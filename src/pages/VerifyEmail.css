@@ -1,0 +1,203 @@
+.verify-email-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background:
+    radial-gradient(circle at top, rgba(240, 201, 87, .18), transparent 32%),
+    #eadfc9;
+  color: #2d271c;
+}
+
+.verify-email-card {
+  width: 100%;
+  max-width: 560px;
+  background: rgba(255, 252, 242, .94);
+  border: 1px solid rgba(130, 103, 50, .22);
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 14px 34px rgba(63, 50, 28, .16);
+}
+
+.verify-email-icon {
+  width: 66px;
+  height: 66px;
+  margin: 0 auto 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(212, 162, 61, .14);
+  color: #b8860b;
+  font-size: 2rem;
+  border: 1px solid rgba(184, 134, 11, .24);
+}
+
+.verify-email-header {
+  text-align: center;
+  margin-bottom: 1.3rem;
+}
+
+.verify-email-kicker {
+  display: block;
+  margin-bottom: .45rem;
+  color: #b8960f;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.verify-email-header h1 {
+  margin-bottom: .55rem;
+  color: #3b3123;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.75rem;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.verify-email-header p {
+  color: #6d6049;
+  font-size: .95rem;
+  line-height: 1.55;
+}
+
+.verify-email-endpoint {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  margin-bottom: 1rem;
+  padding: .75rem .85rem;
+  border: 1px solid rgba(82, 96, 68, .22);
+  border-radius: 8px;
+  background: rgba(234, 245, 235, .75);
+}
+
+.verify-email-endpoint span {
+  padding: .26rem .55rem;
+  border-radius: 999px;
+  background: #2fbf71;
+  color: #fff;
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.verify-email-endpoint code {
+  color: #263244;
+  font-size: .9rem;
+  font-weight: 800;
+}
+
+.verify-email-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .8rem;
+  margin-bottom: 1rem;
+}
+
+.verify-email-details div {
+  padding: .85rem;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .58);
+  border: 1px solid rgba(130, 103, 50, .16);
+}
+
+.verify-email-details span {
+  display: block;
+  margin-bottom: .25rem;
+  color: #7b705c;
+  font-size: .75rem;
+}
+
+.verify-email-details strong {
+  display: block;
+  color: #3b3123;
+  font-size: .88rem;
+  overflow-wrap: anywhere;
+}
+
+.verify-email-message {
+  margin-bottom: 1rem;
+  padding: .9rem 1rem;
+  border-radius: 8px;
+  font-size: .9rem;
+  line-height: 1.5;
+}
+
+.verify-email-message-sent,
+.verify-email-message-verified,
+.verify-email-message-already-verified {
+  background: rgba(16, 185, 129, .12);
+  border: 1px solid rgba(16, 185, 129, .24);
+  color: #1f6b4b;
+}
+
+.verify-email-message-error,
+.verify-email-message-unauthorized {
+  background: rgba(239, 68, 68, .1);
+  border: 1px solid rgba(239, 68, 68, .2);
+  color: #9d2525;
+}
+
+.verify-email-button {
+  width: 100%;
+  min-height: 2.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #d4a23d;
+  color: #fff;
+  font-size: .82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .02em;
+  box-shadow: 0 6px 18px rgba(158, 103, 16, .18);
+  transition: all 250ms cubic-bezier(.4, 0, .2, 1);
+}
+
+.verify-email-button:hover:not(:disabled) {
+  background: #c8932f;
+  transform: translateY(-1px);
+}
+
+.verify-email-button:disabled {
+  opacity: .68;
+  cursor: not-allowed;
+}
+
+.verify-email-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  color: #5f624d;
+  font-size: .86rem;
+}
+
+.verify-email-actions a {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  color: #6b8a4b;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .verify-email-card {
+    padding: 1.5rem;
+  }
+
+  .verify-email-details {
+    grid-template-columns: 1fr;
+  }
+
+  .verify-email-actions {
+    flex-direction: column;
+    gap: .5rem;
+  }
+}

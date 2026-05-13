@@ -1,0 +1,527 @@
+/* ============================================================
+   HONEY PRODUCTS — Premium Design
+   ============================================================ */
+
+/* --- Page --- */
+.honey-page {
+  min-height: 100vh;
+  background: radial-gradient(circle at top, rgba(244,230,181,0.25), transparent 26%), #f3eee3;
+  color: #f5f0e8;
+}
+
+/* --- Navbar --- */
+.honey-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2.5rem;
+  background: rgba(10, 8, 6, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.honey-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  color: #f5f0e8;
+}
+
+.honey-brand-icon {
+  font-size: 1.5rem;
+}
+
+.honey-brand-text {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #d4af37, #f0c957);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* --- Hero --- */
+.honey-hero {
+  position: relative;
+  height: 80vh;
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+}
+
+.honey-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10,8,6,0.18), rgba(10,8,6,0.55));
+}
+
+.honey-hero-img {
+  display: none; /* Hide the img tag since we're using background-image */
+}
+
+.honey-hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 700px;
+  padding: 2rem;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.honey-hero-tag {
+  display: inline-block;
+  padding: 0.5rem 1.25rem;
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #f0c957;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.02em;
+}
+
+.honey-hero-content h1 {
+  font-size: 3.2rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.25rem;
+  color: #f5f0e8;
+}
+
+.honey-gold {
+  background: linear-gradient(135deg, #d4af37, #f0c957, #d4af37);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.honey-hero-content p {
+  font-size: 1.1rem;
+  color: rgba(245, 240, 232, 0.7);
+  line-height: 1.7;
+  margin-bottom: 2rem;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.honey-btn-primary {
+  background: linear-gradient(135deg, #d4af37, #b8860b);
+  color: #0a0806;
+  border: none;
+  font-weight: 700;
+  box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
+  padding: 0.9rem 2rem;
+  font-size: 1rem;
+  border-radius: 12px;
+}
+
+.honey-btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(212, 175, 55, 0.45);
+}
+
+/* --- Stats --- */
+.honey-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 3rem 2rem;
+  background: rgba(212, 175, 55, 0.04);
+  border-top: 1px solid rgba(212, 175, 55, 0.08);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.08);
+  flex-wrap: wrap;
+}
+
+.honey-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0 2rem;
+}
+
+.honey-stat-number {
+  font-size: 1.75rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #d4af37, #f0c957);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.honey-stat-label {
+  font-size: 0.85rem;
+  color: rgba(245, 240, 232, 0.5);
+  font-weight: 500;
+}
+
+.honey-stat-divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(212, 175, 55, 0.15);
+}
+
+/* --- Products Section --- */
+.honey-products {
+  padding: 5rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.honey-products-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.honey-products-header h2 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #f5f0e8, #d4af37);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.honey-products-header p {
+  color: rgba(245, 240, 232, 0.5);
+  font-size: 1rem;
+}
+
+/* --- Filters --- */
+.honey-filters {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+
+.filter-icon {
+  color: rgba(212, 175, 55, 0.5);
+  margin-right: 0.5rem;
+}
+
+.honey-filter-btn {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(245, 240, 232, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.honey-filter-btn:hover {
+  background: rgba(212, 175, 55, 0.1);
+  color: #f0c957;
+  border-color: rgba(212, 175, 55, 0.25);
+}
+
+.honey-filter-btn.active {
+  background: linear-gradient(135deg, #d4af37, #b8860b);
+  color: #0a0806;
+  border-color: transparent;
+  font-weight: 600;
+}
+
+/* --- Product Grid --- */
+.honey-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+/* --- Product Card --- */
+.honey-card {
+  position: relative;
+  background: rgba(20, 16, 12, 0.6);
+  border: 1px solid rgba(212, 175, 55, 0.08);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 350ms cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+}
+
+.honey-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(212, 175, 55, 0.2);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.4),
+    0 0 40px rgba(212, 175, 55, 0.08);
+}
+
+/* Badge */
+.honey-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 0.35rem 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 9999px;
+  z-index: 3;
+  letter-spacing: 0.02em;
+}
+
+.badge-gold {
+  background: linear-gradient(135deg, #d4af37, #f0c957);
+  color: #0a0806;
+}
+
+.badge-purple {
+  background: linear-gradient(135deg, #8b5cf6, #a78bfa);
+  color: #fff;
+}
+
+.badge-green {
+  background: linear-gradient(135deg, #10b981, #34d399);
+  color: #0a0806;
+}
+
+.badge-amber {
+  background: linear-gradient(135deg, #d97706, #f59e0b);
+  color: #0a0806;
+}
+
+/* Favorite */
+.honey-fav {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 38px;
+  height: 38px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(245, 240, 232, 0.5);
+  z-index: 3;
+  transition: all 200ms ease;
+  cursor: pointer;
+}
+
+.honey-fav:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  transform: scale(1.1);
+}
+
+.honey-fav.fav-active {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+/* Card Image */
+.honey-card-img-wrapper {
+  position: relative;
+  height: 260px;
+  overflow: hidden;
+}
+
+.honey-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.honey-card:hover .honey-card-img {
+  transform: scale(1.08);
+}
+
+.honey-card-img-glow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(to top, rgba(20, 16, 12, 1), transparent);
+  pointer-events: none;
+}
+
+/* Card Body */
+.honey-card-body {
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.honey-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #f5f0e8;
+  letter-spacing: -0.01em;
+}
+
+.honey-card-desc {
+  font-size: 0.85rem;
+  color: rgba(245, 240, 232, 0.5);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Rating */
+.honey-card-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.honey-stars {
+  display: flex;
+  gap: 2px;
+}
+
+.star-filled {
+  color: #f0c957;
+  fill: #f0c957;
+}
+
+.star-empty {
+  color: rgba(245, 240, 232, 0.2);
+}
+
+.honey-rating-text {
+  font-size: 0.78rem;
+  color: rgba(245, 240, 232, 0.4);
+}
+
+/* Card Footer */
+.honey-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(212, 175, 55, 0.08);
+}
+
+.honey-price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.honey-price-current {
+  font-size: 1.35rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #d4af37, #f0c957);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.honey-price-old {
+  font-size: 0.85rem;
+  color: rgba(245, 240, 232, 0.3);
+  text-decoration: line-through;
+}
+
+.honey-add-btn {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #d4af37, #b8860b);
+  color: #0a0806;
+  border: none;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 250ms ease;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+}
+
+.honey-add-btn:hover {
+  transform: scale(1.1) rotate(-5deg);
+  box-shadow: 0 6px 25px rgba(212, 175, 55, 0.35);
+}
+
+/* --- Footer --- */
+.honey-footer {
+  padding: 3rem 2rem;
+  border-top: 1px solid rgba(212, 175, 55, 0.08);
+  text-align: center;
+}
+
+.honey-footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.honey-footer-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: #d4af37;
+}
+
+.honey-footer p {
+  font-size: 0.85rem;
+  color: rgba(245, 240, 232, 0.3);
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .honey-hero-content h1 {
+    font-size: 2.2rem;
+  }
+
+  .honey-hero {
+    height: 60vh;
+  }
+
+  .honey-stats {
+    gap: 1rem;
+  }
+
+  .honey-stat {
+    padding: 0 1rem;
+  }
+
+  .honey-stat-divider {
+    display: none;
+  }
+
+  .honey-grid {
+    grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .honey-nav {
+    padding: 0.75rem 1rem;
+  }
+}
