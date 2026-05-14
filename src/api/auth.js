@@ -1,15 +1,14 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://ice-universe-reason.ngrok-free.dev',
+  baseURL: 'https://TON-DOMAINE.ngrok-free.app/api',
   headers: {
     'Content-Type': 'application/json',
     'ngrok-skip-browser-warning': 'true',
   },
-  withCredentials: true,
 });
 
-// Attach token to every request if available
+// Attacher le token à chaque requête
 API.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -21,7 +20,14 @@ API.interceptors.request.use((config) => {
 // --- Auth API ---
 
 export const registerUser = async (data) => {
-  const response = await API.post('/register', data);
+  const response = await API.post('/register', {
+    nom: data.lastName,
+    prenom: data.firstName,
+    email: data.email,
+    telephone: data.Telephone,
+    password: data.password,
+    c_password: data.password_confirmation,
+  });
   return response.data;
 };
 
@@ -38,7 +44,7 @@ export const logoutUser = async () => {
 // --- Email Verification ---
 
 export const sendVerificationEmail = async () => {
-  const response = await API.post('/profil/vérifier/envoyer');
+  const response = await API.post('/profile/verify/send');
   return response.data;
 };
 
