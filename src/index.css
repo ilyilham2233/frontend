@@ -481,6 +481,18 @@ input { font-family:inherit; }
   color:#4e4a3c;
   font-size:.82rem;
 }
+.forgot-frame {
+  max-width:920px;
+}
+.forgot-visual {
+  background-position:center right;
+}
+.forgot-back a {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:.35rem;
+}
 
 /* ============================================================
    VERIFY EMAIL

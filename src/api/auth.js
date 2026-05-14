@@ -41,6 +41,18 @@ export const logoutUser = async () => {
   return response.data;
 };
 
+export const requestPasswordReset = async (email) => {
+  const response = await API.post('/password/email', { email });
+  return response.data;
+};
+
+export const validateResetToken = async (token, email) => {
+  const response = await API.get(`/mot_de_passe/r%C3%A9initialisation/${encodeURIComponent(token)}`, {
+    params: { email },
+  });
+  return response.data;
+};
+
 // --- Email Verification ---
 
 export const sendVerificationEmail = async () => {
