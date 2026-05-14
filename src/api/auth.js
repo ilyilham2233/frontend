@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'https://TON-DOMAINE.ngrok-free.app/api',
+  baseURL: 'https://ice-universe-reason.ngrok-free.dev/api',
   headers: {
     'Content-Type': 'application/json',
     'ngrok-skip-browser-warning': 'true',
