@@ -47,7 +47,7 @@ export const requestPasswordReset = async (email) => {
 };
 
 export const validateResetToken = async (token, email) => {
-  const response = await API.get(`/mot_de_passe/r%C3%A9initialisation/${encodeURIComponent(token)}`, {
+  const response = await API.get(`/password/reset/${token}`, {
     params: { email },
   });
   return response.data;
