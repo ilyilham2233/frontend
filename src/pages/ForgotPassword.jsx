@@ -1,109 +1,113 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FiArrowLeft, FiMail, FiSend } from 'react-icons/fi';
+import { FiArrowLeft, FiCheckCircle, FiMail, FiSend } from 'react-icons/fi';
 import { requestPasswordReset } from '../api/auth';
+import './VerifyEmail.css';
+import './ForgotPassword.css';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
+  const [status, setStatus] = useState('idle'); // idle | sending | sent | error
   const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const getValidationMessage = (errors) => {
-    if (!errors) return null;
-    const firstError = Object.values(errors).flat()[0];
-    return firstError || null;
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    if (!email.trim()) return;
+
+    setStatus('sending');
     setMessage('');
-    setError('');
 
     try {
-      const data = await requestPasswordReset(email);
+      const data = await requestPasswordReset(email.trim());
+      setStatus('sent');
       setMessage(data.message || 'Si cet email existe, un lien de réinitialisation a été envoyé.');
     } catch (err) {
-      const data = err.response?.data;
-      const validationMessage = getValidationMessage(data?.errors);
-      setError(validationMessage || data?.message || "Impossible d'envoyer le lien. Vérifiez l'adresse email.");
-    } finally {
-      setLoading(false);
+      const code = err.response?.status;
+      const apiMessage = err.response?.data?.message || err.response?.data?.errors?.email?.[0];
+
+      if (code === 422) {
+        setStatus('error');
+        setMessage(apiMessage || 'Adresse e-mail invalide.');
+      } else {
+        setStatus('error');
+        setMessage(apiMessage || 'Une erreur est survenue. Réessayez plus tard.');
+      }
     }
   };
 
+  const isSending = status === 'sending';
+  const isSent = status === 'sent';
+
   return (
-    <main className="login-page">
-      <section className="login-frame forgot-frame">
-        <div
-          className="login-visual forgot-visual"
-          style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/miel2.jpg)` }}
-        />
+    <main className="verify-email-page">
+      <section className="verify-email-card">
 
-        <div className="login-panel">
-          <div className="login-card">
-            <div className="login-header">
-              <h2>Mot de passe oublié ?</h2>
-              <p>Entrez votre adresse email pour recevoir un lien de réinitialisation.</p>
-            </div>
+        {/* Icon */}
+        <div className="verify-email-icon">
+          {isSent ? <FiCheckCircle /> : <FiMail />}
+        </div>
 
-            {message && (
-              <div className="alert alert-success">
-                <span className="alert-icon">✓</span>
-                {message}
-              </div>
-            )}
+        {/* Header */}
+        <div className="verify-email-header">
+          <span className="verify-email-kicker">Réinitialisation du mot de passe</span>
+          <h1>{isSent ? 'E-mail envoyé !' : 'Mot de passe oublié ?'}</h1>
+          <p>
+            {isSent
+              ? 'Vérifiez votre boîte mail et cliquez sur le lien reçu pour choisir un nouveau mot de passe.'
+              : 'Entrez votre adresse e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.'}
+          </p>
+        </div>
 
-            {error && (
-              <div className="alert alert-error">
-                <span className="alert-icon">!</span>
-                {error}
-              </div>
-            )}
+        {/* Message */}
+        {message && (
+          <div className={`verify-email-message ${isSent ? 'verify-email-message-verified' : 'verify-email-message-error'}`}>
+            {message}
+          </div>
+        )}
 
-            <form onSubmit={handleSubmit} className="login-form">
-              <div className="login-field">
-                <FiMail className="login-input-icon" />
+        {/* Form — masqué après envoi réussi */}
+        {!isSent && (
+          <form onSubmit={handleSubmit} className="forgot-form">
+            <div className="forgot-field">
+              <label htmlFor="fp-email">Adresse e-mail</label>
+              <div className="forgot-input-wrap">
+                <FiMail className="forgot-input-icon" />
                 <input
+                  id="fp-email"
                   type="email"
-                  id="forgot-password-email"
-                  name="email"
-                  placeholder="Adresse E-mail"
+                  placeholder="votre@email.com"
                   value={email}
                   onChange={(e) => {
                     setEmail(e.target.value);
-                    setError('');
-                    setMessage('');
+                    if (status === 'error') setStatus('idle');
                   }}
+                  disabled={isSending}
                   required
-                  autoComplete="email"
+                  autoFocus
                 />
               </div>
+            </div>
 
-              <button type="submit" className="login-submit" disabled={loading}>
-                {loading ? (
-                  <span className="btn-loading">
-                    <span className="spinner-small" />
-                    Envoi...
-                  </span>
-                ) : (
-                  <span className="btn-content">
-                    Envoyer le lien
-                    <FiSend />
-                  </span>
-                )}
-              </button>
-            </form>
+            <button
+              type="submit"
+              className="verify-email-button"
+              disabled={isSending || !email.trim()}
+            >
+              <span className="btn-content">
+                <FiSend />
+                {isSending ? 'Envoi en cours...' : 'Envoyer le lien'}
+              </span>
+            </button>
+          </form>
+        )}
 
-            <p className="login-register forgot-back">
-              <Link to="/login">
-                <FiArrowLeft />
-                Retour à la connexion
-              </Link>
-            </p>
-          </div>
+        {/* Actions */}
+        <div className="verify-email-actions">
+          <Link to="/login">
+            <FiArrowLeft /> Retour à la connexion
+          </Link>
         </div>
+
       </section>
     </main>
   );

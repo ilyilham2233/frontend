@@ -5,7 +5,7 @@ import PrivateRoute from './components/PrivateRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
-import ResetToken from './pages/ResetToken';
+import ResetPasswordForm from './pages/ResetPasswordForm';
 import VerifyEmail from './pages/VerifyEmail';
 import Profile from './pages/Profile';
 import Home from './pages/Home';
@@ -16,12 +16,12 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          
+
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password/:token" element={<ResetToken />} />
+          <Route path="/reset-password" element={<ResetPasswordForm />} />
           <Route path="/verify/:id/:hash" element={<VerifyEmail />} />
           <Route path="/products" element={<Products />} />
 

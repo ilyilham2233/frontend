@@ -75,30 +75,20 @@ const VerifyEmail = () => {
         <div className="verify-email-header">
           <span className="verify-email-kicker">Vérification de l'adresse e-mail</span>
           <h1>
-  {status === 'verifying'        ? 'Vérification en cours...' :
-   status === 'verified'         ? 'E-mail vérifié !' :
-   status === 'error'            ? 'Lien invalide' :
-   status === 'sending'          ? 'Envoi en cours...' :
-   status === 'sent'             ? 'E-mail envoyé !' :
-   status === 'already-verified' ? 'Déjà vérifié' :
-   'Envoyer un lien de vérification'}
-</h1>
+            {status === 'verifying'        ? 'Vérification en cours...' :
+             status === 'verified'         ? 'E-mail vérifié !' :
+             status === 'error'            ? 'Lien invalide' :
+             status === 'sending'          ? 'Envoi en cours...' :
+             status === 'sent'             ? 'E-mail envoyé !' :
+             status === 'already-verified' ? 'Déjà vérifié' :
+             'Envoyer un lien de vérification'}
+          </h1>
           <p>
-            Un e-mail sera envoyé à votre adresse afin de confirmer votre compte.
+            {id && hash
+              ? "Ce lien de vérification est public et ne nécessite pas de connexion."
+              : "Un e-mail sera envoyé à votre adresse afin de confirmer votre compte."}
           </p>
         </div>
-
-        <div className="verify-email-details">
-          <div>
-            <span>Compte</span>
-            <strong>{user?.email || 'Utilisateur connecté'}</strong>
-          </div>
-          <div>
-            <span>Authentification</span>
-            <strong>{isAuthenticated ? 'Jeton Bearer détecté' : 'Connexion requise'}</strong>
-          </div>
-        </div>
-
         {message && (
           <div className={`verify-email-message verify-email-message-${status}`}>
             {message}
@@ -106,18 +96,18 @@ const VerifyEmail = () => {
         )}
 
         {!id && !hash && (
-  <button
-    type="button"
-    className="verify-email-button"
-    onClick={handleSendVerification}
-    disabled={!canSend}
-  >
-    <span className="btn-content">
-      <FiSend />
-      {isBusy ? 'Envoi en cours...' : cooldown > 0 ? `Renvoyer dans ${cooldown}s` : "Envoyer l'e-mail"}
-    </span>
-  </button>
-)}
+          <button
+            type="button"
+            className="verify-email-button"
+            onClick={handleSendVerification}
+            disabled={!canSend}
+          >
+            <span className="btn-content">
+              <FiSend />
+              {isBusy ? 'Envoi en cours...' : cooldown > 0 ? `Renvoyer dans ${cooldown}s` : "Envoyer l'e-mail"}
+            </span>
+          </button>
+        )}
 
         <div className="verify-email-actions">
           {!isAuthenticated ? (

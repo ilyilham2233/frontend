@@ -187,6 +187,62 @@
   text-underline-offset: 2px;
 }
 
+.reset-password-form {
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+}
+
+.reset-password-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.reset-password-input-icon {
+  position: absolute;
+  left: .75rem;
+  color: #526044;
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+.reset-password-field input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: .6rem 2.7rem .6rem 2.3rem;
+  border: 1px solid rgba(130, 103, 50, .2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .64);
+  color: #2d271c;
+  font-size: .92rem;
+  outline: none;
+  transition: border-color 200ms ease, box-shadow 200ms ease, background 200ms ease;
+}
+
+.reset-password-field input:focus {
+  border-color: #c79b35;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, .14);
+}
+
+.reset-password-toggle {
+  position: absolute;
+  right: .65rem;
+  width: 1.9rem;
+  height: 1.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: #687155;
+  font-size: 1rem;
+}
+
+.reset-password-toggle:hover {
+  color: #b8860b;
+}
+
 @media (max-width: 640px) {
   .verify-email-card {
     padding: 1.5rem;

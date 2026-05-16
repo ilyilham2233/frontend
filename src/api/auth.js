@@ -41,6 +41,8 @@ export const logoutUser = async () => {
   return response.data;
 };
 
+// --- Password Reset ---
+
 export const requestPasswordReset = async (email) => {
   const response = await API.post('/password/email', { email });
   return response.data;
@@ -50,6 +52,11 @@ export const validateResetToken = async (token, email) => {
   const response = await API.get(`/password/reset/${token}`, {
     params: { email },
   });
+  return response.data;
+};
+
+export const updatePassword = async (data) => {
+  const response = await API.post('/reset-password', data);
   return response.data;
 };
 
