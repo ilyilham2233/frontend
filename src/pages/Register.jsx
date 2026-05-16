@@ -44,7 +44,7 @@ const Register = () => {
 
     try {
       await register(formData);
-      navigate('/verify-email');
+      navigate('/verify-email?registered=true');
     } catch (err) {
       const data = err.response?.data;
       let message = "Échec de l'inscription. Veuillez réessayer.";

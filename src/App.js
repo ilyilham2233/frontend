@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPasswordForm from './pages/ResetPasswordForm';
+import ResetToken from './pages/ResetToken';
 import VerifyEmail from './pages/VerifyEmail';
 import Profile from './pages/Profile';
 import Home from './pages/Home';
@@ -22,6 +23,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPasswordForm />} />
+          <Route path="/reset-password/:token" element={<ResetToken />} />
           <Route path="/verify/:id/:hash" element={<VerifyEmail />} />
           <Route path="/products" element={<Products />} />
 

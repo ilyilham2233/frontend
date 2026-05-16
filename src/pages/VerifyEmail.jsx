@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { verifyEmail } from '../api/auth';
 import { FiAlertCircle, FiArrowRight, FiCheckCircle, FiClock, FiMail, FiSend } from 'react-icons/fi';
@@ -7,9 +7,10 @@ import './VerifyEmail.css';
 
 const VerifyEmail = () => {
   const { id, hash } = useParams();
-  const { sendVerification, user, isAuthenticated } = useAuth();
+  const [searchParams] = useSearchParams();
+  const { sendVerification, isAuthenticated } = useAuth();
   const [status, setStatus] = useState(id && hash ? 'verifying' : 'idle');
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState(searchParams.get('registered') ? 'Inscription réussie : vérifiez votre e-mail pour activer votre compte.' : '');
   const [cooldown, setCooldown] = useState(0);
 
   useEffect(() => {
@@ -86,6 +87,8 @@ const VerifyEmail = () => {
           <p>
             {id && hash
               ? "Ce lien de vérification est public et ne nécessite pas de connexion."
+              : searchParams.get('registered')
+              ? "Votre compte est créé. Envoyez un e-mail de verification pour activer votre adresse."
               : "Un e-mail sera envoyé à votre adresse afin de confirmer votre compte."}
           </p>
         </div>

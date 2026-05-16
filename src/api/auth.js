@@ -60,6 +60,8 @@ export const updatePassword = async (data) => {
   return response.data;
 };
 
+export const updateResetPassword = updatePassword;
+
 // --- Email Verification ---
 
 export const sendVerificationEmail = async () => {
