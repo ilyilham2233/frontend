@@ -49,7 +49,7 @@ export const requestPasswordReset = async (email) => {
 };
 
 export const validateResetToken = async (token, email) => {
-  const response = await API.get(`/password/update/${token}`, {
+  const response = await API.get(`/password/reset/${token}`, {
     params: { email },
   });
   return response.data;
