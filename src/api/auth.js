@@ -49,15 +49,16 @@ export const requestPasswordReset = async (email) => {
 };
 
 export const validateResetToken = async (token, email) => {
-  const response = await API.get(`/password/reset/${token}`, {
+  const response = await API.get(`/password/upsate/${token}`, {
     params: { email },
   });
   return response.data;
 };
 
 export const updatePassword = async (data) => {
-  const response = await API.post('/reset-password', data);
+  const response = await API.post('/password/update', data);
   return response.data;
+
 };
 
 export const updateResetPassword = updatePassword;
