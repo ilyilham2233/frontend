@@ -340,10 +340,11 @@ const Products = () => {
                 {/* Image */}
                 <div className="honey-card-img-wrapper">
                   <img
-                    src={product.image_url || `${process.env.PUBLIC_URL}/images/honey-pure.png`}
+                    src={product.image_url || `${process.env.PUBLIC_URL}/images/honey-hero.png`}
                     alt={product.nom}
                     className="honey-card-img"
-                    onError={e => { e.target.src = `${process.env.PUBLIC_URL}/images/honey-pure.png`; }}
+                    onError={e => { e.target.src = `${process.env.PUBLIC_URL}/images/honey-hero.png`;}}
+
                   />
                   <div className="honey-card-img-glow" />
                 </div>
@@ -362,9 +363,9 @@ const Products = () => {
 
                   {/* Rating */}
                   <div className="honey-card-rating">
-                    <Stars rating={product.note_moyenne || 0} />
+                    <Stars rating={product.avis_avg_note || 0} />
                     <span className="honey-rating-text">
-                      {product.note_moyenne ? `${product.note_moyenne}` : 'Pas encore noté'}
+                      {product.avis_avg_note? `${product.avis_avg_note}` : 'Pas encore noté'}
                     </span>
                   </div>
 
