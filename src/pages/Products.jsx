@@ -187,6 +187,7 @@ const Products = () => {
               <Link to="/cart" className="nav-link"><FiShoppingCart /> Panier</Link>
               <Link to="/profile" className="nav-link"><FiUser /> Profil</Link>
               <button onClick={logout} className="nav-link nav-btn"><FiLogOut /> Déconnexion</button>
+              <Link to="/orders" className="nav-link"><FiPackage /> Commandes</Link>
             </>
           ) : (
             <Link to="/login" className="nav-link"><FiLogIn /> Connexion</Link>
