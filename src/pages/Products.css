@@ -553,42 +553,47 @@
   gap: 0.6rem;
 }
 
-.honey-price-current {
-  font-size: 1.35rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #d4af37, #f0c957);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.honey-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #d4a017, #f2d16b);
+  color: #2b1d0e;
+  border: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
 }
 
-.honey-price-old {
-  font-size: 0.85rem;
-  color: rgba(245, 240, 232, 0.3);
-  text-decoration: line-through;
+.honey-add-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 160, 23, 0.35);
 }
 
 .honey-add-btn {
-  width: 44px;
-  height: 44px;
-  background: linear-gradient(135deg, #d4af37, #b8860b);
-  color: #0a0806;
-  border: none;
-  border-radius: 12px;
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 1.1rem;
-  cursor: pointer;
-  transition: all 250ms ease;
-  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+  gap: 8px;
+  padding: 12px 18px;
+  border-radius: 14px;
 }
 
 .honey-add-btn:hover {
   transform: scale(1.1) rotate(-5deg);
   box-shadow: 0 6px 25px rgba(212, 175, 55, 0.35);
 }
+.honey-price-current {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #f0c957;
+}
 
+.honey-price-old {
+  font-size: 0.9rem;
+  color: rgba(245, 240, 232, 0.35);
+  text-decoration: line-through;
+}
 /* --- Footer --- */
 .honey-footer {
   padding: 3rem 2rem;

@@ -4,7 +4,6 @@ import './Products.css';
 import './ProductsExtra.css';
 import './ProductsHero.css';
 import { useAuth } from '../context/AuthContext';
-import { useCart } from '../context/CartContext';
 import {
   FiShoppingCart, FiStar, FiHeart, FiFilter,
   FiUser, FiLogOut, FiLogIn, FiSearch,
@@ -68,7 +67,6 @@ const Particles = () => {
 // ─── Main component ───────────────────────────────────────────────────────────
 const Products = () => {
   const { isAuthenticated, logout } = useAuth();
-  const { cartCount, incrementCartCount, refreshCart } = useCart();
 
   // Catalogue state
   const [products, setProducts]     = useState([]);
@@ -163,8 +161,6 @@ const Products = () => {
     setCartLoading(produitId);
     try {
       await addToCart(produitId, 1);
-      incrementCartCount(1);
-      refreshCart().catch(() => {});
       setCartMsg('Produit ajouté au panier !');
     } catch (err) {
       setCartMsg(err.response?.data?.message || "Erreur lors de l'ajout.");
@@ -188,10 +184,7 @@ const Products = () => {
         <div className="navbar-links">
           {isAuthenticated ? (
             <>
-              <Link to="/cart" className="nav-link cart-nav-link">
-                <FiShoppingCart /> Panier
-                {cartCount > 0 && <span className="cart-count-badge">{cartCount}</span>}
-              </Link>
+              <Link to="/cart" className="nav-link"><FiShoppingCart /> Panier</Link>
               <Link to="/profile" className="nav-link"><FiUser /> Profil</Link>
               <button onClick={logout} className="nav-link nav-btn"><FiLogOut /> Déconnexion</button>
             </>
@@ -402,12 +395,19 @@ const Products = () => {
                       <span className="honey-price-current">{product.prix} DH</span>
                     </div>
                     <button
-                      className="honey-add-btn"
-                      onClick={() => handleAddToCart(product.id)}
-                      disabled={product.quantite_stock === 0 || cartLoading === product.id}
-                    >
-                      {cartLoading === product.id ? <span className="cart-spinner" /> : <FiShoppingCart />}
-                    </button>
+           className="honey-add-btn"
+            onClick={() => handleAddToCart(product.id)}
+             disabled={product.quantite_stock === 0 || cartLoading === product.id}
+           >
+            {cartLoading === product.id ? (
+             <span className="cart-spinner" />
+          ) : (
+            <>
+              <FiShoppingCart />
+            <span>Ajouter au panier</span>
+           </>
+           )}
+          </button>
                   </div>
                 </div>
               </div>
