@@ -4,7 +4,8 @@ import { FiCheckCircle, FiAlertCircle, FiArrowLeft, FiShoppingBag, FiUser, FiLog
 import { processOrder } from '../api/orders';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import './Orders.css';
+import './Cart.css';
+
 
 const Checkout = () => {
   const { logout, user } = useAuth();
@@ -41,7 +42,7 @@ const Checkout = () => {
   };
 
   return (
-    <div className="orders-page">
+   <div className="cart-page">
       {/* Navbar */}
       <nav className="honey-nav">
         <Link to="/products" className="honey-brand">

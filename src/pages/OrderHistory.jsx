@@ -6,7 +6,7 @@ import {
 } from 'react-icons/fi';
 import { getOrderHistory, trackOrder, downloadReceipt } from '../api/orders';
 import { useAuth } from '../context/AuthContext';
-import './Orders.css';
+import './Cart.css';
 
 // ── Statut badge ──────────────────────────────────────────────────────────────
 const StatusBadge = ({ status }) => {
@@ -71,7 +71,7 @@ const OrderHistory = () => {
   };
 
   return (
-   <div className="orders-page">
+   <div className="cart-page">
       {/* Navbar */}
       <nav className="honey-nav">
         <Link to="/products" className="honey-brand">

@@ -4,7 +4,7 @@ import { FiShoppingCart, FiTrash2, FiPlus, FiMinus, FiArrowLeft, FiArrowRight, F
 import { updateCart, removeFromCart } from '../api/catalogue';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
-import './Orders.css';
+import './Cart.css';
 
 const Cart = () => {
   const { logout, user } = useAuth();
@@ -54,7 +54,7 @@ const Cart = () => {
   const total = cart.reduce((sum, item) => sum + (item.produit?.prix || 0) * item.quantite, 0);
 
   return (
-    <div className="orders-page">
+    <div className="cart-page">
       {/* Navbar */}
       <nav className="honey-nav">
         <Link to="/products" className="honey-brand">
