@@ -6,7 +6,6 @@ import {
 } from 'react-icons/fi';
 import { getOrderHistory, trackOrder, downloadReceipt } from '../api/orders';
 import { useAuth } from '../context/AuthContext';
-import './Cart.css';
 import './Orders.css';
 
 // ── Statut badge ──────────────────────────────────────────────────────────────
@@ -72,12 +71,12 @@ const OrderHistory = () => {
   };
 
   return (
-    <div className="cart-page">
+   <div className="orders-page">
       {/* Navbar */}
       <nav className="honey-nav">
         <Link to="/products" className="honey-brand">
           <span className="honey-brand-icon">🍯</span>
-          <span className="honey-brand-text">Maison du Miel</span>
+          <span className="honey-brand-text">khayrat bladi</span>
         </Link>
         <div className="navbar-links">
           <Link to="/profile" className="nav-link"><FiUser /> {user?.prenom || 'Profil'}</Link>

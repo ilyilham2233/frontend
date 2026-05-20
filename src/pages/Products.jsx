@@ -190,6 +190,7 @@ const Products = () => {
             </>
           ) : (
             <Link to="/login" className="nav-link"><FiLogIn /> Connexion</Link>
+            
           )}
         </div>
       </nav>
