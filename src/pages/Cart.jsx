@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FiShoppingCart, FiTrash2, FiPlus, FiMinus, FiArrowLeft, FiArrowRight, FiUser, FiLogOut } from 'react-icons/fi';
 import { getCart, updateCart, removeFromCart } from '../api/catalogue';
 import { useAuth } from '../context/AuthContext';
+import { normalizeCartItems } from '../utils/cart';
 import './Cart.css';
 
 const Cart = () => {
@@ -15,9 +16,10 @@ const Cart = () => {
 
   const fetchCart = () => {
     setLoading(true);
+    setError('');
     getCart()
-      .then(res => setCart(res.data?.articles || res.data || []))
-      .catch(() => setError('Impossible de charger le panier.'))
+      .then(res => setCart(normalizeCartItems(res)))
+      .catch((err) => setError(err.response?.data?.message || 'Impossible de charger le panier.'))
       .finally(() => setLoading(false));
   };
 

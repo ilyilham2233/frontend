@@ -179,12 +179,12 @@ const Products = () => {
       {/* Navbar */}
       <nav className="honey-nav">
         <Link to="/home" className="honey-brand">
-          <span className="honey-brand-icon">🍯</span>
           <span className="honey-brand-text">khayrat bladi</span>
         </Link>
         <div className="navbar-links">
           {isAuthenticated ? (
             <>
+              <Link to="/cart" className="nav-link"><FiShoppingCart /> Panier</Link>
               <Link to="/profile" className="nav-link"><FiUser /> Profil</Link>
               <button onClick={logout} className="nav-link nav-btn"><FiLogOut /> Déconnexion</button>
             </>
@@ -194,10 +194,8 @@ const Products = () => {
         </div>
       </nav>
 
-      {/* ── HERO avec vidéo ── */}
+      {/* Hero */}
       <section className="honey-hero hero-video-section" ref={heroRef}>
-
-        {/* Vidéo de fond */}
         <video
           className="hero-video-bg"
           autoPlay muted loop playsInline
@@ -205,13 +203,10 @@ const Products = () => {
           <source src={`${process.env.PUBLIC_URL}/images/video 2.mp4`} type="video/mp4" />
         </video>
 
-        {/* Overlay dégradé */}
         <div className="hero-video-overlay" />
 
-        {/* Particules flottantes */}
         <Particles />
 
-        {/* Contenu avec parallax */}
         <div className="honey-hero-content hero-parallax-content" ref={contentRef}>
           <span className="honey-hero-tag hero-tag-animated">
             ✦ Artisanal &amp; 100% Naturel ✦
@@ -239,7 +234,6 @@ const Products = () => {
           </div>
         </div>
 
-        {/* Scroll indicator */}
         <a href="#products-section" className="hero-scroll-indicator" aria-label="Défiler">
           <FiChevronDown />
         </a>
@@ -390,9 +384,6 @@ const Products = () => {
                 <div className="honey-card-body">
                   <h3 className="honey-card-title">{product.nom}</h3>
                   <p className="honey-card-desc">{product.description || 'Produit apicole artisanal de qualité.'}</p>
-                  {product.vendeur && (
-                    <p className="honey-card-vendor">Par {product.vendeur.prenom} {product.vendeur.nom}</p>
-                  )}
                   <div className="honey-card-rating">
                     <Stars rating={product.note_moyenne || 0} />
                     <span className="honey-rating-text">
@@ -445,7 +436,7 @@ const Products = () => {
       {/* Footer */}
       <footer className="honey-footer">
         <div className="honey-footer-inner">
-          <div className="honey-footer-brand"><span>🍯</span><span>khayrat bladi</span></div>
+          <div className="honey-footer-brand"><span>khayrat bladi</span></div>
           <p>© 2026 khayrat bladi — Tous droits réservés</p>
         </div>
       </footer>

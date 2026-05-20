@@ -5,7 +5,7 @@
 /* --- Page --- */
 .honey-page {
   min-height: 100vh;
-  background: radial-gradient(circle at top, rgba(244,230,181,0.25), transparent 26%), #e0d5bf;
+  background: #0a0806;
   color: #f5f0e8;
 }
 
@@ -177,30 +177,130 @@
 
 /* --- Products Section --- */
 .honey-products {
-  padding: 5rem 2rem;
-  max-width: 1200px;
+  position: relative;
+  padding: 6rem 2rem 5rem;
+  max-width: none;
   margin: 0 auto;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 14% 10%, rgba(255, 225, 151, 0.32), transparent 27%),
+    radial-gradient(circle at 86% 7%, rgba(142, 92, 42, 0.18), transparent 31%),
+    radial-gradient(ellipse at 50% 0%, rgba(255, 245, 219, 0.88), transparent 42%),
+    linear-gradient(180deg, #f8ecd8 0%, #ead7ba 48%, #d9c0a2 100%);
+  color: #3f2816;
+}
+
+.honey-products::before {
+  content: '';
+  position: absolute;
+  top: -92px;
+  left: 0;
+  right: 0;
+  height: 180px;
+  background:
+    linear-gradient(180deg, rgba(10, 8, 6, 0.94) 0%, rgba(83, 58, 34, 0.52) 38%, rgba(247, 234, 211, 0) 100%);
+  pointer-events: none;
+}
+
+.honey-products::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 4% 22%, rgba(143, 96, 40, 0.11) 0 1px, transparent 2px 20px),
+    radial-gradient(circle at 96% 18%, rgba(143, 96, 40, 0.1) 0 1px, transparent 2px 22px),
+    linear-gradient(115deg, rgba(255, 255, 255, 0.2), transparent 32%),
+    repeating-linear-gradient(90deg, rgba(101, 70, 35, 0.025) 0 1px, transparent 1px 92px);
+  pointer-events: none;
+}
+
+.honey-products > * {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .honey-products-header {
+  position: relative;
   text-align: center;
   margin-bottom: 2.5rem;
+  padding: 0 5rem;
+}
+
+.honey-products-header::before,
+.honey-products-header::after {
+  content: '';
+  position: absolute;
+  top: .32rem;
+  width: 126px;
+  height: 92px;
+  opacity: .42;
+  pointer-events: none;
+  background:
+    radial-gradient(circle, rgba(166, 112, 38, .24) 0 1.5px, transparent 2px),
+    linear-gradient(135deg, transparent 42%, rgba(166, 112, 38, .28) 43% 45%, transparent 46%),
+    linear-gradient(45deg, transparent 42%, rgba(166, 112, 38, .2) 43% 45%, transparent 46%);
+  background-size: 22px 22px, 28px 28px, 28px 28px;
+  mask-image: radial-gradient(ellipse at center, #000 0 58%, transparent 78%);
+}
+
+.honey-products-header::before {
+  left: max(0px, calc(50% - 430px));
+}
+
+.honey-products-header::after {
+  right: max(0px, calc(50% - 430px));
+  transform: scaleX(-1);
 }
 
 .honey-products-header h2 {
+  position: relative;
+  display: inline-block;
   font-size: 2.25rem;
   font-weight: 800;
   letter-spacing: -0.03em;
   margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, #f5f0e8, #d4af37);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #4f3219;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.honey-products-header h2::before,
+.honey-products-header h2::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 72px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(151, 96, 31, .58));
+}
+
+.honey-products-header h2::before {
+  right: calc(100% + 18px);
+}
+
+.honey-products-header h2::after {
+  left: calc(100% + 18px);
+  transform: scaleX(-1);
 }
 
 .honey-products-header p {
-  color: rgba(245, 240, 232, 0.5);
+  position: relative;
+  color: rgba(76, 50, 25, 0.68);
   font-size: 1rem;
+}
+
+.honey-products-header p::after {
+  content: '';
+  display: block;
+  width: 34px;
+  height: 7px;
+  margin: 1rem auto 0;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(163, 105, 30, .68) 0 3px, transparent 4px),
+    radial-gradient(circle at 24% 50%, rgba(191, 139, 49, .32) 0 2px, transparent 3px),
+    radial-gradient(circle at 76% 50%, rgba(191, 139, 49, .32) 0 2px, transparent 3px);
 }
 
 /* --- Filters --- */
@@ -214,7 +314,7 @@
 }
 
 .filter-icon {
-  color: rgba(212, 175, 55, 0.5);
+  color: rgba(109, 73, 32, 0.62);
   margin-right: 0.5rem;
 }
 
@@ -222,23 +322,24 @@
   padding: 0.5rem 1.25rem;
   font-size: 0.875rem;
   font-weight: 500;
-  background: rgba(255, 255, 255, 0.04);
-  color: rgba(245, 240, 232, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 251, 241, 0.55);
+  color: rgba(67, 43, 21, 0.72);
+  border: 1px solid rgba(132, 86, 36, 0.16);
   border-radius: 9999px;
   cursor: pointer;
   transition: all 200ms ease;
+  box-shadow: 0 8px 22px rgba(89, 55, 22, 0.05);
 }
 
 .honey-filter-btn:hover {
-  background: rgba(212, 175, 55, 0.1);
-  color: #f0c957;
-  border-color: rgba(212, 175, 55, 0.25);
+  background: rgba(255, 248, 224, 0.82);
+  color: #5c3918;
+  border-color: rgba(177, 128, 48, 0.38);
 }
 
 .honey-filter-btn.active {
-  background: linear-gradient(135deg, #d4af37, #b8860b);
-  color: #0a0806;
+  background: linear-gradient(135deg, #7b4f22, #bf8b31);
+  color: #fff7e6;
   border-color: transparent;
   font-weight: 600;
 }
@@ -519,6 +620,42 @@
     grid-template-columns: 1fr;
     max-width: 400px;
     margin: 0 auto;
+  }
+
+  .honey-products {
+    padding: 4.8rem 1.25rem 4rem;
+  }
+
+  .honey-products-header {
+    padding: 0;
+  }
+
+  .honey-products-header::before,
+  .honey-products-header::after {
+    width: 82px;
+    height: 64px;
+    opacity: .24;
+  }
+
+  .honey-products-header::before {
+    left: -26px;
+  }
+
+  .honey-products-header::after {
+    right: -26px;
+  }
+
+  .honey-products-header h2::before,
+  .honey-products-header h2::after {
+    width: 34px;
+  }
+
+  .honey-products-header h2::before {
+    right: calc(100% + 10px);
+  }
+
+  .honey-products-header h2::after {
+    left: calc(100% + 10px);
   }
 
   .honey-nav {

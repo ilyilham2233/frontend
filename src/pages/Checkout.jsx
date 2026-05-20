@@ -4,6 +4,7 @@ import { FiCheckCircle, FiAlertCircle, FiArrowLeft, FiShoppingBag, FiUser, FiLog
 import { getCart } from '../api/catalogue';
 import { processOrder } from '../api/orders';
 import { useAuth } from '../context/AuthContext';
+import { normalizeCartItems } from '../utils/cart';
 import './Cart.css';
 
 const Checkout = () => {
@@ -17,7 +18,7 @@ const Checkout = () => {
 
   useEffect(() => {
     getCart()
-      .then(res => setCart(res.data?.articles || res.data || []))
+      .then(res => setCart(normalizeCartItems(res)))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
