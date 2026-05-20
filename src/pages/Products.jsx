@@ -4,10 +4,11 @@ import './Products.css';
 import './ProductsExtra.css';
 import './ProductsHero.css';
 import { useAuth } from '../context/AuthContext';
-import { FiShoppingCart, FiStar, FiHeart, FiFilter,
+import {
+  FiShoppingCart, FiStar, FiHeart, FiFilter,
   FiUser, FiLogOut, FiLogIn, FiSearch,
   FiChevronLeft, FiChevronRight, FiX, FiAlertCircle,
-  FiChevronDown, FiPackage,
+  FiChevronDown,
 } from 'react-icons/fi';
 import { getProducts, getCategories, addToCart } from '../api/catalogue';
 
@@ -186,7 +187,6 @@ const Products = () => {
               <Link to="/cart" className="nav-link"><FiShoppingCart /> Panier</Link>
               <Link to="/profile" className="nav-link"><FiUser /> Profil</Link>
               <button onClick={logout} className="nav-link nav-btn"><FiLogOut /> Déconnexion</button>
-              <Link to="/orders" className="nav-link"><FiPackage /> Commandes</Link>
             </>
           ) : (
             <Link to="/login" className="nav-link"><FiLogIn /> Connexion</Link>
