@@ -4,11 +4,10 @@ import './Products.css';
 import './ProductsExtra.css';
 import './ProductsHero.css';
 import { useAuth } from '../context/AuthContext';
-import {
-  FiShoppingCart, FiStar, FiHeart, FiFilter,
+import { FiShoppingCart, FiStar, FiHeart, FiFilter,
   FiUser, FiLogOut, FiLogIn, FiSearch,
   FiChevronLeft, FiChevronRight, FiX, FiAlertCircle,
-  FiChevronDown,
+  FiChevronDown, FiPackage,
 } from 'react-icons/fi';
 import { getProducts, getCategories, addToCart } from '../api/catalogue';
 

@@ -88,13 +88,6 @@ const Checkout = () => {
               <h2 className="checkout-section-title">Articles commandés</h2>
               {cart.map(item => (
                 <div className="cart-item checkout-item" key={item.id}>
-                  <div className="cart-item-img">
-                    <img
-                      src={item.produit?.image_url || `${process.env.PUBLIC_URL}/images/honey-pure.png`}
-                      alt={item.produit?.nom}
-                      onError={e => { e.target.src = `${process.env.PUBLIC_URL}/images/honey-pure.png`; }}
-                    />
-                  </div>
                   <div className="cart-item-info">
                     <h3>{item.produit?.nom}</h3>
                     <p className="cart-item-category">{item.produit?.categorie?.nom}</p>
