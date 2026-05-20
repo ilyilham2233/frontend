@@ -1,27 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiCheckCircle, FiAlertCircle, FiArrowLeft, FiShoppingBag, FiUser, FiLogOut } from 'react-icons/fi';
-import { getCart } from '../api/catalogue';
 import { processOrder } from '../api/orders';
 import { useAuth } from '../context/AuthContext';
-import { normalizeCartItems } from '../utils/cart';
+import { useCart } from '../context/CartContext';
 import './Cart.css';
 
 const Checkout = () => {
   const { logout, user } = useAuth();
+  const { cartItems: cart, refreshCart, setCartItems } = useCart();
   const navigate = useNavigate();
-  const [cart, setCart]         = useState([]);
   const [loading, setLoading]   = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [status, setStatus]     = useState('idle'); // idle | success | error
   const [message, setMessage]   = useState('');
 
   useEffect(() => {
-    getCart()
-      .then(res => setCart(normalizeCartItems(res)))
+    refreshCart()
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, []);
+  }, [refreshCart]);
 
   const total = cart.reduce((sum, item) => sum + (item.produit?.prix || 0) * item.quantite, 0);
 
@@ -31,6 +29,7 @@ const Checkout = () => {
     try {
       const res = await processOrder();
       setStatus('success');
+      setCartItems([]);
       setMessage(res.message || 'Commande passée avec succès ! Un e-mail de confirmation vous a été envoyé.');
       setTimeout(() => navigate('/orders'), 2500);
     } catch (err) {

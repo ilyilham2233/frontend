@@ -45,6 +45,29 @@
   background-clip: text;
 }
 
+.cart-nav-link {
+  position: relative;
+}
+
+.cart-count-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #f0c957, #b8860b);
+  color: #0a0806;
+  font-size: .68rem;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, .38);
+}
+
 /* --- Hero --- */
 .honey-hero {
   position: relative;

@@ -1,36 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiShoppingCart, FiTrash2, FiPlus, FiMinus, FiArrowLeft, FiArrowRight, FiUser, FiLogOut } from 'react-icons/fi';
-import { getCart, updateCart, removeFromCart } from '../api/catalogue';
+import { updateCart, removeFromCart } from '../api/catalogue';
 import { useAuth } from '../context/AuthContext';
-import { normalizeCartItems } from '../utils/cart';
+import { useCart } from '../context/CartContext';
 import './Cart.css';
 
 const Cart = () => {
   const { logout, user } = useAuth();
+  const { cartItems: cart, setCartItems, refreshCart } = useCart();
   const navigate = useNavigate();
-  const [cart, setCart]       = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState('');
   const [updating, setUpdating] = useState(null);
 
-  const fetchCart = () => {
+  const fetchCart = useCallback(() => {
     setLoading(true);
     setError('');
-    getCart()
-      .then(res => setCart(normalizeCartItems(res)))
+    refreshCart()
       .catch((err) => setError(err.response?.data?.message || 'Impossible de charger le panier.'))
       .finally(() => setLoading(false));
-  };
+  }, [refreshCart]);
 
-  useEffect(() => { fetchCart(); }, []);
+  useEffect(() => { fetchCart(); }, [fetchCart]);
 
   const handleUpdate = async (articleId, newQty) => {
     if (newQty < 1) return;
     setUpdating(articleId);
     try {
       await updateCart(articleId, newQty);
-      setCart(prev => prev.map(item =>
+      setCartItems(cart.map(item =>
         item.id === articleId ? { ...item, quantite: newQty } : item
       ));
     } catch (err) {
@@ -44,7 +43,7 @@ const Cart = () => {
     setUpdating(articleId);
     try {
       await removeFromCart(articleId);
-      setCart(prev => prev.filter(item => item.id !== articleId));
+      setCartItems(cart.filter(item => item.id !== articleId));
     } catch {
       setError('Erreur suppression.');
     } finally {
