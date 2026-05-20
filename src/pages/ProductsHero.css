@@ -1,0 +1,196 @@
+/* ProductsHero.css — Hero vidéo + animations */
+
+/* ── Hero vidéo ─────────────────────────────────────────────────────────── */
+.hero-video-section {
+  position: relative;
+  height: 100vh;
+  min-height: 600px;
+}
+
+.hero-video-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+  /* Fallback si pas de vidéo : l'image poster s'affiche */
+}
+
+.hero-video-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg,
+      rgba(10,8,6,.35) 0%,
+      rgba(10,8,6,.5)  60%,
+      rgba(10,8,6,.85) 100%
+    ),
+    radial-gradient(ellipse at center, transparent 40%, rgba(10,8,6,.4) 100%);
+}
+
+/* ── Particules flottantes ───────────────────────────────────────────────── */
+.hero-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.hero-particle {
+  position: absolute;
+  bottom: -20px;
+  background: #d4af37;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  animation: floatUp linear infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes floatUp {
+  0%   { transform: translateY(0)   rotate(0deg);   opacity: var(--op, .2); }
+  50%  { transform: translateY(-45vh) rotate(180deg); opacity: calc(var(--op, .2) * 1.6); }
+  100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+}
+
+/* ── Parallax content ────────────────────────────────────────────────────── */
+.hero-parallax-content {
+  position: relative;
+  z-index: 3;
+  will-change: transform, opacity;
+  transition: none;
+}
+
+/* ── Tag animé ────────────────────────────────────────────────────────────── */
+.hero-tag-animated {
+  animation: fadeInDown .7s ease-out both;
+  letter-spacing: .12em;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Titre animé ─────────────────────────────────────────────────────────── */
+.hero-title-animated {
+  animation: fadeInUp .85s .15s ease-out both;
+}
+
+/* ── Shine sur le mot doré ───────────────────────────────────────────────── */
+.hero-gold-shine {
+  background: linear-gradient(
+    90deg,
+    #d4af37 0%,
+    #f0c957 30%,
+    #ffe88a 50%,
+    #f0c957 70%,
+    #d4af37 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: goldShine 3s linear infinite;
+}
+
+@keyframes goldShine {
+  from { background-position: 0% center; }
+  to   { background-position: 200% center; }
+}
+
+/* ── Description animée ──────────────────────────────────────────────────── */
+.hero-desc-animated {
+  animation: fadeInUp .85s .3s ease-out both;
+}
+
+/* ── Groupe de boutons ───────────────────────────────────────────────────── */
+.hero-cta-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  animation: fadeInUp .85s .45s ease-out both;
+}
+
+/* ── Bouton secondaire ───────────────────────────────────────────────────── */
+.hero-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  padding: .9rem 2rem;
+  border: 1px solid rgba(212,175,55,.4);
+  border-radius: 12px;
+  color: #f0c957;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 250ms ease;
+  backdrop-filter: blur(8px);
+  background: rgba(212,175,55,.07);
+}
+.hero-btn-secondary:hover {
+  background: rgba(212,175,55,.15);
+  border-color: rgba(212,175,55,.7);
+  transform: translateY(-3px);
+}
+
+/* ── Pulsation sur bouton principal ──────────────────────────────────────── */
+.hero-btn-pulse {
+  animation: pulse 2.5s 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 4px 20px rgba(212,175,55,.3); }
+  50%       { box-shadow: 0 4px 40px rgba(212,175,55,.65), 0 0 60px rgba(212,175,55,.2); }
+}
+
+/* ── Scroll indicator ────────────────────────────────────────────────────── */
+.hero-scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: rgba(245,240,232,.5);
+  font-size: 1.6rem;
+  text-decoration: none;
+  animation: bounceDown 2s ease-in-out infinite;
+  transition: color 200ms;
+}
+.hero-scroll-indicator:hover { color: #f0c957; }
+
+@keyframes bounceDown {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(8px); }
+}
+
+/* ── Fallback si vidéo non disponible ────────────────────────────────────── */
+.hero-video-section:not(:has(.hero-video-bg[src])) {
+  background-size: cover;
+  background-position: center;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .hero-video-section { height: 85vh; }
+  .hero-cta-group { flex-direction: column; }
+  .hero-btn-secondary { width: 100%; max-width: 280px; justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-particle,
+  .hero-tag-animated,
+  .hero-title-animated,
+  .hero-desc-animated,
+  .hero-cta-group,
+  .hero-btn-pulse,
+  .hero-scroll-indicator,
+  .hero-gold-shine { animation: none; }
+  .hero-parallax-content { transform: none !important; opacity: 1 !important; }
+}

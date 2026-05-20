@@ -5,7 +5,7 @@
 /* --- Page --- */
 .honey-page {
   min-height: 100vh;
-  background: radial-gradient(circle at top, rgba(244,230,181,0.25), transparent 26%), #f3eee3;
+  background: radial-gradient(circle at top, rgba(244,230,181,0.25), transparent 26%), #e0d5bf;
   color: #f5f0e8;
 }
 
@@ -382,7 +382,7 @@
   line-height: 1.6;
   margin-bottom: 1rem;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-c: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
