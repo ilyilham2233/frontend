@@ -1,48 +1,41 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FiLogIn, FiLogOut, FiMail, FiShield, FiShoppingBag, FiUser } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
-import { FiUser, FiLogOut, FiShield, FiMail, FiShoppingBag, FiLogIn } from 'react-icons/fi';
+import { FeatureCard, Navbar } from '../components';
 
 const Home = () => {
   const { user, logout, isAuthenticated } = useAuth();
 
   return (
-    <div className="page-wrapper home-wallpaper" style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/honey-hero.png)` }}>
-      {/* Navbar */}
-      <nav className="navbar" id="main-navbar">
-        <Link to="/home" className="navbar-brand">
-          <span className="brand-text">Maison du Miel</span>
-        </Link>
-        <div className="navbar-links">
-          <Link to="/products" className="nav-link" id="nav-products">
-            <FiShoppingBag />
-            <span>Produits</span>
-          </Link>
-          {isAuthenticated ? (
-            <>
-              <Link to="/profile" className="nav-link" id="nav-profile">
-                <FiUser />
-                <span>Profil</span>
-              </Link>
-              <button onClick={logout} className="nav-link nav-btn" id="nav-logout">
-                <FiLogOut />
-                <span>Déconnexion</span>
-              </button>
-            </>
-          ) : (
-            <>
-              <Link to="/login" className="nav-link" id="nav-login"><FiLogIn /> Se connecter</Link>
-              <Link to="/register" className="btn btn-primary btn-sm" id="nav-register">Créer un compte</Link>
-            </>
-          )}
-        </div>
-      </nav>
+    <div
+      className="page-wrapper home-wallpaper"
+      style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/home.jpeg)` }}
+    >
+      <Navbar
+        brand="khayrat bladi"
+        brandTo="/home"
+        isAuthenticated={isAuthenticated}
+        onLogout={logout}
+        links={
+          isAuthenticated
+            ? [
+                { to: '/products', label: 'Produits', icon: <FiShoppingBag />, id: 'nav-products' },
+                { to: '/profile', label: 'Profil', icon: <FiUser />, id: 'nav-profile' },
+                { type: 'button', label: 'Deconnexion', icon: <FiLogOut />, onClick: logout },
+              ]
+            : [
+                { to: '/products', label: 'Produits', icon: <FiShoppingBag />, id: 'nav-products' },
+                { to: '/login', label: 'Se connecter', icon: <FiLogIn />, id: 'nav-login' },
+                { to: '/register', label: 'Creer un compte', className: 'btn btn-primary btn-sm', id: 'nav-register' },
+              ]
+        }
+      />
 
-      {/* Hero section */}
       <section
         className="hero"
         id="hero-section"
-        style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/honey-hero.png)` }}
+        style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/home.jpeg)` }}
       >
         <div className="hero-bg">
           <div className="hero-shape hero-shape-1" />
@@ -52,13 +45,13 @@ const Home = () => {
         <div className="hero-content">
           <h1 className="hero-title">
             {isAuthenticated
-              ? `Bienvenue, ${user?.name || 'Utilisateur'} 👋`
-              : 'Des miels d\'exception, récoltés avec passion'}
+              ? `Bienvenue, ${user?.name || 'Utilisateur'}`
+              : "Des miels d'exception, recoltes avec passion"}
           </h1>
           <p className="hero-subtitle">
             {isAuthenticated
-              ? 'Explorez notre catalogue de miels artisanaux et gérez votre profil.'
-              : 'Découvrez notre sélection de miels artisanaux 100% naturels. Du producteur à votre table.'}
+              ? 'Explorez notre catalogue de miels artisanaux et gerez votre profil.'
+              : 'Decouvrez notre selection de miels artisanaux 100% naturels. Du producteur a votre table.'}
           </p>
           <div className="hero-actions">
             {isAuthenticated ? (
@@ -93,24 +86,23 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Feature cards */}
       <section className="features" id="features-section">
         <div className="features-grid">
-          <div className="feature-card">
-            <div className="feature-icon"><FiShield /></div>
-            <h3>100% Naturel</h3>
-            <p>Nos miels sont récoltés sans additifs ni traitements. Un produit pur directement de la ruche.</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon"><FiUser /></div>
-            <h3>Artisanal</h3>
-            <p>Chaque pot est le fruit du savoir-faire de nos apiculteurs passionnés depuis des générations.</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon"><FiMail /></div>
-            <h3>Livraison Rapide</h3>
-            <p>Commandez en ligne et recevez vos miels directement chez vous, partout au Maroc.</p>
-          </div>
+          <FeatureCard
+            icon={<FiShield />}
+            title="100% Naturel"
+            description="Nos miels sont recoltes sans additifs ni traitements. Un produit pur directement de la ruche."
+          />
+          <FeatureCard
+            icon={<FiUser />}
+            title="Artisanal"
+            description="Chaque pot est le fruit du savoir-faire de nos apiculteurs passionnes depuis des generations."
+          />
+          <FeatureCard
+            icon={<FiMail />}
+            title="Livraison Rapide"
+            description="Commandez en ligne et recevez vos miels directement chez vous, partout au Maroc."
+          />
         </div>
       </section>
     </div>

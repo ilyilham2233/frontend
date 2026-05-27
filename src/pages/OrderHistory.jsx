@@ -1,59 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  FiPackage, FiDownload, FiMapPin, FiChevronDown, FiChevronUp,
-  FiUser, FiLogOut, FiClock, FiCheckCircle, FiXCircle, FiTruck
+  FiChevronDown,
+  FiChevronUp,
+  FiDownload,
+  FiLogOut,
+  FiMapPin,
+  FiPackage,
+  FiUser,
 } from 'react-icons/fi';
-import { getOrderHistory, trackOrder, downloadReceipt } from '../api/orders';
+import { downloadReceipt, getOrderHistory, trackOrder } from '../api/orders';
 import { useAuth } from '../context/AuthContext';
+import { Navbar, StatusBadge } from '../components';
 import './Cart.css';
+import './Orders.css';
 
-// ── Statut badge ──────────────────────────────────────────────────────────────
-const StatusBadge = ({ status }) => {
-  const map = {
-    en_attente:  { label: 'En attente',  icon: <FiClock />,        cls: 'status-pending'   },
-    confirmee:   { label: 'Confirmée',   icon: <FiCheckCircle />,  cls: 'status-confirmed' },
-    refusee:     { label: 'Refusée',     icon: <FiXCircle />,      cls: 'status-refused'   },
-    recuperee:   { label: 'Récupérée',   icon: <FiPackage />,      cls: 'status-picked'    },
-    livree:      { label: 'Livrée',      icon: <FiCheckCircle />,  cls: 'status-delivered' },
-    en_livraison:{ label: 'En livraison',icon: <FiTruck />,        cls: 'status-shipping'  },
-  };
-  const s = map[status] || { label: status, icon: <FiClock />, cls: 'status-pending' };
-  return (
-    <span className={`order-status-badge ${s.cls}`}>
-      {s.icon} {s.label}
-    </span>
-  );
-};
-
-// ── Main component ────────────────────────────────────────────────────────────
 const OrderHistory = () => {
   const { logout, user } = useAuth();
-  const [orders, setOrders]       = useState([]);
-  const [loading, setLoading]     = useState(true);
-  const [error, setError]         = useState('');
-  const [expanded, setExpanded]   = useState(null);
-  const [tracking, setTracking]   = useState({});
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [expanded, setExpanded] = useState(null);
+  const [tracking, setTracking] = useState({});
   const [trackLoading, setTrackLoading] = useState(null);
   const [dlLoading, setDlLoading] = useState(null);
 
   useEffect(() => {
     getOrderHistory()
-      .then(res => setOrders(res.data || []))
+      .then((res) => setOrders(res.data || []))
       .catch(() => setError('Impossible de charger les commandes.'))
       .finally(() => setLoading(false));
   }, []);
 
-  const toggleExpand = (id) => setExpanded(prev => prev === id ? null : id);
+  const toggleExpand = (id) => setExpanded((current) => (current === id ? null : id));
 
   const handleTrack = async (orderId) => {
     if (tracking[orderId]) return;
     setTrackLoading(orderId);
     try {
       const res = await trackOrder(orderId);
-      setTracking(prev => ({ ...prev, [orderId]: res.data }));
+      setTracking((current) => ({ ...current, [orderId]: res.data }));
     } catch {
-      setTracking(prev => ({ ...prev, [orderId]: { error: 'Suivi indisponible.' } }));
+      setTracking((current) => ({ ...current, [orderId]: { error: 'Suivi indisponible.' } }));
     } finally {
       setTrackLoading(null);
     }
@@ -64,25 +52,22 @@ const OrderHistory = () => {
     try {
       await downloadReceipt(orderId);
     } catch {
-      alert('Reçu indisponible pour cette commande.');
+      alert('Recu indisponible pour cette commande.');
     } finally {
       setDlLoading(null);
     }
   };
 
   return (
-   <div className="cart-page">
-      {/* Navbar */}
-      <nav className="honey-nav">
-        <Link to="/products" className="honey-brand">
-          <span className="honey-brand-icon">🍯</span>
-          <span className="honey-brand-text">khayrat bladi</span>
-        </Link>
-        <div className="navbar-links">
-          <Link to="/profile" className="nav-link"><FiUser /> {user?.prenom || 'Profil'}</Link>
-          <button onClick={logout} className="nav-link nav-btn"><FiLogOut /> Déconnexion</button>
-        </div>
-      </nav>
+    <div className="cart-page">
+      <Navbar
+        variant="honey"
+        brandTo="/products"
+        links={[
+          { to: '/profile', label: user?.prenom || 'Profil', icon: <FiUser /> },
+          { type: 'button', label: 'Deconnexion', icon: <FiLogOut />, onClick: logout },
+        ]}
+      />
 
       <div className="cart-container">
         <div className="cart-header">
@@ -94,59 +79,55 @@ const OrderHistory = () => {
 
         {loading ? (
           <div className="cart-loading">
-            {[1,2,3].map(i => <div key={i} className="cart-skeleton" />)}
+            {[1, 2, 3].map((index) => <div key={index} className="cart-skeleton" />)}
           </div>
         ) : orders.length === 0 ? (
           <div className="cart-empty">
-            <span>📦</span>
+            <span>Commandes</span>
             <p>Vous n'avez pas encore de commandes.</p>
-            <Link to="/products" className="cart-btn-primary">Découvrir nos produits</Link>
+            <Link to="/products" className="cart-btn-primary">Decouvrir nos produits</Link>
           </div>
         ) : (
           <div className="orders-list">
-            {orders.map(order => (
-              <div className="order-card" key={order.id}>
-
-                {/* Header commande */}
+            {orders.map((order) => (
+              <div className="order-card parchment-card" key={order.id}>
                 <div className="order-card-header" onClick={() => toggleExpand(order.id)}>
-                  <div className="order-card-meta">
+                  <div className="order-card-meta order-meta">
                     <span className="order-id">Commande #{order.id}</span>
                     <span className="order-date">
                       {new Date(order.created_at).toLocaleDateString('fr-FR', {
-                        day: '2-digit', month: 'long', year: 'numeric'
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric',
                       })}
                     </span>
                   </div>
-                  <div className="order-card-right">
+                  <div className="order-card-right order-right">
                     <StatusBadge status={order.statut} />
-                    <span className="order-total">{Number(order.total || 0).toFixed(2)} DH</span>
+                    <span className="order-total order-amount">{Number(order.total || 0).toFixed(2)} DH</span>
                     {expanded === order.id ? <FiChevronUp /> : <FiChevronDown />}
                   </div>
                 </div>
 
-                {/* Détails dépliables */}
                 {expanded === order.id && (
-                  <div className="order-card-body">
-
-                    {/* Articles */}
+                  <div className="order-card-body order-body">
                     {order.articles && order.articles.length > 0 && (
                       <div className="order-articles">
                         <h4>Articles</h4>
-                        {order.articles.map((item, i) => (
-                          <div className="order-article-row" key={i}>
+                        {order.articles.map((item, index) => (
+                          <div className="order-article-row" key={index}>
                             <span>{item.produit?.nom || 'Produit'}</span>
-                            <span>× {item.quantite}</span>
+                            <span>x {item.quantite}</span>
                             <span>{((item.prix_unitaire || 0) * item.quantite).toFixed(2)} DH</span>
                           </div>
                         ))}
                       </div>
                     )}
 
-                    {/* Actions */}
                     <div className="order-actions">
-                      {/* Suivi */}
                       <button
-                        className="order-action-btn order-track-btn"
+                        type="button"
+                        className="order-action-btn btn-honey-outline btn-track"
                         onClick={() => handleTrack(order.id)}
                         disabled={trackLoading === order.id}
                       >
@@ -154,20 +135,19 @@ const OrderHistory = () => {
                         {trackLoading === order.id ? 'Chargement...' : 'Suivre la commande'}
                       </button>
 
-                      {/* Télécharger reçu */}
                       <button
-                        className="order-action-btn order-dl-btn"
+                        type="button"
+                        className="order-action-btn btn-honey-outline btn-download"
                         onClick={() => handleDownload(order.id)}
                         disabled={dlLoading === order.id}
                       >
                         <FiDownload />
-                        {dlLoading === order.id ? 'Téléchargement...' : 'Télécharger le reçu'}
+                        {dlLoading === order.id ? 'Telechargement...' : 'Telecharger le recu'}
                       </button>
                     </div>
 
-                    {/* Résultat suivi */}
                     {tracking[order.id] && (
-                      <div className="order-tracking-result">
+                      <div className="order-tracking-result tracking-result">
                         {tracking[order.id].error ? (
                           <span className="tracking-error">{tracking[order.id].error}</span>
                         ) : (
@@ -176,7 +156,7 @@ const OrderHistory = () => {
                             <StatusBadge status={tracking[order.id].statut || order.statut} />
                             {tracking[order.id].updated_at && (
                               <span className="tracking-date">
-                                Mis à jour le {new Date(tracking[order.id].updated_at).toLocaleString('fr-FR')}
+                                Mis a jour le {new Date(tracking[order.id].updated_at).toLocaleString('fr-FR')}
                               </span>
                             )}
                           </>

@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiShoppingCart, FiTrash2, FiPlus, FiMinus, FiArrowLeft, FiArrowRight, FiUser, FiLogOut } from 'react-icons/fi';
-import { updateCart, removeFromCart } from '../api/catalogue';
+import { FiArrowLeft, FiArrowRight, FiLogOut, FiShoppingCart, FiUser } from 'react-icons/fi';
+import { removeFromCart, updateCart } from '../api/catalogue';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { CartItem, CartSummary, Navbar } from '../components';
 import './Cart.css';
 
 const Cart = () => {
@@ -11,7 +12,7 @@ const Cart = () => {
   const { cartItems: cart, setCartItems, refreshCart } = useCart();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState('');
+  const [error, setError] = useState('');
   const [updating, setUpdating] = useState(null);
 
   const fetchCart = useCallback(() => {
@@ -22,18 +23,20 @@ const Cart = () => {
       .finally(() => setLoading(false));
   }, [refreshCart]);
 
-  useEffect(() => { fetchCart(); }, [fetchCart]);
+  useEffect(() => {
+    fetchCart();
+  }, [fetchCart]);
 
   const handleUpdate = async (articleId, newQty) => {
     if (newQty < 1) return;
     setUpdating(articleId);
     try {
       await updateCart(articleId, newQty);
-      setCartItems(cart.map(item =>
+      setCartItems(cart.map((item) =>
         item.id === articleId ? { ...item, quantite: newQty } : item
       ));
     } catch (err) {
-      setError(err.response?.data?.message || 'Erreur mise à jour.');
+      setError(err.response?.data?.message || 'Erreur mise a jour.');
     } finally {
       setUpdating(null);
     }
@@ -43,7 +46,7 @@ const Cart = () => {
     setUpdating(articleId);
     try {
       await removeFromCart(articleId);
-      setCartItems(cart.filter(item => item.id !== articleId));
+      setCartItems(cart.filter((item) => item.id !== articleId));
     } catch {
       setError('Erreur suppression.');
     } finally {
@@ -55,18 +58,16 @@ const Cart = () => {
 
   return (
     <div className="cart-page">
-      {/* Navbar */}
-      <nav className="honey-nav">
-        <Link to="/products" className="honey-brand">
-          <span className="honey-brand-icon">🍯</span>
-          <span className="honey-brand-text">khayrat bladi</span>
-          
-        </Link>
-        <div className="navbar-links">
-          <Link to="/profile" className="nav-link"><FiUser /> {user?.prenom || 'Profil'}</Link>
-          <button onClick={logout} className="nav-link nav-btn"><FiLogOut /> Déconnexion</button>
-        </div>
-      </nav>
+      <Navbar
+        variant="honey"
+        brandTo="/products"
+        user={user}
+        onLogout={logout}
+        links={[
+          { to: '/profile', label: user?.prenom || 'Profil', icon: <FiUser /> },
+          { type: 'button', label: 'Deconnexion', icon: <FiLogOut />, onClick: logout },
+        ]}
+      />
 
       <div className="cart-container">
         <div className="cart-header">
@@ -80,89 +81,35 @@ const Cart = () => {
 
         {loading ? (
           <div className="cart-loading">
-            {[1,2,3].map(i => <div key={i} className="cart-skeleton" />)}
+            {[1, 2, 3].map((index) => <div key={index} className="cart-skeleton" />)}
           </div>
         ) : cart.length === 0 ? (
           <div className="cart-empty">
-            <span>🛒</span>
+            <span>Panier</span>
             <p>Votre panier est vide.</p>
             <Link to="/products" className="cart-btn-primary">Voir les produits</Link>
           </div>
         ) : (
           <div className="cart-layout">
-            {/* Articles */}
             <div className="cart-items">
-              {cart.map(item => (
-                <div className="cart-item" key={item.id}>
-                  <div className="cart-item-img">
-                    <img
-                      src={item.produit?.image_url || `${process.env.PUBLIC_URL}/images/honey-pure.png`}
-                      alt={item.produit?.nom}
-                      onError={e => { e.target.src = `${process.env.PUBLIC_URL}/images/honey-pure.png`; }}
-                    />
-                  </div>
-                  <div className="cart-item-info">
-                    <h3>{item.produit?.nom}</h3>
-                    <p className="cart-item-category">{item.produit?.categorie?.nom}</p>
-                    <p className="cart-item-price">{item.produit?.prix} DH / unité</p>
-                  </div>
-                  <div className="cart-item-qty">
-                    <button
-                      className="qty-btn"
-                      onClick={() => handleUpdate(item.id, item.quantite - 1)}
-                      disabled={updating === item.id || item.quantite <= 1}
-                    >
-                      <FiMinus />
-                    </button>
-                    <span className="qty-value">
-                      {updating === item.id ? '...' : item.quantite}
-                    </span>
-                    <button
-                      className="qty-btn"
-                      onClick={() => handleUpdate(item.id, item.quantite + 1)}
-                      disabled={updating === item.id}
-                    >
-                      <FiPlus />
-                    </button>
-                  </div>
-                  <div className="cart-item-subtotal">
-                    {((item.produit?.prix || 0) * item.quantite).toFixed(2)} DH
-                  </div>
-                  <button
-                    className="cart-remove-btn"
-                    onClick={() => handleRemove(item.id)}
-                    disabled={updating === item.id}
-                    title="Supprimer"
-                  >
-                    <FiTrash2 />
-                  </button>
-                </div>
+              {cart.map((item) => (
+                <CartItem
+                  key={item.id}
+                  item={item}
+                  updating={updating}
+                  onUpdate={handleUpdate}
+                  onRemove={handleRemove}
+                />
               ))}
             </div>
 
-            {/* Résumé */}
-            <div className="cart-summary">
-              <h2>Résumé de commande</h2>
-              <div className="summary-rows">
-                {cart.map(item => (
-                  <div className="summary-row" key={item.id}>
-                    <span>{item.produit?.nom} × {item.quantite}</span>
-                    <span>{((item.produit?.prix || 0) * item.quantite).toFixed(2)} DH</span>
-                  </div>
-                ))}
-              </div>
-              <div className="summary-divider" />
-              <div className="summary-total">
-                <span>Total</span>
-                <span className="summary-total-amount">{total.toFixed(2)} DH</span>
-              </div>
-              <button
-                className="cart-btn-primary cart-checkout-btn"
-                onClick={() => navigate('/checkout')}
-              >
-                Passer la commande <FiArrowRight />
-              </button>
-            </div>
+            <CartSummary
+              cart={cart}
+              total={total}
+              onCheckout={() => navigate('/checkout')}
+              actionLabel="Passer la commande"
+              actionIcon={<FiArrowRight />}
+            />
           </div>
         )}
       </div>

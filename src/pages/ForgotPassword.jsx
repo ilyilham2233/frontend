@@ -52,7 +52,7 @@ const ForgotPassword = () => {
             <div className="login-header" style={{ marginBottom: '1.5rem' }}>
               <p style={{
                 fontSize: '.78rem', fontWeight: 700, letterSpacing: '.08em',
-                color: '#b8860b', textTransform: 'uppercase', marginBottom: '.5rem'
+                color: '#947017', textTransform: 'uppercase', marginBottom: '.5rem'
               }}>
                 Mot de passe oublié ?
               </p>
@@ -61,12 +61,12 @@ const ForgotPassword = () => {
                 fontSize: '1.55rem', fontWeight: 500, color: '#3b3123',
                 marginBottom: '.6rem', lineHeight: 1.3
               }}>
-                {isSent ? 'E-mail envoyé !' : 'Entrez votre adresse email pour recevoir un lien de réinitialisation.'}
+                {isSent ? 'E-mail envoyé !' : 'Entrez votre adresse email.'}
               </h2>
               <p style={{ color: '#6d6049', fontSize: '.86rem', lineHeight: 1.5 }}>
                 {isSent
                   ? 'Vérifiez votre boîte mail et cliquez sur le lien reçu.'
-                  : "Saisissez l'adresse e-mail associée à votre compte pour recevoir un lien sécurisé de réinitialisation."}
+                  : ""}
               </p>
             </div>
 
