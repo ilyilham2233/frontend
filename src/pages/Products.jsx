@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { FiAlertCircle, FiLogIn, FiLogOut, FiShoppingCart, FiUser } from 'react-icons/fi';
+import { FiAlertCircle, FiClipboard, FiLogIn, FiLogOut, FiShoppingCart, FiUser } from 'react-icons/fi';
 import { getProducts, getCategories, addToCart } from '../api/catalogue';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -11,6 +11,7 @@ import {
   ProductGrid,
   ProductsHero,
 } from '../components';
+import ProductModal from '../components/ProductModal/ProductModal';
 import './Products.css';
 import './ProductsExtra.css';
 import './ProductsHero.css';
@@ -42,6 +43,7 @@ const Products = () => {
   const [favorites, setFavorites] = useState([]);
   const [cartLoading, setCartLoading] = useState(null);
   const [cartMsg, setCartMsg] = useState('');
+  const [modalProduct, setModalProduct] = useState(null);
 
   const heroRef = useRef(null);
   const contentRef = useRef(null);
@@ -157,6 +159,7 @@ const Products = () => {
           isAuthenticated
             ? [
                 { to: '/cart', label: 'Panier', icon: <FiShoppingCart /> },
+                { to: '/orders', label: 'Mes Commandes', icon: <FiClipboard /> },
                 { to: '/profile', label: 'Profil', icon: <FiUser /> },
                 { type: 'button', label: 'Deconnexion', icon: <FiLogOut />, onClick: logout },
               ]
@@ -222,6 +225,7 @@ const Products = () => {
           cartLoading={cartLoading}
           onToggleFavorite={toggleFavorite}
           onAddToCart={handleAddToCart}
+          onOpenDetail={setModalProduct}
           onClearFilters={clearFilters}
         />
 
@@ -235,6 +239,16 @@ const Products = () => {
       </section>
 
       <Footer />
+
+      {modalProduct && (
+        <ProductModal
+          product={modalProduct}
+          isFavorite={favorites.includes(modalProduct.id)}
+          onClose={() => setModalProduct(null)}
+          onAddToCart={handleAddToCart}
+          onToggleFavorite={toggleFavorite}
+        />
+      )}
     </div>
   );
 };

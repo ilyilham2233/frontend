@@ -8,11 +8,12 @@ import {
   FiMapPin,
   FiPackage,
   FiUser,
+  FiAlertCircle,
+  FiShoppingBag,
 } from 'react-icons/fi';
 import { downloadReceipt, getOrderHistory, trackOrder } from '../api/orders';
 import { useAuth } from '../context/AuthContext';
 import { Navbar, StatusBadge } from '../components';
-import './Cart.css';
 import './Orders.css';
 
 const OrderHistory = () => {
@@ -32,16 +33,16 @@ const OrderHistory = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  const toggleExpand = (id) => setExpanded((current) => (current === id ? null : id));
+  const toggleExpand = (id) => setExpanded((cur) => (cur === id ? null : id));
 
   const handleTrack = async (orderId) => {
     if (tracking[orderId]) return;
     setTrackLoading(orderId);
     try {
       const res = await trackOrder(orderId);
-      setTracking((current) => ({ ...current, [orderId]: res.data }));
+      setTracking((cur) => ({ ...cur, [orderId]: res.data }));
     } catch {
-      setTracking((current) => ({ ...current, [orderId]: { error: 'Suivi indisponible.' } }));
+      setTracking((cur) => ({ ...cur, [orderId]: { error: 'Suivi indisponible.' } }));
     } finally {
       setTrackLoading(null);
     }
@@ -58,8 +59,13 @@ const OrderHistory = () => {
     }
   };
 
+  const formatDate = (dateStr) =>
+    new Date(dateStr).toLocaleDateString('fr-FR', {
+      day: '2-digit', month: 'long', year: 'numeric',
+    });
+
   return (
-    <div className="cart-page">
+    <div className="oh-page">
       <Navbar
         variant="honey"
         brandTo="/products"
@@ -69,104 +75,139 @@ const OrderHistory = () => {
         ]}
       />
 
-      <div className="cart-container">
-        <div className="cart-header">
-          <h1><FiPackage /> Mes Commandes</h1>
-          <Link to="/products" className="cart-back-link">Retour aux produits</Link>
+      <div className="oh-container">
+
+        {/* Header */}
+        <div className="oh-header">
+          <h1 className="oh-title"><FiPackage /> Mes Commandes</h1>
+          <Link to="/products" className="oh-back-link">
+            ← Retour aux produits
+          </Link>
         </div>
 
-        {error && <div className="cart-alert cart-alert-error">{error}</div>}
-
-        {loading ? (
-          <div className="cart-loading">
-            {[1, 2, 3].map((index) => <div key={index} className="cart-skeleton" />)}
+        {/* Error */}
+        {error && (
+          <div className="oh-alert">
+            <FiAlertCircle /> {error}
           </div>
-        ) : orders.length === 0 ? (
-          <div className="cart-empty">
-            <span>Commandes</span>
+        )}
+
+        {/* Loading skeletons */}
+        {loading && (
+          <div className="oh-skeletons">
+            {[1, 2, 3].map((i) => <div key={i} className="oh-skeleton" />)}
+          </div>
+        )}
+
+        {/* Empty */}
+        {!loading && orders.length === 0 && !error && (
+          <div className="oh-empty">
+            <FiShoppingBag size={48} />
             <p>Vous n'avez pas encore de commandes.</p>
-            <Link to="/products" className="cart-btn-primary">Decouvrir nos produits</Link>
+            <Link to="/products" className="oh-cta-btn">Découvrir nos produits</Link>
           </div>
-        ) : (
-          <div className="orders-list">
-            {orders.map((order) => (
-              <div className="order-card parchment-card" key={order.id}>
-                <div className="order-card-header" onClick={() => toggleExpand(order.id)}>
-                  <div className="order-card-meta order-meta">
-                    <span className="order-id">Commande #{order.id}</span>
-                    <span className="order-date">
-                      {new Date(order.created_at).toLocaleDateString('fr-FR', {
-                        day: '2-digit',
-                        month: 'long',
-                        year: 'numeric',
-                      })}
-                    </span>
-                  </div>
-                  <div className="order-card-right order-right">
-                    <StatusBadge status={order.statut} />
-                    <span className="order-total order-amount">{Number(order.total || 0).toFixed(2)} DH</span>
-                    {expanded === order.id ? <FiChevronUp /> : <FiChevronDown />}
-                  </div>
-                </div>
+        )}
 
-                {expanded === order.id && (
-                  <div className="order-card-body order-body">
-                    {order.articles && order.articles.length > 0 && (
-                      <div className="order-articles">
-                        <h4>Articles</h4>
-                        {order.articles.map((item, index) => (
-                          <div className="order-article-row" key={index}>
-                            <span>{item.produit?.nom || 'Produit'}</span>
-                            <span>x {item.quantite}</span>
-                            <span>{((item.prix_unitaire || 0) * item.quantite).toFixed(2)} DH</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+        {/* Orders list */}
+        {!loading && orders.length > 0 && (
+          <div className="oh-list">
+            {orders.map((order) => {
+              const isOpen = expanded === order.id;
+              const total = Number(order.total || 0).toFixed(2);
 
-                    <div className="order-actions">
-                      <button
-                        type="button"
-                        className="order-action-btn btn-honey-outline btn-track"
-                        onClick={() => handleTrack(order.id)}
-                        disabled={trackLoading === order.id}
-                      >
-                        <FiMapPin />
-                        {trackLoading === order.id ? 'Chargement...' : 'Suivre la commande'}
-                      </button>
+              return (
+                <div className={`oh-card${isOpen ? ' oh-card--open' : ''}`} key={order.id}>
 
-                      <button
-                        type="button"
-                        className="order-action-btn btn-honey-outline btn-download"
-                        onClick={() => handleDownload(order.id)}
-                        disabled={dlLoading === order.id}
-                      >
-                        <FiDownload />
-                        {dlLoading === order.id ? 'Telechargement...' : 'Telecharger le recu'}
-                      </button>
+                  {/* Card header — toujours visible */}
+                  <div className="oh-card-header" onClick={() => toggleExpand(order.id)}>
+                    <div className="oh-card-left">
+                      <span className="oh-order-num">Commande #{order.id}</span>
+                      <span className="oh-order-date">{formatDate(order.created_at)}</span>
                     </div>
-
-                    {tracking[order.id] && (
-                      <div className="order-tracking-result tracking-result">
-                        {tracking[order.id].error ? (
-                          <span className="tracking-error">{tracking[order.id].error}</span>
-                        ) : (
-                          <>
-                            <strong>Statut actuel :</strong>
-                            <StatusBadge status={tracking[order.id].statut || order.statut} />
-                            {tracking[order.id].updated_at && (
-                              <span className="tracking-date">
-                                Mis a jour le {new Date(tracking[order.id].updated_at).toLocaleString('fr-FR')}
-                              </span>
-                            )}
-                          </>
-                        )}
-                      </div>
-                    )}
+                    <div className="oh-card-right">
+                      <StatusBadge status={order.statut} />
+                      <span className="oh-order-total">{total} DH</span>
+                      <span className="oh-chevron">
+                        {isOpen ? <FiChevronUp /> : <FiChevronDown />}
+                      </span>
+                    </div>
                   </div>
-                )}
-              </div>
-            ))}
+
+                  {/* Card body — expandable */}
+                  {isOpen && (
+                    <div className="oh-card-body">
+
+                      {/* Articles */}
+                      {order.articles && order.articles.length > 0 && (
+                        <div className="oh-articles">
+                          <p className="oh-articles-title">Articles commandés</p>
+                          <div className="oh-articles-list">
+                            {order.articles.map((item, idx) => (
+                              <div className="oh-article-row" key={idx}>
+                                <span className="oh-article-name">
+                                  {item.produit?.nom || 'Produit'}
+                                </span>
+                                <span className="oh-article-qty">× {item.quantite}</span>
+                                <span className="oh-article-price">
+                                  {((item.prix_unitaire || 0) * item.quantite).toFixed(2)} DH
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="oh-articles-total">
+                            <span>Total</span>
+                            <span>{total} DH</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Actions */}
+                      <div className="oh-actions">
+                        <button
+                          type="button"
+                          className="oh-btn oh-btn--track"
+                          onClick={() => handleTrack(order.id)}
+                          disabled={trackLoading === order.id}
+                        >
+                          <FiMapPin size={14} />
+                          {trackLoading === order.id ? 'Chargement...' : 'Suivre la commande'}
+                        </button>
+
+                        <button
+                          type="button"
+                          className="oh-btn oh-btn--download"
+                          onClick={() => handleDownload(order.id)}
+                          disabled={dlLoading === order.id}
+                        >
+                          <FiDownload size={14} />
+                          {dlLoading === order.id ? 'Téléchargement...' : 'Télécharger le reçu'}
+                        </button>
+                      </div>
+
+                      {/* Tracking result */}
+                      {tracking[order.id] && (
+                        <div className="oh-tracking">
+                          {tracking[order.id].error ? (
+                            <span className="oh-tracking-error">{tracking[order.id].error}</span>
+                          ) : (
+                            <>
+                              <strong>Statut :</strong>
+                              <StatusBadge status={tracking[order.id].statut || order.statut} />
+                              {tracking[order.id].updated_at && (
+                                <span className="oh-tracking-date">
+                                  Mis à jour le {new Date(tracking[order.id].updated_at).toLocaleString('fr-FR')}
+                                </span>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      )}
+
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

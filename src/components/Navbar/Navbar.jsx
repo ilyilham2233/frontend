@@ -7,6 +7,7 @@ import {
   FiShoppingCart,
   FiUser,
 } from 'react-icons/fi';
+import { useCart } from '../../context/CartContext';
 import './Navbar.css';
 
 const Navbar = ({
@@ -21,6 +22,13 @@ const Navbar = ({
   const navClassName = variant === 'honey' ? 'honey-nav' : 'navbar';
   const brandClassName = variant === 'honey' ? 'honey-brand' : 'navbar-brand';
   const brandTextClassName = variant === 'honey' ? 'honey-brand-text' : 'brand-text';
+
+  // Récupère cartCount depuis le context (0 si non dispo)
+  let cartCount = 0;
+  try {
+    const cart = useCart();
+    cartCount = cart.cartCount || 0;
+  } catch (_) {}
 
   const defaultLinks = isAuthenticated
     ? [
@@ -42,7 +50,8 @@ const Navbar = ({
 
       <div className="navbar-links">
         {items.map((item, index) => {
-          const icon = item.iconName === 'cart' ? <FiShoppingCart /> : item.icon;
+          const isCart = item.to === '/cart' || item.iconName === 'cart';
+          const icon = isCart ? <FiShoppingCart /> : item.icon;
 
           if (item.type === 'button') {
             return (
@@ -65,7 +74,14 @@ const Navbar = ({
               className={item.className || 'nav-link'}
               id={item.id}
             >
-              {icon}
+              {isCart ? (
+                <span className="nav-cart-wrap">
+                  <FiShoppingCart />
+                  {cartCount > 0 && (
+                    <span className="nav-cart-badge">{cartCount > 99 ? '99+' : cartCount}</span>
+                  )}
+                </span>
+              ) : icon}
               <span>{item.label}</span>
             </Link>
           );

@@ -10,3 +10,5 @@ export { default as Pagination } from './Pagination/Pagination';
 export { default as ProductGrid } from './Products/ProductGrid';
 export { default as ProductsHero } from './Products/ProductsHero';
 export { default as StatusBadge } from './StatusBadge/StatusBadge';
+
+export { default as ProductModal } from './ProductModal/ProductModal';

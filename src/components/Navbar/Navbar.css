@@ -1,1 +1,31 @@
-/* Navbar styles live mostly in global/page CSS for now. */
+/* ── Cart badge ── */
+.nav-cart-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  background: #e8400c;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  pointer-events: none;
+  animation: badge-pop 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes badge-pop {
+  from { transform: scale(0.5); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}

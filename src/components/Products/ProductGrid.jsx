@@ -9,6 +9,7 @@ const ProductGrid = ({
   cartLoading,
   onToggleFavorite,
   onAddToCart,
+  onOpenDetail,
   onClearFilters,
 }) => (
   <div className="honey-grid">
@@ -28,6 +29,7 @@ const ProductGrid = ({
           isAdding={cartLoading === product.id}
           onToggleFavorite={onToggleFavorite}
           onAddToCart={onAddToCart}
+          onOpenDetail={onOpenDetail}
         />
       ))
     )}

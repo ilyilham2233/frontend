@@ -10,7 +10,7 @@ const Home = () => {
   return (
     <div
       className="page-wrapper home-wallpaper"
-      style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/home.jpeg)` }}
+      style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/home2.jpeg)` }}
     >
       <Navbar
         brand="khayrat bladi"
@@ -20,7 +20,10 @@ const Home = () => {
         links={
           isAuthenticated
             ? [
+              { to: '/ Acceuil', label: 'Acceuil', icon: <FiShoppingBag />, id: 'nav-Acceuil' },
                 { to: '/products', label: 'Produits', icon: <FiShoppingBag />, id: 'nav-products' },
+                 { to: '/categories', label: 'Catégories', icon: <FiShoppingBag />, id: 'nav-categories' },
+                  { to: '/A propos de nos ', label: 'A propos de nos', icon: <FiShoppingBag />, id: 'nav-A propos de nos'},
                 { to: '/profile', label: 'Profil', icon: <FiUser />, id: 'nav-profile' },
                 { type: 'button', label: 'Deconnexion', icon: <FiLogOut />, onClick: logout },
               ]
@@ -35,7 +38,7 @@ const Home = () => {
       <section
         className="hero"
         id="hero-section"
-        style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/home.jpeg)` }}
+        style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/home2.jpeg)` }}
       >
         <div className="hero-bg">
           <div className="hero-shape hero-shape-1" />

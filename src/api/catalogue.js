@@ -44,3 +44,17 @@ export const removeFromCart = async (articleId) => {
   const response = await API.delete(`/cart/remove/${articleId}`);
   return response.data;
 };
+export const checkReviewForm = async (productId) => {
+  const response = await API.get(`/product/${productId}/review/form`);
+  return response.data;
+};
+
+export const submitReview = async (productId, note, commentaire = '') => {
+  const response = await API.post(`/product/${productId}/review/store`, { note, commentaire });
+  return response.data;
+};
+
+export const getProductReviews = async (productId) => {
+  const response = await API.get(`/product/${productId}/review`);
+  return response.data;
+};

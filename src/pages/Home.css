@@ -1,0 +1,53 @@
+/* ستايل الـ Navbar المدموجة وسط الصفحة */
+.wild-navbar {
+    display: flex;
+    align-items: center;
+    background-color: transparent !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 25px 60px;
+    box-sizing: border-box;
+    font-family: 'Times New Roman', serif;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+.navbar-links-main {
+    display: flex;
+    gap: 25px;
+}
+
+.navbar-links-user {
+    display: flex;
+    margin-left: auto;
+    gap: 25px;
+}
+
+.wild-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #e0d9ca;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: 500;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.wild-nav-link:hover {
+    color: #c9a063;
+}
+
+.wild-nav-link.user-link {
+    color: #c9a063; /* الملف الشخصي باللون الذهبي */
+}
+
+.brand-icon-svg { font-size: 28px; color: #c9a063; }
+.honey-jar-svg { font-size: 250px; color: #c9a063; opacity: 0.8; }
+.feature-icon-svg { font-size: 40px; color: #c9a063; margin-bottom: 15px; }

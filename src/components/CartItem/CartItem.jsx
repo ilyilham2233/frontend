@@ -2,7 +2,7 @@ import React from 'react';
 import { FiMinus, FiPlus, FiTrash2 } from 'react-icons/fi';
 import './CartItem.css';
 
-const fallbackImage = `${process.env.PUBLIC_URL}`;
+const fallbackImage = `${process.env.PUBLIC_URL}/images/honey-pure.png`;
 
 const CartItem = ({ item, updating, onUpdate, onRemove }) => (
   <div className="cart-item">
