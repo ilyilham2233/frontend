@@ -419,6 +419,20 @@ const StepPayment = ({ total, onBack, onConfirm, submitting, user }) => {
             </div>
           </div>
           <p className="ck-card-note">🔒 Formulaire de démonstration — aucune donnée réelle envoyée</p>
+          <div className="ck-secure-payment">
+  <p className="ck-secure-title">Paiement sécurisé</p>
+  <div className="ck-secure-badge">
+  <div className="ck-secure-header">🔒 PAIEMENT SÉCURISÉ</div>
+  <div className="ck-secure-body">
+    <span className="ck-secure-lock">🔒</span>
+    <span className="ck-logo-cb">CB</span>
+    <span className="ck-logo-visa">VISA</span>
+    <span className="ck-logo-mc">Master<span>Card</span></span>
+    <span className="ck-logo-paypal"><span className="pp-p">P</span>ayPal</span>
+    <span className="ck-secure-virement">Virement<br/>Bancaire</span>
+  </div>
+</div>
+</div>
         </div>
       )}
 
