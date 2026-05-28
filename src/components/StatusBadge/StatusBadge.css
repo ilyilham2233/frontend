@@ -8,3 +8,39 @@
   font-size: .73rem;
   font-weight: 700;
 }
+
+.status-pending {
+  background: rgba(243, 156, 18, .12);
+  color: #d68910;
+  border: 1px solid rgba(243, 156, 18, .25);
+}
+
+.status-confirmed {
+  background: rgba(39, 174, 96, .1);
+  color: #1e8449;
+  border: 1px solid rgba(39, 174, 96, .22);
+}
+
+.status-refused {
+  background: rgba(192, 57, 43, .1);
+  color: #922b21;
+  border: 1px solid rgba(192, 57, 43, .22);
+}
+
+.status-picked {
+  background: rgba(52, 152, 219, .1);
+  color: #1a73c7;
+  border: 1px solid rgba(52, 152, 219, .22);
+}
+
+.status-delivered {
+  background: rgba(39, 174, 96, .15);
+  color: #1a6e3c;
+  border: 1px solid rgba(39, 174, 96, .28);
+}
+
+.status-shipping {
+  background: rgba(155, 89, 182, .1);
+  color: #7d3c98;
+  border: 1px solid rgba(155, 89, 182, .22);
+}

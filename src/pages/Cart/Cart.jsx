@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiArrowLeft, FiArrowRight, FiLogOut, FiShoppingCart, FiUser } from 'react-icons/fi';
-import { removeFromCart, updateCart } from '../api/catalogue';
-import { useAuth } from '../context/AuthContext';
-import { useCart } from '../context/CartContext';
-import { CartItem, CartSummary, Navbar } from '../components';
+import { removeFromCart, updateCart } from '../../api/catalogue';
+import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../context/CartContext';
+import { CartItem, CartSummary, Navbar } from '../../components';
 import './Cart.css';
 
 const Cart = () => {

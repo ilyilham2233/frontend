@@ -1,7 +1,6 @@
 import API from './auth';
 
 // ── Catalogue ──────────────────────────────────────────────────────────────
-
 export const getProducts = async (params = {}) => {
   const response = await API.get('/produits', { params });
   return response.data;
@@ -17,8 +16,21 @@ export const getCategories = async () => {
   return response.data;
 };
 
-// ── Panier ─────────────────────────────────────────────────────────────────
+// ── Home ───────────────────────────────────────────────────────────────────
+export const getHomeData = async () => {
+  const response = await API.get('/home');
+  return response.data;
+};
 
+// ── Suggestions ────────────────────────────────────────────────────────────
+export const getSuggestions = async (search) => {
+  const response = await API.get('/produits/suggestions', {
+    params: { search }
+  });
+  return response.data;
+};
+
+// ── Panier ─────────────────────────────────────────────────────────────────
 export const addToCart = async (produitId, quantite = 1) => {
   const response = await API.post('/cart/add', {
     produit_id: produitId,
@@ -44,6 +56,27 @@ export const removeFromCart = async (articleId) => {
   const response = await API.delete(`/cart/remove/${articleId}`);
   return response.data;
 };
+
+export const getAddresses = async () => {
+  const response = await API.get('/profile/addresses');
+  return response.data;
+};
+
+export const storeAddress = async (data) => {
+  const response = await API.post('/profile/addresses/store', data);
+  return response.data;
+};
+
+export const updateAddress = async (id, data) => {
+  const response = await API.put(`/profile/addresses/${id}`, data);
+  return response.data;
+};
+
+export const deleteAddress = async (id) => {
+  const response = await API.delete(`/profile/addresses/${id}`);
+  return response.data;
+};
+
 export const checkReviewForm = async (productId) => {
   const response = await API.get(`/product/${productId}/review/form`);
   return response.data;

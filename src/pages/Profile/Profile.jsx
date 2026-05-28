@@ -9,8 +9,8 @@ import {
   FiShoppingBag,
   FiUser,
 } from 'react-icons/fi';
-import { useAuth } from '../context/AuthContext';
-import { Navbar } from '../components';
+import { useAuth } from '../../context/AuthContext';
+import { Navbar } from '../../components';
 
 const Profile = () => {
   const { user, logout } = useAuth();

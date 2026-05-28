@@ -10,8 +10,8 @@ import {
   FiKey,
   FiLock,
 } from 'react-icons/fi';
-import { updateResetPassword, validateResetToken } from '../api/auth';
-import './VerifyEmail.css';
+import { updateResetPassword, validateResetToken } from '../../api/auth';
+import '../VerifyEmail/VerifyEmail.css';
 
 const ResetToken = () => {
   const { token } = useParams();

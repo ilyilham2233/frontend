@@ -23,7 +23,7 @@ const RatingBlock = ({ productId, currentRating, onRated }) => {
     setStatus('checking');
     checkReviewForm(productId)
       .then((res) => {
-        const data = res.data;
+        const data = res?.data ?? res ?? {};
         if (data.avis_existant) {
           setExistingNote(data.avis_existant.note);
           setSelected(data.avis_existant.note);

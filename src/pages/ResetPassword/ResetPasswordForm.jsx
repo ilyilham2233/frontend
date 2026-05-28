@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiAlertCircle, FiArrowLeft, FiCheckCircle, FiEye, FiEyeOff, FiKey, FiLock } from 'react-icons/fi';
-import { validateResetToken, updatePassword } from '../api/auth';
-import './VerifyEmail.css';
-import './ForgotPassword.css';
+import { validateResetToken, updatePassword } from '../../api/auth';
+import '../VerifyEmail/VerifyEmail.css';
+import '../ForgotPassword/ForgotPassword.css';
 import './ResetPassword.css';
 
 const ResetPassword = () => {

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FiArrowLeft, FiMail, FiSend } from 'react-icons/fi';
-import { requestPasswordReset } from '../api/auth';
+import { requestPasswordReset } from '../../api/auth';
+import './ForgotPassword.css';
 
 const ForgotPassword = () => {
   const [email, setEmail]     = useState('');

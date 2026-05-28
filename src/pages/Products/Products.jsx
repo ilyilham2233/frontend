@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FiAlertCircle, FiClipboard, FiLogIn, FiLogOut, FiShoppingCart, FiUser } from 'react-icons/fi';
-import { getProducts, getCategories, addToCart } from '../api/catalogue';
-import { useAuth } from '../context/AuthContext';
+import { getProducts, getCategories, addToCart } from '../../api/catalogue';
+import { useAuth } from '../../context/AuthContext';
 import {
   CatalogueFilters,
   CatalogueSearch,
@@ -10,8 +10,8 @@ import {
   Pagination,
   ProductGrid,
   ProductsHero,
-} from '../components';
-import ProductModal from '../components/ProductModal/ProductModal';
+} from '../../components';
+import ProductModal from '../../components/ProductModal/ProductModal';
 import './Products.css';
 import './ProductsExtra.css';
 import './ProductsHero.css';
@@ -107,7 +107,6 @@ const Products = () => {
     setSearch(searchInput.trim());
     resetPage();
   };
-
   const clearFilters = () => {
     setSearch('');
     setSearchInput('');
@@ -127,7 +126,7 @@ const Products = () => {
     );
   };
 
-  const handleAddToCart = async (produitId) => {
+  const handleAddToCart = async (produitId, quantite = 1) => {
     if (!isAuthenticated) {
       setCartMsg('Connectez-vous pour ajouter au panier.');
       return;
@@ -135,7 +134,7 @@ const Products = () => {
 
     setCartLoading(produitId);
     try {
-      await addToCart(produitId, 1);
+      await addToCart(produitId, quantite);
       setCartMsg('Produit ajoute au panier !');
     } catch (err) {
       setCartMsg(err.response?.data?.message || "Erreur lors de l'ajout.");
@@ -175,16 +174,21 @@ const Products = () => {
           <p>Selectionnes avec soin pour leur qualite et leur authenticite</p>
         </div>
 
-        <CatalogueSearch
-          value={searchInput}
-          onChange={setSearchInput}
-          onSubmit={handleSearch}
-          onClear={() => {
-            setSearchInput('');
-            setSearch('');
-            resetPage();
-          }}
-        />
+       <CatalogueSearch
+  value={searchInput}
+  onChange={setSearchInput}
+  onSubmit={handleSearch}
+  onClear={() => {
+    setSearchInput('');
+    setSearch('');
+    resetPage();
+  }}
+  onSelectSuggestion={(nom) => {  // ← nouvelle prop
+    setSearchInput(nom);
+    setSearch(nom);
+    resetPage();
+  }}
+/>
 
         <CatalogueFilters
           categories={categories}

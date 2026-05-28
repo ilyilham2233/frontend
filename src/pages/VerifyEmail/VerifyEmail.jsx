@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { verifyEmail } from '../api/auth';
+import { useAuth } from '../../context/AuthContext';
+import { verifyEmail } from '../../api/auth';
 import { FiAlertCircle, FiArrowRight, FiCheckCircle, FiClock, FiMail, FiSend } from 'react-icons/fi';
 import './VerifyEmail.css';
 

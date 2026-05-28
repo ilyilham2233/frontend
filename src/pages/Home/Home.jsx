@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiLogIn, FiLogOut, FiMail, FiShield, FiShoppingBag, FiUser } from 'react-icons/fi';
-import { useAuth } from '../context/AuthContext';
-import { FeatureCard, Navbar } from '../components';
+import { useAuth } from '../../context/AuthContext';
+import { FeatureCard, Navbar } from '../../components';
+import './Home.css';
 
 const Home = () => {
   const { user, logout, isAuthenticated } = useAuth();
