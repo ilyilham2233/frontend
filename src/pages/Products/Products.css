@@ -325,6 +325,9 @@
     radial-gradient(circle at 24% 50%, rgba(191, 139, 49, .32) 0 2px, transparent 3px),
     radial-gradient(circle at 76% 50%, rgba(191, 139, 49, .32) 0 2px, transparent 3px);
 }
+.honey-products {
+  padding-top: 80px;
+}
 
 /* --- Filters --- */
 .honey-filters {
@@ -463,4 +466,25 @@
   .honey-nav {
     padding: 0.75rem 1rem;
   }
+}
+/* Navbar transparente page produits */
+.honey-page .navbar {
+  background: transparent !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  box-shadow: none;
+  border: none;
+}
+
+.honey-page .navbar .nav-link,
+.honey-page .navbar .nav-btn,
+.honey-page .navbar span {
+  color: #fff !important;
+}
+
+.honey-page .navbar .brand-text {
+  color: #C8960C !important;
 }

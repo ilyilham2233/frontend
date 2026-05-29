@@ -1,114 +1,265 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { FiLogIn, FiLogOut, FiMail, FiShield, FiShoppingBag, FiUser } from 'react-icons/fi';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  FiLogIn, FiLogOut, FiMail, FiShield,
+  FiShoppingBag, FiUser, FiPackage, FiStar, FiArrowRight
+} from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
-import { FeatureCard, Navbar } from '../../components';
+import { Navbar } from '../../components';
+import { getCategories, getProducts } from '../../api/catalogue';
 import './Home.css';
 
 const Home = () => {
   const { user, logout, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  const [categories, setCategories]       = useState([]);
+  const [vedettes, setVedettes]           = useState([]);
+  const [populaires, setPopulaires]       = useState([]);
+
+  useEffect(() => {
+    getCategories()
+      .then(res => setCategories(res?.data ?? res ?? []))
+      .catch(() => {});
+
+    // Produits vedettes — les plus récents
+    getProducts({ sort: 'created_at', order: 'desc', per_page: 4 })
+      .then(res => {
+        const payload = res?.data ?? res;
+        const items = payload?.data ?? payload ?? [];
+        setVedettes(Array.isArray(items) ? items.slice(0, 4) : []);
+      })
+      .catch(() => {});
+
+    // Produits populaires — par prix desc
+    getProducts({ sort: 'prix', order: 'desc', per_page: 4 })
+      .then(res => {
+        const payload = res?.data ?? res;
+        const items = payload?.data ?? payload ?? [];
+        setPopulaires(Array.isArray(items) ? items.slice(0, 4) : []);
+      })
+      .catch(() => {});
+  }, []);
 
   return (
-    <div
-      className="page-wrapper home-wallpaper"
-      style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/home2.jpeg)` }}
-    >
+    <div className="wild-page">
+
+      {/* ── NAVBAR ── */}
       <Navbar
-        brand="khayrat bladi"
+        variant="default"
+        brand="Khayrat Bladi"
         brandTo="/home"
         isAuthenticated={isAuthenticated}
         onLogout={logout}
         links={
           isAuthenticated
             ? [
-              { to: '/ Acceuil', label: 'Acceuil', icon: <FiShoppingBag />, id: 'nav-Acceuil' },
-                { to: '/products', label: 'Produits', icon: <FiShoppingBag />, id: 'nav-products' },
-                 { to: '/categories', label: 'Catégories', icon: <FiShoppingBag />, id: 'nav-categories' },
-                  { to: '/A propos de nos ', label: 'A propos de nos', icon: <FiShoppingBag />, id: 'nav-A propos de nos'},
-                { to: '/profile', label: 'Profil', icon: <FiUser />, id: 'nav-profile' },
-                { type: 'button', label: 'Deconnexion', icon: <FiLogOut />, onClick: logout },
+                { to: '/home',     label: 'Accueil',     icon: <FiShoppingBag /> },
+                { to: '/products', label: 'Produits',    icon: <FiShoppingBag /> },
+                { to: '/profile',  label: 'Profil',      icon: <FiUser /> },
+                { type: 'button',  label: 'Déconnexion', icon: <FiLogOut />, onClick: logout },
               ]
             : [
-                { to: '/products', label: 'Produits', icon: <FiShoppingBag />, id: 'nav-products' },
-                { to: '/login', label: 'Se connecter', icon: <FiLogIn />, id: 'nav-login' },
-                { to: '/register', label: 'Creer un compte', className: 'btn btn-primary btn-sm', id: 'nav-register' },
+                { to: '/products', label: 'Produits',     icon: <FiShoppingBag /> },
+                { to: '/login',    label: 'Se connecter', icon: <FiLogIn /> },
               ]
         }
       />
 
+      {/* ── HERO ── */}
       <section
-        className="hero"
-        id="hero-section"
+        className="wild-hero"
         style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/home2.jpeg)` }}
       >
-        <div className="hero-bg">
-          <div className="hero-shape hero-shape-1" />
-          <div className="hero-shape hero-shape-2" />
-          <div className="hero-shape hero-shape-3" />
-        </div>
-        <div className="hero-content">
-          <h1 className="hero-title">
+        <div className="wild-overlay" />
+        <div className="wild-hero-content">
+          <p className="wild-eyebrow">100% Naturel · Artisanal · Marocain</p>
+          <h1 className="wild-title">
             {isAuthenticated
-              ? `Bienvenue, ${user?.name || 'Utilisateur'}`
-              : "Des miels d'exception, recoltes avec passion"}
+              ? `Bienvenue,\n${user?.prenom || 'Cher client'}`
+              : 'Khayrat\nBladi'}
           </h1>
-          <p className="hero-subtitle">
+          <p className="wild-subtitle">
             {isAuthenticated
-              ? 'Explorez notre catalogue de miels artisanaux et gerez votre profil.'
-              : 'Decouvrez notre selection de miels artisanaux 100% naturels. Du producteur a votre table.'}
+              ? 'Explorez notre sélection de produits du terroir marocain.'
+              : 'Le meilleur du terroir marocain,\nrécolté avec passion et tradition.'}
           </p>
-          <div className="hero-actions">
-            {isAuthenticated ? (
-              <>
-                <Link to="/products" className="btn btn-primary" id="hero-products">
-                  <span className="btn-content">
-                    <FiShoppingBag />
-                    Nos Produits
-                  </span>
-                </Link>
-                <Link to="/profile" className="btn btn-glass" id="hero-profile">
-                  <span className="btn-content">
-                    <FiUser />
-                    Mon Profil
-                  </span>
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link to="/register" className="btn btn-primary" id="hero-register">
-                  <span className="btn-content">Commencer</span>
-                </Link>
-                <Link to="/products" className="btn btn-glass" id="hero-browse">
-                  <span className="btn-content">
-                    <FiShoppingBag />
-                    Voir les produits
-                  </span>
-                </Link>
-              </>
-            )}
+          <div className="wild-actions">
+            <Link to="/products" className="wild-btn-primary">
+              <FiShoppingBag /> Nos Produits
+            </Link>
+            {isAuthenticated
+              ? <Link to="/profile" className="wild-btn-ghost"><FiUser /> Mon Profil</Link>
+              : <Link to="/register" className="wild-btn-ghost">Créer un compte</Link>
+            }
+          </div>
+        </div>
+
+        {/* ── STATS BAR ── */}
+        <div className="wild-stats">
+          <div className="wild-stat">
+            <span className="wild-stat-val">⭐ 4.9</span>
+            <span className="wild-stat-lbl">Note moyenne</span>
+          </div>
+          <div className="wild-stat-sep" />
+          <div className="wild-stat">
+            <span className="wild-stat-val">5K+</span>
+            <span className="wild-stat-lbl">Clients satisfaits</span>
+          </div>
+          <div className="wild-stat-sep" />
+          <div className="wild-stat">
+            <span className="wild-stat-val">100%</span>
+            <span className="wild-stat-lbl">Naturel & Certifié</span>
+          </div>
+          <div className="wild-stat-sep" />
+          <div className="wild-stat">
+            <span className="wild-stat-val">48h</span>
+            <span className="wild-stat-lbl">Livraison rapide</span>
           </div>
         </div>
       </section>
 
-      <section className="features" id="features-section">
-        <div className="features-grid">
-          <FeatureCard
-            icon={<FiShield />}
-            title="100% Naturel"
-            description="Nos miels sont recoltes sans additifs ni traitements. Un produit pur directement de la ruche."
-          />
-          <FeatureCard
-            icon={<FiUser />}
-            title="Artisanal"
-            description="Chaque pot est le fruit du savoir-faire de nos apiculteurs passionnes depuis des generations."
-          />
-          <FeatureCard
-            icon={<FiMail />}
-            title="Livraison Rapide"
-            description="Commandez en ligne et recevez vos miels directement chez vous, partout au Maroc."
-          />
+      {/* ── FEATURES ── */}
+      <section className="wild-features">
+        <div className="wild-features-grid">
+          <div className="wild-feat">
+            <div className="wild-feat-icon"><FiShield /></div>
+            <h3>100% Naturel</h3>
+            <p>Sans additifs ni traitements. Un produit pur directement de la nature.</p>
+          </div>
+          <div className="wild-feat">
+            <div className="wild-feat-icon"><FiUser /></div>
+            <h3>Artisanal</h3>
+            <p>Savoir-faire transmis de génération en génération par nos producteurs.</p>
+          </div>
+          <div className="wild-feat">
+            <div className="wild-feat-icon"><FiPackage /></div>
+            <h3>Livraison Rapide</h3>
+            <p>Recevez vos produits directement chez vous, partout au Maroc.</p>
+          </div>
+          <div className="wild-feat">
+            <div className="wild-feat-icon"><FiMail /></div>
+            <h3>Service Client</h3>
+            <p>Notre équipe est disponible pour répondre à toutes vos questions.</p>
+          </div>
         </div>
       </section>
+
+      {/* ── À PROPOS ── */}
+      <section className="wild-about">
+        <div className="wild-about-inner">
+          <div className="wild-about-text">
+            <p className="wild-section-eyebrow">Notre Histoire</p>
+            <h2 className="wild-section-title">À Propos de Khayrat Bladi</h2>
+            <p className="wild-about-desc">
+              Khayrat Bladi est née d'une passion pour les richesses naturelles du Maroc.
+              Nous sélectionnons avec soin les meilleurs produits du terroir — miels, huiles d'argan,
+              amlou et bien plus — directement auprès de producteurs locaux passionnés.
+            </p>
+            <p className="wild-about-desc">
+              Notre mission : vous offrir des produits authentiques, 100% naturels,
+              récoltés dans le respect des traditions ancestrales marocaines.
+            </p>
+            <Link to="/products" className="wild-btn-primary" style={{ display: 'inline-flex', marginTop: '24px' }}>
+              Découvrir nos produits <FiArrowRight />
+            </Link>
+          </div>
+          <div className="wild-about-img">
+            <img
+              src={`${process.env.PUBLIC_URL}/images/home2.jpeg`}
+              alt="À propos"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ── CATÉGORIES ── */}
+      {categories.length > 0 && (
+        <section className="wild-section wild-cats-section">
+          <div className="wild-section-header">
+            <p className="wild-section-eyebrow">Explorer</p>
+            <h2 className="wild-section-title">Nos Catégories</h2>
+          </div>
+          <div className="wild-cats-grid">
+            {categories.slice(0, 6).map(cat => (
+              <div
+                key={cat.id}
+                className="wild-cat-card"
+                onClick={() => navigate(`/products?categorie_id=${cat.id}`)}
+              >
+                <div className="wild-cat-icon"><FiShoppingBag /></div>
+                <p className="wild-cat-name">{cat.nom}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ── PRODUITS VEDETTES ── */}
+      {vedettes.length > 0 && (
+        <section className="wild-section wild-prods-section">
+          <div className="wild-section-header">
+            <p className="wild-section-eyebrow">Sélection</p>
+            <h2 className="wild-section-title">Produits Vedettes</h2>
+            <Link to="/products" className="wild-section-link">Voir tout <FiArrowRight /></Link>
+          </div>
+          <div className="wild-prods-grid">
+            {vedettes.map(p => (
+              <div key={p.id} className="wild-prod-card" onClick={() => navigate('/products')}>
+                <div className="wild-prod-img">
+                  <img
+                    src={p.image_url || `${process.env.PUBLIC_URL}/images/honey-pure.png`}
+                    alt={p.nom}
+                    onError={e => { e.target.src = `${process.env.PUBLIC_URL}/images/honey-pure.png`; }}
+                  />
+                </div>
+                <div className="wild-prod-info">
+                  <p className="wild-prod-cat">{p.categorie?.nom || 'Produit'}</p>
+                  <h3 className="wild-prod-name">{p.nom}</h3>
+                  <div className="wild-prod-bottom">
+                    <span className="wild-prod-price">{p.prix} DH</span>
+                    <span className="wild-prod-stars"><FiStar /> 4.9</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* ── PRODUITS POPULAIRES ── */}
+      {populaires.length > 0 && (
+        <section className="wild-section wild-prods-section wild-pop-section">
+          <div className="wild-section-header">
+            <p className="wild-section-eyebrow">Tendances</p>
+            <h2 className="wild-section-title">Produits Populaires</h2>
+            <Link to="/products" className="wild-section-link">Voir tout <FiArrowRight /></Link>
+          </div>
+          <div className="wild-prods-grid">
+            {populaires.map(p => (
+              <div key={p.id} className="wild-prod-card" onClick={() => navigate('/products')}>
+                <div className="wild-prod-img">
+                  <img
+                    src={p.image_url || `${process.env.PUBLIC_URL}/images/honey-pure.png`}
+                    alt={p.nom}
+                    onError={e => { e.target.src = `${process.env.PUBLIC_URL}/images/honey-pure.png`; }}
+                  />
+                  <span className="wild-prod-badge">Populaire</span>
+                </div>
+                <div className="wild-prod-info">
+                  <p className="wild-prod-cat">{p.categorie?.nom || 'Produit'}</p>
+                  <h3 className="wild-prod-name">{p.nom}</h3>
+                  <div className="wild-prod-bottom">
+                    <span className="wild-prod-price">{p.prix} DH</span>
+                    <span className="wild-prod-stars"><FiStar /> 4.9</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
     </div>
   );
 };

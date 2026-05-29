@@ -150,8 +150,8 @@ const Products = () => {
   return (
     <div className="honey-page">
       <Navbar
-        variant="honey"
-        brandTo="/home"
+  variant="default"
+  brandTo="/home"
         isAuthenticated={isAuthenticated}
         onLogout={logout}
         links={

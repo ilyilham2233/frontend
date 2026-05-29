@@ -335,8 +335,7 @@
   .catalogue-search { flex-direction: column; }
   .catalogue-search-btn { width: 100%; justify-content: center; }
   .catalogue-filters-row { flex-direction: column; align-items: flex-start; }
-}
-.pag-btn {
+}.pag-btn {
   color: #1a1a1a !important;
 }
 
