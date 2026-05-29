@@ -40,20 +40,17 @@ const CatalogueSearch = ({
   }, []);
 
   // Clic sur une suggestion
- const handleSelectSuggestion = (suggestion) => {
-  onChange(suggestion.nom);
+const handleSelectSuggestion = (suggestion) => {
   setShowSuggestions(false);
-  onSelectSuggestion(suggestion.nom);
-  // Lancer la recherche automatiquement
-  onSubmit({ preventDefault: () => {} });
+  onSelectSuggestion(suggestion); // ← pass l'objet complet, machi juste le nom
 };
 
   return (
-    <form className="catalogue-search" onSubmit={(e) => {
+   <form className="catalogue-search" style={{ position: 'relative', zIndex: 100 }} onSubmit={(e) => {
       setShowSuggestions(false);
       onSubmit(e);
     }}>
-      <div className="catalogue-search-wrap" ref={wrapRef} style={{ position: 'relative' }}>
+      <div className="catalogue-search-wrap" ref={wrapRef} style={{ position: 'relative', zIndex: 9999 }}>
         <FiSearch className="catalogue-search-icon" />
         <input
           type="text"
@@ -77,7 +74,7 @@ const CatalogueSearch = ({
         {showSuggestions && suggestions.length > 0 && (
           <ul style={{
             position: 'absolute',
-            top: '100%',
+            top: 'calc(100% + 4px)',
             left: 0,
             right: 0,
             backgroundColor: '#fff',
@@ -87,7 +84,7 @@ const CatalogueSearch = ({
             listStyle: 'none',
             margin: 0,
             padding: '8px 0',
-            zIndex: 1000,
+            zIndex: 9999,
             maxHeight: '300px',
             overflowY: 'auto',
           }}>

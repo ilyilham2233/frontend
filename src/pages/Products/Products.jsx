@@ -183,11 +183,15 @@ const Products = () => {
     setSearch('');
     resetPage();
   }}
-  onSelectSuggestion={(nom) => {  // ← nouvelle prop
-    setSearchInput(nom);
-    setSearch(nom);
+  onSelectSuggestion={(suggestion) => {
+  if (suggestion?.id) {
+    setModalProduct(suggestion);
+  } else {
+    setSearchInput(suggestion);
+    setSearch(suggestion);
     resetPage();
-  }}
+  }
+}}
 />
 
         <CatalogueFilters
