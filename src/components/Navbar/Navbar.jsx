@@ -1,11 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import {
-  FiLogIn,
-  FiLogOut,
-  FiShoppingBag,
-  FiShoppingCart,
-  FiUser,
+  FiLogIn, FiLogOut, FiShoppingBag, FiShoppingCart, FiUser,
 } from 'react-icons/fi';
 import { useCart } from '../../context/CartContext';
 import './Navbar.css';
@@ -18,23 +14,59 @@ const Navbar = ({
   user,
   onLogout,
   links,
+  fixed = false,
 }) => {
-  const navClassName = variant === 'honey' ? 'honey-nav' : 'navbar';
-  const brandClassName = variant === 'honey' ? 'honey-brand' : 'navbar-brand';
-  const brandTextClassName = variant === 'honey' ? 'honey-brand-text' : 'brand-text';
 
-  // Récupère cartCount depuis le context (0 si non dispo)
+  // ── Scroll state (actif uniquement si fixed) ──
+  const [scrolled, setScrolled] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!fixed) return;
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [fixed]);
+
+  // ── Classes dynamiques ──
+  const baseClass =
+    variant === 'honey'       ? 'honey-nav' :
+    variant === 'transparent' ? 'honey-nav navbar-transparent' :
+    'navbar';
+
+  const navClassName = [
+    baseClass,
+    fixed            ? 'navbar-fixed'  : '',
+    fixed && scrolled ? 'navbar-scrolled' : '',
+  ].filter(Boolean).join(' ');
+
+  const brandClassName =
+    (variant === 'honey' || variant === 'transparent')
+      ? 'honey-brand'
+      : 'navbar-brand';
+
+  const brandTextClassName =
+    (variant === 'honey' || variant === 'transparent')
+      ? 'honey-brand-text'
+      : 'brand-text';
+
+  // ── Cart count ──
   let cartCount = 0;
   try {
     const cart = useCart();
     cartCount = cart.cartCount || 0;
   } catch (_) {}
 
+  // ── Links par défaut ──
   const defaultLinks = isAuthenticated
     ? [
-        { to: '/products', label: 'Produits', icon: <FiShoppingBag /> },
-        { to: '/profile', label: user?.prenom || 'Profil', icon: <FiUser /> },
-        onLogout && { type: 'button', label: 'Deconnexion', icon: <FiLogOut />, onClick: onLogout },
+        { to: '/products', label: 'Produits',                icon: <FiShoppingBag /> },
+        { to: '/profile',  label: user?.prenom || 'Profil',  icon: <FiUser /> },
+        onLogout && {
+          type: 'button',
+          label: 'Deconnexion',
+          icon: <FiLogOut />,
+          onClick: onLogout,
+        },
       ].filter(Boolean)
     : [
         { to: '/login', label: 'Connexion', icon: <FiLogIn /> },
@@ -42,6 +74,7 @@ const Navbar = ({
 
   const items = links || defaultLinks;
 
+  // ── Render ──
   return (
     <nav className={navClassName}>
       <Link to={brandTo} className={brandClassName}>
@@ -51,7 +84,7 @@ const Navbar = ({
       <div className="navbar-links">
         {items.map((item, index) => {
           const isCart = item.to === '/cart' || item.iconName === 'cart';
-          const icon = isCart ? <FiShoppingCart /> : item.icon;
+          const icon   = isCart ? <FiShoppingCart /> : item.icon;
 
           if (item.type === 'button') {
             return (
@@ -78,7 +111,9 @@ const Navbar = ({
                 <span className="nav-cart-wrap">
                   <FiShoppingCart />
                   {cartCount > 0 && (
-                    <span className="nav-cart-badge">{cartCount > 99 ? '99+' : cartCount}</span>
+                    <span className="nav-cart-badge">
+                      {cartCount > 99 ? '99+' : cartCount}
+                    </span>
                   )}
                 </span>
               ) : icon}

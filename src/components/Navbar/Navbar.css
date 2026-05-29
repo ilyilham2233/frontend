@@ -1,28 +1,126 @@
-/* ── Cart badge ── */
-.nav-cart-wrap {
+/* ════════════════════════════════════════
+   BASE — commune à tous les variants
+════════════════════════════════════════ */
+.navbar,
+.honey-nav {
   position: relative;
-  display: inline-flex;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 64px;
+  transition: background 0.3s ease, backdrop-filter 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ════════════════════════════════════════
+   FIXED — pages autres que Home
+════════════════════════════════════════ */
+.navbar-fixed {
+  position: fixed !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* Fond au scroll (lisibilité) */
+.navbar-fixed.navbar-scrolled {
+  background:      rgba(20, 15, 10, 0.88) !important;
+  backdrop-filter: blur(12px) !important;
+  box-shadow:      0 2px 16px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* ════════════════════════════════════════
+   TRANSPARENT — Home + autres avec hero
+════════════════════════════════════════ */
+.navbar-transparent,
+.honey-nav.navbar-transparent,
+.honey-page .navbar {
+  background:       transparent !important;
+  background-color: transparent !important;
+  backdrop-filter:  none !important;
+  box-shadow:       none !important;
+  border:           none !important;
+}
+
+.navbar-transparent .nav-link,
+.navbar-transparent .nav-btn {
+  color: rgba(245, 240, 232, 0.85) !important;
+}
+
+.navbar-transparent .nav-link:hover {
+  color:      #f0c957 !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ════════════════════════════════════════
+   LIENS & BOUTONS
+════════════════════════════════════════ */
+.navbar-links {
+  display:     flex;
+  align-items: center;
+  gap:         0.5rem;
+}
+
+.nav-link {
+  display:     inline-flex;
+  align-items: center;
+  gap:         0.4rem;
+  padding:     0.4rem 0.75rem;
+  border-radius: 8px;
+  font-size:   0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition:  color 0.2s, background 0.2s;
+}
+
+.nav-btn {
+  display:     inline-flex;
+  align-items: center;
+  gap:         0.4rem;
+  padding:     0.4rem 0.75rem;
+  border:      none;
+  border-radius: 8px;
+  font-size:   0.9rem;
+  font-weight: 500;
+  background:  transparent;
+  cursor:      pointer;
+  transition:  color 0.2s, background 0.2s;
+}
+
+/* ════════════════════════════════════════
+   CART BADGE
+════════════════════════════════════════ */
+.nav-cart-wrap {
+  position:    relative;
+  display:     inline-flex;
   align-items: center;
 }
 
 .nav-cart-badge {
-  position: absolute;
-  top: -8px;
-  right: -10px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 4px;
-  background: #e8400c;
-  color: #fff;
-  font-size: 0.62rem;
-  font-weight: 700;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
+  position:        absolute;
+  top:             -8px;
+  right:           -10px;
+  min-width:       18px;
+  height:          18px;
+  padding:         0 4px;
+  background:      #e8400c;
+  color:           #fff;
+  font-size:       0.62rem;
+  font-weight:     700;
+  border-radius:   999px;
+  display:         flex;
+  align-items:     center;
   justify-content: center;
-  line-height: 1;
-  pointer-events: none;
-  animation: badge-pop 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  line-height:     1;
+  pointer-events:  none;
+  animation:       badge-pop 250ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes badge-pop {

@@ -1,88 +1,356 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  FiAlertTriangle,
-  FiCheckCircle,
-  FiLogOut,
-  FiMail,
-  FiShield,
-  FiShoppingBag,
-  FiUser,
+  FiUser, FiMapPin, FiShield, FiBell, FiLogOut,
+  FiEdit2, FiAlertTriangle, FiCheckCircle, FiMail,
+  FiShoppingBag, FiPackage, FiTrash2, FiX, FiPlus,
+  FiCheck, FiHome,
 } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
+import { getOrderHistory } from '../../api/orders';
+import { getAddresses, createAddress, updateAddress, deleteAddress } from '../../api/Adresse';
 import { Navbar } from '../../components';
+import './Profile.css';
+
+const NAV_ITEMS = [
+  { key: 'profil',        label: 'Mon Profil',    icon: FiUser },
+  { key: 'adresses',      label: 'Adresses',      icon: FiMapPin },
+];
+
+const EMPTY_FORM = { rue: '', ville: '', code_postal: '', est_par_defaut: false };
 
 const Profile = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, sendVerification } = useAuth();
+  const [activeTab, setActiveTab] = useState('profil');
+  const [orders,    setOrders]    = useState([]);
+  const [sending,   setSending]   = useState(false);
+  const [sentMsg,   setSentMsg]   = useState('');
+
+  // ── Addresses state ──
+  const [addresses,   setAddresses]   = useState([]);
+  const [addrLoading, setAddrLoading] = useState(false);
+  const [addrError,   setAddrError]   = useState('');
+  const [showForm,    setShowForm]    = useState(false);
+  const [editingId,   setEditingId]   = useState(null);
+  const [form,        setForm]        = useState(EMPTY_FORM);
+  const [formLoading, setFormLoading] = useState(false);
+  const [formError,   setFormError]   = useState('');
+  const [deleteId,    setDeleteId]    = useState(null);
+
+  // Member since
+  const memberSince = (() => {
+    if (!user?.created_at) return null;
+    return new Date(user.created_at).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+  })();
+
+  // Load orders
+  useEffect(() => {
+    getOrderHistory()
+      .then(res => setOrders(res?.data ?? res ?? []))
+      .catch(() => setOrders([]));
+  }, []);
+
+  // Load addresses when tab opens
+  useEffect(() => {
+    if (activeTab === 'adresses') loadAddresses();
+  }, [activeTab]);
+
+  const loadAddresses = async () => {
+    setAddrLoading(true);
+    setAddrError('');
+    try {
+      const res = await getAddresses();
+      setAddresses(res?.data ?? res ?? []);
+    } catch {
+      setAddrError('Impossible de charger les adresses.');
+    } finally {
+      setAddrLoading(false);
+    }
+  };
+
+  const totalSpent = orders.reduce((s, o) => s + parseFloat(o.prix_total ?? 0), 0);
+  const initials   = [user?.prenom, user?.nom]
+    .filter(Boolean).map(s => s[0].toUpperCase()).join('') || 'U';
+
+  // ── Verification resend ──
+  const handleResend = async () => {
+    setSending(true); setSentMsg('');
+    try {
+      await sendVerification();
+      setSentMsg('Email envoyé ! Vérifiez votre boîte.');
+    } catch { setSentMsg('Erreur. Réessayez plus tard.'); }
+    finally  { setSending(false); }
+  };
+
+  // ── Address form ──
+  const openCreate = () => {
+    setEditingId(null); setForm(EMPTY_FORM);
+    setFormError(''); setShowForm(true);
+  };
+  const openEdit = (addr) => {
+    setEditingId(addr.id);
+    setForm({ rue: addr.rue, ville: addr.ville, code_postal: addr.code_postal, est_par_defaut: !!addr.est_par_defaut });
+    setFormError(''); setShowForm(true);
+  };
+  const closeForm = () => { setShowForm(false); setEditingId(null); setForm(EMPTY_FORM); setFormError(''); };
+
+  const handleFormChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm(f => ({ ...f, [name]: type === 'checkbox' ? checked : value }));
+  };
+
+  const handleFormSubmit = async () => {
+    if (!form.rue.trim() || !form.ville.trim() || !form.code_postal.trim()) {
+      setFormError('Tous les champs sont obligatoires.'); return;
+    }
+    setFormLoading(true); setFormError('');
+    try {
+      if (editingId) {
+        await updateAddress(editingId, form);
+      } else {
+        await createAddress(form);
+      }
+      closeForm();
+      await loadAddresses();
+    } catch (err) {
+      setFormError(err?.response?.data?.message || 'Erreur lors de la sauvegarde.');
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    setDeleteId(id);
+    try {
+      await deleteAddress(id);
+      setAddresses(prev => prev.filter(a => a.id !== id));
+    } catch {
+      setAddrError('Erreur lors de la suppression.');
+    } finally {
+      setDeleteId(null);
+    }
+  };
 
   return (
-    <div className="page-wrapper">
+    <div className="pf-root">
       <Navbar
-        brand="Maison du Miel"
+        variant="variant"
+        brand="Khayrat Bladi"
         brandTo="/home"
+        isAuthenticated={true}
+        onLogout={logout}
         links={[
-          { to: '/products', label: 'Produits', icon: <FiShoppingBag /> },
-          { to: '/home', label: 'Accueil' },
+          { to: '/products',        label: 'Produits',      icon: <FiShoppingBag /> },
+          { to: '/orders/history',  label: 'Mes Commandes', icon: <FiPackage /> },
+          { to: '/profile',         label: 'Profil',        icon: <FiUser /> },
+          { type: 'button',         label: 'Déconnexion',   icon: <FiLogOut />, onClick: logout },
         ]}
       />
 
-      <div className="profile-container">
-        <div className="profile-card">
-          <div className="profile-avatar">
-            <div className="avatar-circle">
-              <FiUser size={40} />
+      <div className="pf-page">
+        {/* ── BANNER ── */}
+        <div className="pf-banner">
+          <div className="pf-banner-inner">
+            <div className="pf-avatar">{initials}</div>
+            <div className="pf-banner-info">
+              <h1 className="pf-banner-name">{user?.prenom} {user?.nom}</h1>
+              <p className="pf-banner-email"><FiMail size={13} /> {user?.email}</p>
+              {memberSince && <p className="pf-banner-since"><FiShield size={13} /> Membre depuis {memberSince}</p>}
             </div>
-          </div>
-
-          <h2 className="profile-name">{user?.name || 'Utilisateur'}</h2>
-          <p className="profile-email">{user?.email || '-'}</p>
-
-          <div className={`verification-badge ${user?.email_verified_at ? 'verified' : 'unverified'}`}>
-            {user?.email_verified_at ? (
-              <>
-                <FiCheckCircle />
-                <span>Email verifie</span>
-              </>
-            ) : (
-              <>
-                <FiAlertTriangle />
-                <span>Email non verifie</span>
-              </>
-            )}
-          </div>
-
-          <div className="profile-info">
-            <div className="info-row">
-              <div className="info-icon"><FiMail /></div>
-              <div>
-                <span className="info-label">Email</span>
-                <span className="info-value">{user?.email || '-'}</span>
+            <div className="pf-banner-stats">
+              <div className="pf-stat">
+                <span className="pf-stat-val">{orders.length}</span>
+                <span className="pf-stat-lbl">Commandes</span>
               </div>
-            </div>
-            <div className="info-row">
-              <div className="info-icon"><FiShield /></div>
-              <div>
-                <span className="info-label">Statut</span>
-                <span className="info-value">
-                  {user?.email_verified_at ? 'Compte verifie' : 'En attente de verification'}
-                </span>
+              <div className="pf-stat">
+                <span className="pf-stat-val">{totalSpent.toFixed(0)} DH</span>
+                <span className="pf-stat-lbl">Total dépensé</span>
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="profile-actions">
-            {!user?.email_verified_at && (
-              <Link to="/verify-email" className="btn btn-outline btn-full" id="profile-verify">
-                <span className="btn-content"><FiMail /> Verifier mon email</span>
-              </Link>
+        {/* ── BODY ── */}
+        <div className="pf-body">
+          {/* Sidebar */}
+          <aside className="pf-sidebar">
+            <nav className="pf-nav">
+              {NAV_ITEMS.map(({ key, label, icon: Icon }) => (
+                <button key={key}
+                  className={`pf-nav-item ${activeTab === key ? 'active' : ''}`}
+                  onClick={() => setActiveTab(key)}>
+                  <Icon size={16} />{label}
+                </button>
+              ))}
+              <div className="pf-nav-divider" />
+              <button className="pf-nav-item pf-nav-logout" onClick={logout}>
+                <FiLogOut size={16} />Se déconnecter
+              </button>
+            </nav>
+          </aside>
+
+          {/* Main */}
+          <main className="pf-main">
+
+            {/* ── MON PROFIL ── */}
+            {activeTab === 'profil' && (
+              <section className="pf-section">
+                <div className="pf-section-head">
+                  <h2>Informations personnelles</h2>
+                  <button className="pf-edit-btn"><FiEdit2 size={14} /> Modifier</button>
+                </div>
+                <div className="pf-fields">
+                  <div className="pf-field">
+                    <span className="pf-field-label">PRÉNOM</span>
+                    <span className="pf-field-value">{user?.prenom || '—'}</span>
+                  </div>
+                  <div className="pf-field">
+                    <span className="pf-field-label">NOM</span>
+                    <span className="pf-field-value">{user?.nom || '—'}</span>
+                  </div>
+                  <div className="pf-field pf-field--wide">
+                    <span className="pf-field-label">EMAIL</span>
+                    <span className="pf-field-value">{user?.email || '—'}</span>
+                  </div>
+                  <div className="pf-field">
+                    <span className="pf-field-label">TÉLÉPHONE</span>
+                    <span className="pf-field-value">{user?.telephone || '—'}</span>
+                  </div>
+                  <div className="pf-field">
+                    <span className="pf-field-label">RÔLE</span>
+                    <span className="pf-field-value pf-role-badge">{user?.role || '—'}</span>
+                  </div>
+                </div>
+
+                {!user?.email_verified_at ? (
+                  <div className="pf-verify-card">
+                    <div className="pf-verify-icon"><FiAlertTriangle size={20} /></div>
+                    <div className="pf-verify-text">
+                      <strong>Email non vérifié</strong>
+                      <p>Vérifiez votre email pour accéder à toutes les fonctionnalités.</p>
+                    </div>
+                    <button className="pf-resend-btn" onClick={handleResend} disabled={sending}>
+                      {sending ? 'Envoi…' : 'Renvoyer'}
+                    </button>
+                    {sentMsg && <p className="pf-sent-msg">{sentMsg}</p>}
+                  </div>
+                ) : (
+                  <div className="pf-verified-card">
+                    <FiCheckCircle size={18} /><span>Email vérifié</span>
+                  </div>
+                )}
+              </section>
             )}
-            <Link to="/products" className="btn btn-primary btn-full" id="profile-products">
-              <span className="btn-content"><FiShoppingBag /> Voir les produits</span>
-            </Link>
-            <button type="button" onClick={logout} className="btn btn-danger btn-full" id="profile-logout">
-              <span className="btn-content"><FiLogOut /> Se deconnecter</span>
-            </button>
-          </div>
+
+            {/* ── ADRESSES ── */}
+            {activeTab === 'adresses' && (
+              <section className="pf-section">
+                <div className="pf-section-head">
+                  <h2>Mes adresses</h2>
+                  <button className="pf-edit-btn" onClick={openCreate}>
+                    <FiPlus size={14} /> Ajouter
+                  </button>
+                </div>
+
+                {addrError && <div className="pf-alert pf-alert--error">{addrError}</div>}
+
+                {/* Address form (inline) */}
+                {showForm && (
+                  <div className="pf-addr-form">
+                    <div className="pf-addr-form-head">
+                      <h3>{editingId ? 'Modifier l\'adresse' : 'Nouvelle adresse'}</h3>
+                      <button className="pf-icon-btn" onClick={closeForm}><FiX size={16} /></button>
+                    </div>
+                    {formError && <div className="pf-alert pf-alert--error">{formError}</div>}
+                    <div className="pf-form-grid">
+                      <div className="pf-form-group pf-form-group--wide">
+                        <label>Rue</label>
+                        <input name="rue" value={form.rue} onChange={handleFormChange} placeholder="123 Rue de la Médina" />
+                      </div>
+                      <div className="pf-form-group">
+                        <label>Ville</label>
+                        <input name="ville" value={form.ville} onChange={handleFormChange} placeholder="Casablanca" />
+                      </div>
+                      <div className="pf-form-group">
+                        <label>Code postal</label>
+                        <input name="code_postal" value={form.code_postal} onChange={handleFormChange} placeholder="20000" />
+                      </div>
+                      <div className="pf-form-group pf-form-group--wide pf-form-check">
+                        <label className="pf-checkbox-label">
+                          <input type="checkbox" name="est_par_defaut" checked={form.est_par_defaut} onChange={handleFormChange} />
+                          <span>Définir comme adresse par défaut</span>
+                        </label>
+                      </div>
+                    </div>
+                    <div className="pf-form-actions">
+                      <button className="pf-btn-cancel" onClick={closeForm}>Annuler</button>
+                      <button className="pf-btn-save" onClick={handleFormSubmit} disabled={formLoading}>
+                        {formLoading ? 'Sauvegarde…' : <><FiCheck size={14} /> {editingId ? 'Mettre à jour' : 'Enregistrer'}</>}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Address list */}
+                {addrLoading ? (
+                  <div className="pf-loading">Chargement…</div>
+                ) : addresses.length === 0 ? (
+                  <div className="pf-empty">
+                    <FiMapPin size={32} />
+                    <p>Aucune adresse enregistrée.</p>
+                    <button className="pf-edit-btn" onClick={openCreate}><FiPlus size={14} /> Ajouter une adresse</button>
+                  </div>
+                ) : (
+                  <div className="pf-addr-list">
+                    {addresses.map(addr => (
+                      <div key={addr.id} className={`pf-addr-card ${addr.est_par_defaut ? 'default' : ''}`}>
+                        <div className="pf-addr-icon"><FiHome size={18} /></div>
+                        <div className="pf-addr-info">
+                          <p className="pf-addr-line">{addr.rue}</p>
+                          <p className="pf-addr-sub">{addr.ville}, {addr.code_postal}</p>
+                          {addr.est_par_defaut && <span className="pf-addr-default-badge">Par défaut</span>}
+                        </div>
+                        <div className="pf-addr-actions">
+                          <button className="pf-icon-btn" onClick={() => openEdit(addr)} title="Modifier"><FiEdit2 size={15} /></button>
+                          <button className="pf-icon-btn pf-icon-btn--danger"
+                            onClick={() => handleDelete(addr.id)}
+                            disabled={deleteId === addr.id}
+                            title="Supprimer">
+                            <FiTrash2 size={15} />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* ── SECURITE ── */}
+            {activeTab === 'securite' && (
+              <section className="pf-section">
+                <div className="pf-section-head"><h2>Sécurité</h2></div>
+                <div className="pf-fields">
+                  <div className="pf-field pf-field--wide">
+                    <span className="pf-field-label">MOT DE PASSE</span>
+                    <span className="pf-field-value">••••••••</span>
+                  </div>
+                </div>
+                <Link to="/forgot-password" className="pf-edit-btn" style={{ display:'inline-flex', marginTop:'1rem' }}>
+                  Changer le mot de passe
+                </Link>
+              </section>
+            )}
+
+            {/* ── NOTIFICATIONS ── */}
+            {activeTab === 'notifications' && (
+              <section className="pf-section">
+                <div className="pf-section-head"><h2>Notifications</h2></div>
+                <p className="pf-empty-msg">Aucune notification pour le moment.</p>
+              </section>
+            )}
+
+          </main>
         </div>
       </div>
     </div>

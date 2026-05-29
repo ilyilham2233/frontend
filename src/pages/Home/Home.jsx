@@ -127,23 +127,36 @@ const Home = () => {
   };
 
   const navLinksAuth = [
-    { to: '/home',     label: 'Accueil',            icon: <FiShoppingBag /> },
-    { to: '/products', label: 'Produits',            icon: <FiShoppingBag /> },
-    { type: 'button',  label: 'Catégories',          icon: <FiList />,    onClick: () => scrollTo('categories') },
-    { type: 'button',  label: 'Produits Vedettes',   icon: <FiStar />,    onClick: () => scrollTo('vedettes') },
-    { type: 'button',  label: 'Produits Populaires', icon: <FiPackage />, onClick: () => scrollTo('populaires') },
-    { type: 'button',  label: 'À propos',            icon: <FiFeather />, onClick: () => scrollTo('apropos') },
-    { to: '/profile',  label: 'Profil',              icon: <FiUser /> },
-    { type: 'button',  label: 'Déconnexion',         icon: <FiLogOut />,  onClick: logout },
+    {
+      to: '/products',
+      label: 'Produits',
+      icon: <FiShoppingBag />,
+      dropdown: [
+        { to: '/products',   label: 'Tous les produits', icon: <FiShoppingBag /> },
+        { type: 'button', label: 'Produits Vedettes',   icon: <FiStar />,    onClick: () => scrollTo('vedettes') },
+        { type: 'button', label: 'Produits Populaires', icon: <FiPackage />, onClick: () => scrollTo('populaires') },
+      ]
+    },
+    { type: 'button', label: 'Catégories', icon: <FiList />,    onClick: () => scrollTo('categories') },
+    { type: 'button', label: 'À propos',   icon: <FiFeather />, onClick: () => scrollTo('apropos') },
+    { to: '/profile', label: 'Profil',     icon: <FiUser /> },
+    { type: 'button', label: 'Déconnexion', icon: <FiLogOut />, onClick: logout },
   ];
 
   const navLinksGuest = [
-    { to: '/products', label: 'Produits',            icon: <FiShoppingBag /> },
-    { type: 'button',  label: 'Catégories',          icon: <FiList />,    onClick: () => scrollTo('categories') },
-    { type: 'button',  label: 'Produits Vedettes',   icon: <FiStar />,    onClick: () => scrollTo('vedettes') },
-    { type: 'button',  label: 'Produits Populaires', icon: <FiPackage />, onClick: () => scrollTo('populaires') },
-    { type: 'button',  label: 'À propos',            icon: <FiFeather />, onClick: () => scrollTo('apropos') },
-    { to: '/login',    label: 'Se connecter',        icon: <FiLogIn /> },
+    {
+      to: '/products',
+      label: 'Produits',
+      icon: <FiShoppingBag />,
+      dropdown: [
+        { to: '/products',   label: 'Tous les produits', icon: <FiShoppingBag /> },
+        { type: 'button', label: 'Produits Vedettes',   icon: <FiStar />,    onClick: () => scrollTo('vedettes') },
+        { type: 'button', label: 'Produits Populaires', icon: <FiPackage />, onClick: () => scrollTo('populaires') },
+      ]
+    },
+    { type: 'button', label: 'Catégories', icon: <FiList />,    onClick: () => scrollTo('categories') },
+    { type: 'button', label: 'À propos',   icon: <FiFeather />, onClick: () => scrollTo('apropos') },
+    { to: '/login',   label: 'Se connecter', icon: <FiLogIn /> },
   ];
 
   return (
@@ -162,7 +175,7 @@ const Home = () => {
       {/* ── HERO ── */}
       <section
         className="wild-hero"
-        style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/home2.jpeg)` }}
+        style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/home3.jpeg)` }}
       >
         <div className="wild-overlay" />
         <div className="wild-hero-content">
@@ -219,9 +232,7 @@ const Home = () => {
             <p className="wild-section-eyebrow">Notre Histoire</p>
             <h2 className="wild-section-title">À Propos de Khayrat Bladi</h2>
             <p className="wild-about-desc">
-              Khayrat Bladi est née d'une passion pour les richesses naturelles du Maroc.
-              Nous sélectionnons avec soin les meilleurs produits du terroir — miels, huiles d'argan,
-              amlou et bien plus — directement auprès de producteurs locaux passionnés.
+Fondée en 2018, Khayrate Bladi est une coopérative marocaine passionnée par la richesse de notre terroir, qui s'est donné pour mission de partager les trésors de la nature à travers des produits 100% naturels, authentiques et respectueux de l'environnement. Spécialistes des remèdes et délices naturels, nous sélectionnons avec le plus grand soin des matières premières d’une pureté absolue pour vous offrir le meilleur des miels issus de ruchers préservés, des huiles nobles et cosmétiques (Argan, Amande amère), de l'Amlou traditionnel ainsi que des herbes aromatiques. Grâce à votre fidélité et à notre soutien continu aux producteurs locaux, nous sommes fiers d’expédier aujourd'hui plus de 100 000 produits par an à travers tout le Royaume, s'imposant comme une référence de confiance pour le retour aux sources et l'excellence du terroir marocain.
             </p>
             <p className="wild-about-desc">
               Notre mission : vous offrir des produits authentiques, 100% naturels,
