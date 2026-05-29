@@ -20,7 +20,21 @@ const getCatImage = (nom) => {
   return `${process.env.PUBLIC_URL}/images/honey-pure.png`;
 };
 
+const CATS_FALLBACK = [
+  { id: 1, nom: 'Miel au détail' },
+  { id: 2, nom: 'Miel en gros' },
+  { id: 3, nom: 'Amlou' },
+  { id: 4, nom: 'Argan' },
+  { id: 5, nom: 'Herbes' },
+  { id: 6, nom: 'Huiles' },
+];
+
 const ProdSlider = ({ products, badge }) => {
+  if (!products || products.length === 0) return (
+    <p style={{ textAlign: 'center', color: '#aaa', fontFamily: 'Arial' }}>
+      Connectez-vous pour voir les produits.
+    </p>
+  );
   const doubled = [...products, ...products];
   return (
     <div className="wild-slider-wrap">
@@ -56,46 +70,35 @@ const Home = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(CATS_FALLBACK);
   const [vedettes, setVedettes]     = useState([]);
   const [populaires, setPopulaires] = useState([]);
 
   useEffect(() => {
-  getCategories()
-    .then(res => {
-      const data = res?.data ?? res ?? [];
-      setCategories(Array.isArray(data) ? data : []);
-    })
-    .catch(() => {
-      // Fallback statique si API hors ligne
-      setCategories([
-        { id: 1, nom: 'Miel au détail' },
-        { id: 2, nom: 'Miel en gros' },
-        { id: 3, nom: 'Amlou' },
-        { id: 4, nom: 'Argan' },
-        { id: 5, nom: 'Herbes' },
-        { id: 6, nom: 'Huiles' },
-      ]);
-    });
+    getCategories()
+      .then(res => {
+        const data = res?.data ?? res ?? [];
+        setCategories(Array.isArray(data) && data.length > 0 ? data : CATS_FALLBACK);
+      })
+      .catch(() => setCategories(CATS_FALLBACK));
 
-  getProducts({ sort: 'created_at', order: 'desc', per_page: 8 })
-    .then(res => {
-      const payload = res?.data ?? res;
-      const items = payload?.data ?? payload ?? [];
-      setVedettes(Array.isArray(items) ? items : []);
-    })
-    .catch(() => {});
+    getProducts({ sort: 'created_at', order: 'desc', per_page: 8 })
+      .then(res => {
+        const payload = res?.data ?? res;
+        const items = payload?.data ?? payload ?? [];
+        setVedettes(Array.isArray(items) ? items : []);
+      })
+      .catch(() => {});
 
-  getProducts({ sort: 'prix', order: 'desc', per_page: 8 })
-    .then(res => {
-      const payload = res?.data ?? res;
-      const items = payload?.data ?? payload ?? [];
-      setPopulaires(Array.isArray(items) ? items : []);
-    })
-    .catch(() => {});
-}, []);
+    getProducts({ sort: 'prix', order: 'desc', per_page: 8 })
+      .then(res => {
+        const payload = res?.data ?? res;
+        const items = payload?.data ?? payload ?? [];
+        setPopulaires(Array.isArray(items) ? items : []);
+      })
+      .catch(() => {});
+  }, []);
 
-  // Scroll vers section au chargement si hash dans URL
   useEffect(() => {
     const hash = window.location.hash;
     if (hash) {
@@ -111,7 +114,6 @@ const Home = () => {
     }
   }, []);
 
-  // Scroll direct vers section par id
   const scrollTo = (id) => {
     const el = document.getElementById(id);
     if (el) {
@@ -125,23 +127,23 @@ const Home = () => {
   };
 
   const navLinksAuth = [
-    { to: '/home',     label: 'Accueil',             icon: <FiShoppingBag /> },
-    { to: '/products', label: 'Produits',             icon: <FiShoppingBag /> },
-    { type: 'button',  label: 'Catégories',           icon: <FiList />,    onClick: () => scrollTo('categories') },
-    { type: 'button',  label: 'Produits Vedettes',    icon: <FiStar />,    onClick: () => scrollTo('vedettes') },
-    { type: 'button',  label: 'Produits Populaires',  icon: <FiPackage />, onClick: () => scrollTo('populaires') },
-    { type: 'button',  label: 'À propos',             icon: <FiFeather />, onClick: () => scrollTo('apropos') },
-    { to: '/profile',  label: 'Profil',               icon: <FiUser /> },
-    { type: 'button',  label: 'Déconnexion',          icon: <FiLogOut />,  onClick: logout },
+    { to: '/home',     label: 'Accueil',            icon: <FiShoppingBag /> },
+    { to: '/products', label: 'Produits',            icon: <FiShoppingBag /> },
+    { type: 'button',  label: 'Catégories',          icon: <FiList />,    onClick: () => scrollTo('categories') },
+    { type: 'button',  label: 'Produits Vedettes',   icon: <FiStar />,    onClick: () => scrollTo('vedettes') },
+    { type: 'button',  label: 'Produits Populaires', icon: <FiPackage />, onClick: () => scrollTo('populaires') },
+    { type: 'button',  label: 'À propos',            icon: <FiFeather />, onClick: () => scrollTo('apropos') },
+    { to: '/profile',  label: 'Profil',              icon: <FiUser /> },
+    { type: 'button',  label: 'Déconnexion',         icon: <FiLogOut />,  onClick: logout },
   ];
 
   const navLinksGuest = [
-    { to: '/products', label: 'Produits',             icon: <FiShoppingBag /> },
-    { type: 'button',  label: 'Catégories',           icon: <FiList />,    onClick: () => scrollTo('categories') },
-    { type: 'button',  label: 'Produits Vedettes',    icon: <FiStar />,    onClick: () => scrollTo('vedettes') },
-    { type: 'button',  label: 'Produits Populaires',  icon: <FiPackage />, onClick: () => scrollTo('populaires') },
-    { type: 'button',  label: 'À propos',             icon: <FiFeather />, onClick: () => scrollTo('apropos') },
-    { to: '/login',    label: 'Se connecter',         icon: <FiLogIn /> },
+    { to: '/products', label: 'Produits',            icon: <FiShoppingBag /> },
+    { type: 'button',  label: 'Catégories',          icon: <FiList />,    onClick: () => scrollTo('categories') },
+    { type: 'button',  label: 'Produits Vedettes',   icon: <FiStar />,    onClick: () => scrollTo('vedettes') },
+    { type: 'button',  label: 'Produits Populaires', icon: <FiPackage />, onClick: () => scrollTo('populaires') },
+    { type: 'button',  label: 'À propos',            icon: <FiFeather />, onClick: () => scrollTo('apropos') },
+    { to: '/login',    label: 'Se connecter',        icon: <FiLogIn /> },
   ];
 
   return (
@@ -209,59 +211,79 @@ const Home = () => {
           </div>
         </div>
       </section>
-      {/* ── CATÉGORIES ── */}
-      {categories.length > 0 && (
-        <section className="wild-section wild-cats-section" id="categories">
-          <div className="wild-section-header">
-            <p className="wild-section-eyebrow">Explorer</p>
-            <h2 className="wild-section-title">Nos Catégories</h2>
+
+      {/* ── À PROPOS ── */}
+      <section className="wild-about" id="apropos">
+        <div className="wild-about-inner">
+          <div className="wild-about-text">
+            <p className="wild-section-eyebrow">Notre Histoire</p>
+            <h2 className="wild-section-title">À Propos de Khayrat Bladi</h2>
+            <p className="wild-about-desc">
+              Khayrat Bladi est née d'une passion pour les richesses naturelles du Maroc.
+              Nous sélectionnons avec soin les meilleurs produits du terroir — miels, huiles d'argan,
+              amlou et bien plus — directement auprès de producteurs locaux passionnés.
+            </p>
+            <p className="wild-about-desc">
+              Notre mission : vous offrir des produits authentiques, 100% naturels,
+              récoltés dans le respect des traditions ancestrales marocaines.
+            </p>
+            <Link to="/products" className="wild-btn-primary" style={{ display: 'inline-flex', marginTop: '24px' }}>
+              Découvrir nos produits <FiArrowRight />
+            </Link>
           </div>
-          <div className="wild-cats-grid">
-            {categories.slice(0, 6).map(cat => (
-              <div
-                key={cat.id}
-                className="wild-cat-card"
-                onClick={() => navigate(`/products?categorie_id=${cat.id}`)}
-              >
-                <div className="wild-cat-img-wrap">
-                  <img
-                    src={getCatImage(cat.nom)}
-                    alt={cat.nom}
-                    onError={e => { e.target.src = `${process.env.PUBLIC_URL}/images/honey-pure.png`; }}
-                  />
-                  <div className="wild-cat-overlay">
-                    <p className="wild-cat-name">{cat.nom}</p>
-                  </div>
+          <div className="wild-about-img">
+            <img src={`${process.env.PUBLIC_URL}/images/home2.jpeg`} alt="À propos" />
+          </div>
+        </div>
+      </section>
+
+      {/* ── CATÉGORIES ── */}
+      <section className="wild-section wild-cats-section" id="categories">
+        <div className="wild-section-header">
+          <p className="wild-section-eyebrow">Explorer</p>
+          <h2 className="wild-section-title">Nos Catégories</h2>
+        </div>
+        <div className="wild-cats-grid">
+          {categories.slice(0, 6).map(cat => (
+            <div
+              key={cat.id}
+              className="wild-cat-card"
+              onClick={() => navigate(`/products?categorie_id=${cat.id}`)}
+            >
+              <div className="wild-cat-img-wrap">
+                <img
+                  src={getCatImage(cat.nom)}
+                  alt={cat.nom}
+                  onError={e => { e.target.src = `${process.env.PUBLIC_URL}/images/honey-pure.png`; }}
+                />
+                <div className="wild-cat-overlay">
+                  <p className="wild-cat-name">{cat.nom}</p>
                 </div>
               </div>
-            ))}
-          </div>
-        </section>
-      )}
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* ── PRODUITS VEDETTES ── */}
-      {vedettes.length > 0 && (
-        <section className="wild-section wild-prods-section" id="vedettes">
-          <div className="wild-section-header">
-            <p className="wild-section-eyebrow">Sélection</p>
-            <h2 className="wild-section-title">Produits Vedettes</h2>
-            <Link to="/products" className="wild-section-link">Voir tout <FiArrowRight /></Link>
-          </div>
-          <ProdSlider products={vedettes} />
-        </section>
-      )}
+      <section className="wild-section wild-prods-section" id="vedettes">
+        <div className="wild-section-header">
+          <p className="wild-section-eyebrow">Sélection</p>
+          <h2 className="wild-section-title">Produits Vedettes</h2>
+          <Link to="/products" className="wild-section-link">Voir tout <FiArrowRight /></Link>
+        </div>
+        <ProdSlider products={vedettes} />
+      </section>
 
       {/* ── PRODUITS POPULAIRES ── */}
-      {populaires.length > 0 && (
-        <section className="wild-section wild-prods-section wild-pop-section" id="populaires">
-          <div className="wild-section-header">
-            <p className="wild-section-eyebrow">Tendances</p>
-            <h2 className="wild-section-title">Produits Populaires</h2>
-            <Link to="/products" className="wild-section-link">Voir tout <FiArrowRight /></Link>
-          </div>
-          <ProdSlider products={populaires} badge="Populaire" />
-        </section>
-      )}
+      <section className="wild-section wild-prods-section wild-pop-section" id="populaires">
+        <div className="wild-section-header">
+          <p className="wild-section-eyebrow">Tendances</p>
+          <h2 className="wild-section-title">Produits Populaires</h2>
+          <Link to="/products" className="wild-section-link">Voir tout <FiArrowRight /></Link>
+        </div>
+        <ProdSlider products={populaires} badge="Populaire" />
+      </section>
 
     </div>
   );
