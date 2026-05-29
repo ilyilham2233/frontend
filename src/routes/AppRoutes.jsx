@@ -22,14 +22,14 @@ const AppRoutes = () => (
     <Route path="/verify/:id/:hash" element={<VerifyEmail />} />
     <Route path="/products" element={<Products />} />
 
-    <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+    <Route path="/home" element={<Home />} />
     <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
     <Route path="/verify-email" element={<PrivateRoute><VerifyEmail /></PrivateRoute>} />
     <Route path="/cart" element={<PrivateRoute><Cart /></PrivateRoute>} />
     <Route path="/checkout" element={<PrivateRoute><Checkout /></PrivateRoute>} />
     <Route path="/orders" element={<PrivateRoute><OrderHistory /></PrivateRoute>} />
 
-    <Route path="*" element={<Navigate to="/login" replace />} />
+    <Route path="*" element={<Navigate to="/home" replace />} />
   </Routes>
 );
 
