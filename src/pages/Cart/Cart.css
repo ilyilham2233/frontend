@@ -5,6 +5,10 @@
   background: #f5f0e8;
   color: #2d271c;
 }
+.cart-page {
+  position: relative;
+  padding-top: 100px;
+}
 
 .cart-container {
   max-width: 1100px;
@@ -262,4 +266,13 @@
   color: #9a8a72;
   text-align: center;
   margin-top: .75rem;
+}
+.cart-page,
+.page-wrapper {
+  position: relative;
+  min-height: 100vh;
+}
+
+.cart-container, {
+  padding-top: 90px;
 }

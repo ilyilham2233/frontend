@@ -127,25 +127,35 @@
 /* ── Stats Bar ── */
 .wild-stats {
   position: absolute;
-  bottom: -28px;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: -30px;
+  left: 40px;
+  transform: none;
   display: flex;
   align-items: center;
-  gap: 24px;
-  background: rgba(20,20,20,0.88);
+  gap: 20px;
+  background: rgba(20, 20, 20, 0.88);
   backdrop-filter: blur(10px);
-  border-radius: 14px;
-  padding: 14px 40px;
+  border-radius: 12px;
+  padding: 10px 28px;
   border: 1px solid rgba(255,255,255,0.1);
   z-index: 3;
   white-space: nowrap;
 }
-.wild-stat { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.wild-stat-val { font-size: 18px; font-weight: 800; color: #fff; font-family: 'Arial', sans-serif; }
-.wild-stat-lbl { font-size: 10px; color: #aaa; font-family: 'Arial', sans-serif; letter-spacing: 0.5px; }
-.wild-stat-sep { width: 1px; height: 36px; background: rgba(255,255,255,0.2); }
-
+.wild-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.wild-stat-number {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #C8960C;
+  font-family: 'Arial', sans-serif;
+}
+.wild-features {
+  margin-top: 50px;
+}
 /* ── À Propos ── */
 .wild-about { background: #fff; padding: 80px; margin-top: 40px; }
 .wild-about-inner {

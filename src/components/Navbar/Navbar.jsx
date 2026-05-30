@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  FiLogIn, FiLogOut, FiShoppingBag, FiShoppingCart, FiUser,
+  FiLogIn, FiLogOut, FiShoppingBag, FiShoppingCart, FiUser, FiChevronDown,
 } from 'react-icons/fi';
 import { useCart } from '../../context/CartContext';
 import './Navbar.css';
@@ -14,77 +14,42 @@ const Navbar = ({
   user,
   onLogout,
   links,
-  fixed = false,
 }) => {
+  const [openDropdown, setOpenDropdown] = useState(null);
 
-  // ── Scroll state (actif uniquement si fixed) ──
-  const [scrolled, setScrolled] = React.useState(false);
+  let baseClass = 'navbar';
+  if (variant === 'honey') baseClass = 'honey-nav';
+  if (variant === 'transparent') baseClass = 'honey-nav navbar-transparent';
 
-  React.useEffect(() => {
-    if (!fixed) return;
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [fixed]);
+  const brandClassName     = (variant === 'honey' || variant === 'transparent') ? 'honey-brand' : 'navbar-brand';
+  const brandTextClassName = (variant === 'honey' || variant === 'transparent') ? 'honey-brand-text' : 'brand-text';
 
-  // ── Classes dynamiques ──
-  const baseClass =
-    variant === 'honey'       ? 'honey-nav' :
-    variant === 'transparent' ? 'honey-nav navbar-transparent' :
-    'navbar';
-
-  const navClassName = [
-    baseClass,
-    fixed            ? 'navbar-fixed'  : '',
-    fixed && scrolled ? 'navbar-scrolled' : '',
-  ].filter(Boolean).join(' ');
-
-  const brandClassName =
-    (variant === 'honey' || variant === 'transparent')
-      ? 'honey-brand'
-      : 'navbar-brand';
-
-  const brandTextClassName =
-    (variant === 'honey' || variant === 'transparent')
-      ? 'honey-brand-text'
-      : 'brand-text';
-
-  // ── Cart count ──
   let cartCount = 0;
   try {
     const cart = useCart();
     cartCount = cart.cartCount || 0;
   } catch (_) {}
 
-  // ── Links par défaut ──
   const defaultLinks = isAuthenticated
     ? [
-        { to: '/products', label: 'Produits',                icon: <FiShoppingBag /> },
-        { to: '/profile',  label: user?.prenom || 'Profil',  icon: <FiUser /> },
-        onLogout && {
-          type: 'button',
-          label: 'Deconnexion',
-          icon: <FiLogOut />,
-          onClick: onLogout,
-        },
+        { to: '/products', label: 'Produits', icon: <FiShoppingBag /> },
+        { to: '/profile',  label: user?.prenom || 'Profil', icon: <FiUser /> },
+        onLogout && { type: 'button', label: 'Deconnexion', icon: <FiLogOut />, onClick: onLogout },
       ].filter(Boolean)
-    : [
-        { to: '/login', label: 'Connexion', icon: <FiLogIn /> },
-      ];
+    : [{ to: '/login', label: 'Connexion', icon: <FiLogIn /> }];
 
   const items = links || defaultLinks;
 
-  // ── Render ──
   return (
-    <nav className={navClassName}>
+    <nav className={baseClass}>
       <Link to={brandTo} className={brandClassName}>
         <span className={brandTextClassName}>{brand}</span>
       </Link>
-
       <div className="navbar-links">
         {items.map((item, index) => {
           const isCart = item.to === '/cart' || item.iconName === 'cart';
           const icon   = isCart ? <FiShoppingCart /> : item.icon;
+          const hasDropdown = item.dropdown && item.dropdown.length > 0;
 
           if (item.type === 'button') {
             return (
@@ -94,9 +59,52 @@ const Navbar = ({
                 onClick={item.onClick}
                 className={item.className || 'nav-link nav-btn'}
               >
-                {icon}
-                <span>{item.label}</span>
+                {icon}<span>{item.label}</span>
               </button>
+            );
+          }
+
+          if (hasDropdown) {
+            return (
+              <div
+                key={`${item.to}-${index}`}
+                className="nav-dropdown-wrap"
+                onMouseEnter={() => setOpenDropdown(index)}
+                onMouseLeave={() => setOpenDropdown(null)}
+              >
+                <Link to={item.to} className="nav-link nav-link-dropdown">
+                  {icon}
+                  <span>{item.label}</span>
+                  <FiChevronDown className={`nav-chevron${openDropdown === index ? ' open' : ''}`} />
+                </Link>
+                {openDropdown === index && (
+                  <div className="nav-dropdown">
+                    {item.dropdown.map((sub, si) => (
+                      sub.type === 'button' ? (
+                        <button
+                          key={si}
+                          type="button"
+                          className="nav-dropdown-item"
+                          onClick={() => { sub.onClick(); setOpenDropdown(null); }}
+                        >
+                          {sub.icon && <span className="nav-dd-icon">{sub.icon}</span>}
+                          <span>{sub.label}</span>
+                        </button>
+                      ) : (
+                        <Link
+                          key={si}
+                          to={sub.to}
+                          className="nav-dropdown-item"
+                          onClick={() => setOpenDropdown(null)}
+                        >
+                          {sub.icon && <span className="nav-dd-icon">{sub.icon}</span>}
+                          <span>{sub.label}</span>
+                        </Link>
+                      )
+                    ))}
+                  </div>
+                )}
+              </div>
             );
           }
 

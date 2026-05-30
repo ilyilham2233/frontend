@@ -127,3 +127,133 @@
   from { transform: scale(0.5); opacity: 0; }
   to   { transform: scale(1);   opacity: 1; }
 }
+/* ── Navbar transparente globale ── */
+.navbar {
+  background: transparent !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  box-shadow: none;
+  border: none;
+  padding: 20px 48px;
+}
+
+.nav-link,
+.nav-btn {
+  color: #e8dcc8 !important;
+}
+
+.brand-text {
+  color: #C8960C !important;
+  font-weight: 700;
+  font-style: italic;
+}
+/* ── Navbar transparente toutes pages ── */
+.navbar {
+  background: transparent !important;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  box-shadow: none;
+  border: none;
+  padding: 20px 48px;
+}
+
+.nav-link,
+.nav-btn {
+  color: #e8dcc8 !important;
+}
+
+.brand-text {
+  color: #C8960C !important;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.nav-link,
+.nav-btn {
+  color: #1a1a1a !important;
+}
+
+.brand-text {
+  color: #C8960C !important;
+  font-weight: 700;
+  font-style: italic;
+}
+/* ── Dropdown ── */
+.nav-dropdown-wrap {
+  position: relative;
+}
+
+.nav-link-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.nav-chevron {
+  font-size: 12px;
+  transition: transform 0.2s;
+}
+
+.nav-chevron.open {
+  transform: rotate(180deg);
+}
+
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+
+}
+
+@keyframes dropFade {
+  from { opacity: 0; transform: translateX(-50%) translateY(-6px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.nav-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  font-size: 14px;
+  color: #e8dcc8 !important;
+  text-decoration: none;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  font-family: 'Arial', sans-serif;
+  transition: background 0.15s, color 0.15s;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.nav-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.nav-dropdown-item:hover {
+  background: rgba(200,150,12,0.2);
+  color: #C8960C !important;
+}
+
+.nav-dd-icon {
+  color: #C8960C;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+}
+.nav-dropdown-wrap::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 12px;
+}

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiArrowLeft, FiArrowRight, FiLogOut, FiShoppingCart, FiUser } from 'react-icons/fi';
-import { removeFromCart, updateCart } from '../../api/catalogue';
+import { FiArrowLeft, FiArrowRight, FiLogOut, FiShoppingCart, FiUser, FiShoppingBag, FiPackage } from 'react-icons/fi';import { removeFromCart, updateCart } from '../../api/catalogue';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { CartItem, CartSummary, Navbar } from '../../components';
@@ -59,15 +58,18 @@ const Cart = () => {
   return (
     <div className="cart-page">
       <Navbar
-        variant="honey"
-        brandTo="/products"
-        user={user}
-        onLogout={logout}
-        links={[
-          { to: '/profile', label: user?.prenom || 'Profil', icon: <FiUser /> },
-          { type: 'button', label: 'Deconnexion', icon: <FiLogOut />, onClick: logout },
-        ]}
-      />
+  variant="default"
+  brand="Khayrat Bladi"
+  brandTo="/home"
+  isAuthenticated={true}
+  onLogout={logout}
+  links={[
+    { to: '/products',       label: 'Produits',      icon: <FiShoppingBag /> },
+    { to: '/orders', label: 'Mes Commandes', icon: <FiPackage /> },
+    { to: '/profile',        label: user?.prenom || 'Profil', icon: <FiUser /> },
+    { type: 'button',        label: 'Déconnexion',   icon: <FiLogOut />, onClick: logout },
+  ]}
+/>
 
       <div className="cart-container">
         <div className="cart-header">

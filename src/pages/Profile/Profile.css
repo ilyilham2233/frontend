@@ -21,7 +21,7 @@ body:has(.pf-root) {
 
 /* ── Banner ── */
 .pf-banner {
-  background: linear-gradient(135deg, #1a1200 0%, #3d2800 40%, #6b4200 70%, #b8860b 100%);
+  background: linear-gradient(135deg, #5f4914 0%, #815c16 40%, #b87913 70%, #cc9508 100%);
   border-bottom: 1px solid rgba(212,175,55,0.15);
   padding: 5rem 2.5rem 2rem;
 }
@@ -609,4 +609,26 @@ body:has(.pf-root) {
   .pf-fields, .pf-form-grid { grid-template-columns: 1fr; }
   .pf-field--wide, .pf-form-group--wide { grid-column: auto; }
   .pf-section { padding: 1.25rem; }
+}
+.honey-page,
+.ck-page,
+.page-wrapper {
+  position: relative;
+}
+.honey-products,
+.ck-container,
+.profile-container {
+  padding-top: 80px;
+}
+.profile-page,
+.page-wrapper {
+  position: relative;
+  min-height: 100vh;
+}
+.profile-container {
+  padding-top: 90px;
+}
+.profile-page,
+.page-wrapper {
+  position: relative;
 }

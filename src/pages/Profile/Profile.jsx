@@ -4,7 +4,7 @@ import {
   FiUser, FiMapPin, FiShield, FiBell, FiLogOut,
   FiEdit2, FiAlertTriangle, FiCheckCircle, FiMail,
   FiShoppingBag, FiPackage, FiTrash2, FiX, FiPlus,
-  FiCheck, FiHome,
+  FiCheck, FiHome, FiShoppingCart,
 } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 import { getOrderHistory } from '../../api/orders';
@@ -13,8 +13,8 @@ import { Navbar } from '../../components';
 import './Profile.css';
 
 const NAV_ITEMS = [
-  { key: 'profil',        label: 'Mon Profil',    icon: FiUser },
-  { key: 'adresses',      label: 'Adresses',      icon: FiMapPin },
+  { key: 'profil',   label: 'Mon Profil', icon: FiUser },
+  { key: 'adresses', label: 'Adresses',   icon: FiMapPin },
 ];
 
 const EMPTY_FORM = { rue: '', ville: '', code_postal: '', est_par_defaut: false };
@@ -26,7 +26,6 @@ const Profile = () => {
   const [sending,   setSending]   = useState(false);
   const [sentMsg,   setSentMsg]   = useState('');
 
-  // ── Addresses state ──
   const [addresses,   setAddresses]   = useState([]);
   const [addrLoading, setAddrLoading] = useState(false);
   const [addrError,   setAddrError]   = useState('');
@@ -37,20 +36,17 @@ const Profile = () => {
   const [formError,   setFormError]   = useState('');
   const [deleteId,    setDeleteId]    = useState(null);
 
-  // Member since
   const memberSince = (() => {
     if (!user?.created_at) return null;
     return new Date(user.created_at).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
   })();
 
-  // Load orders
   useEffect(() => {
     getOrderHistory()
       .then(res => setOrders(res?.data ?? res ?? []))
       .catch(() => setOrders([]));
   }, []);
 
-  // Load addresses when tab opens
   useEffect(() => {
     if (activeTab === 'adresses') loadAddresses();
   }, [activeTab]);
@@ -72,7 +68,6 @@ const Profile = () => {
   const initials   = [user?.prenom, user?.nom]
     .filter(Boolean).map(s => s[0].toUpperCase()).join('') || 'U';
 
-  // ── Verification resend ──
   const handleResend = async () => {
     setSending(true); setSentMsg('');
     try {
@@ -82,7 +77,6 @@ const Profile = () => {
     finally  { setSending(false); }
   };
 
-  // ── Address form ──
   const openCreate = () => {
     setEditingId(null); setForm(EMPTY_FORM);
     setFormError(''); setShowForm(true);
@@ -134,16 +128,16 @@ const Profile = () => {
   return (
     <div className="pf-root">
       <Navbar
-        variant="variant"
+        variant="default"
         brand="Khayrat Bladi"
         brandTo="/home"
         isAuthenticated={true}
         onLogout={logout}
         links={[
-          { to: '/products',        label: 'Produits',      icon: <FiShoppingBag /> },
-          { to: '/orders/history',  label: 'Mes Commandes', icon: <FiPackage /> },
-          { to: '/profile',         label: 'Profil',        icon: <FiUser /> },
-          { type: 'button',         label: 'Déconnexion',   icon: <FiLogOut />, onClick: logout },
+          { to: '/products', label: 'Produits',      icon: <FiShoppingBag /> },
+          { to: '/orders',   label: 'Mes Commandes', icon: <FiPackage /> },
+          { to: '/cart',     label: 'Panier',        icon: <FiShoppingCart /> },
+          { type: 'button',  label: 'Déconnexion',   icon: <FiLogOut />, onClick: logout },
         ]}
       />
 
@@ -172,7 +166,6 @@ const Profile = () => {
 
         {/* ── BODY ── */}
         <div className="pf-body">
-          {/* Sidebar */}
           <aside className="pf-sidebar">
             <nav className="pf-nav">
               {NAV_ITEMS.map(({ key, label, icon: Icon }) => (
@@ -189,7 +182,6 @@ const Profile = () => {
             </nav>
           </aside>
 
-          {/* Main */}
           <main className="pf-main">
 
             {/* ── MON PROFIL ── */}
@@ -254,7 +246,6 @@ const Profile = () => {
 
                 {addrError && <div className="pf-alert pf-alert--error">{addrError}</div>}
 
-                {/* Address form (inline) */}
                 {showForm && (
                   <div className="pf-addr-form">
                     <div className="pf-addr-form-head">
@@ -291,7 +282,6 @@ const Profile = () => {
                   </div>
                 )}
 
-                {/* Address list */}
                 {addrLoading ? (
                   <div className="pf-loading">Chargement…</div>
                 ) : addresses.length === 0 ? (
@@ -323,30 +313,6 @@ const Profile = () => {
                     ))}
                   </div>
                 )}
-              </section>
-            )}
-
-            {/* ── SECURITE ── */}
-            {activeTab === 'securite' && (
-              <section className="pf-section">
-                <div className="pf-section-head"><h2>Sécurité</h2></div>
-                <div className="pf-fields">
-                  <div className="pf-field pf-field--wide">
-                    <span className="pf-field-label">MOT DE PASSE</span>
-                    <span className="pf-field-value">••••••••</span>
-                  </div>
-                </div>
-                <Link to="/forgot-password" className="pf-edit-btn" style={{ display:'inline-flex', marginTop:'1rem' }}>
-                  Changer le mot de passe
-                </Link>
-              </section>
-            )}
-
-            {/* ── NOTIFICATIONS ── */}
-            {activeTab === 'notifications' && (
-              <section className="pf-section">
-                <div className="pf-section-head"><h2>Notifications</h2></div>
-                <p className="pf-empty-msg">Aucune notification pour le moment.</p>
               </section>
             )}
 

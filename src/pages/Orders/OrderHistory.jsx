@@ -14,6 +14,7 @@ import {
 import { downloadReceipt, getOrderHistory, trackOrder } from '../../api/orders';
 import { useAuth } from '../../context/AuthContext';
 import { Navbar, StatusBadge } from '../../components';
+import { FiShoppingCart } from 'react-icons/fi';
 import './Orders.css';
 
 const extractOrders = (payload) => {
@@ -141,13 +142,19 @@ const OrderHistory = () => {
   return (
     <div className="orders-page">
       <Navbar
-        variant="honey"
-        brandTo="/products"
-        links={[
-          { to: '/profile', label: user?.prenom || user?.name || 'Profil', icon: <FiUser /> },
-          { type: 'button', label: 'Deconnexion', icon: <FiLogOut />, onClick: logout },
-        ]}
-      />
+  variant="default"
+  brand="Khayrat Bladi"
+  brandTo="/home"
+  isAuthenticated={true}
+  onLogout={logout}
+  links={[
+    { to: '/products',       label: 'Produits',      icon: <FiShoppingBag /> },
+    { to: '/cart',           label: 'Panier',        icon: <FiShoppingCart /> },
+    { to: '/orders', label: 'Mes Commandes', icon: <FiPackage /> },
+    { to: '/profile',        label: user?.prenom || 'Profil', icon: <FiUser /> },
+    { type: 'button',        label: 'Déconnexion',   icon: <FiLogOut />, onClick: logout },
+  ]}
+/>
 
       <main className="orders-container">
         <header className="orders-header">

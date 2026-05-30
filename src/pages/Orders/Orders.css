@@ -459,3 +459,11 @@
     text-align: left;
   }
 }
+.orders-page,
+.page-wrapper {
+  position: relative;
+  min-height: 100vh;
+}
+.orders-container, {
+  padding-top: 90px;
+}

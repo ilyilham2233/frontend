@@ -29,9 +29,9 @@ const CATS_FALLBACK = [
   { id: 6, nom: 'Huiles' },
 ];
 
-const ProdSlider = ({ products, badge }) => {
+const ProdSlider = ({ products, badge, onCardClick }) => {
   if (!products || products.length === 0) return (
-    <p style={{ textAlign: 'center', color: '#aaa', fontFamily: 'Arial' }}>
+    <p style={{ textAlign: 'center', color: '#aaa', fontFamily: 'Arial', padding: '20px' }}>
       Connectez-vous pour voir les produits.
     </p>
   );
@@ -41,7 +41,7 @@ const ProdSlider = ({ products, badge }) => {
       <div className="wild-slider">
         <div className="wild-slider-inner">
           {doubled.map((p, i) => (
-            <div key={`${p.id}-${i}`} className="wild-slide-card">
+            <div key={`${p.id}-${i}`} className="wild-slide-card" onClick={() => onCardClick && onCardClick(p)}>
               <div className="wild-slide-img">
                 <img
                   src={p.image_url || `${process.env.PUBLIC_URL}/images/honey-pure.png`}
@@ -132,7 +132,7 @@ const Home = () => {
       label: 'Produits',
       icon: <FiShoppingBag />,
       dropdown: [
-        { to: '/products',   label: 'Tous les produits', icon: <FiShoppingBag /> },
+        { to: '/products', label: 'Tous les produits', icon: <FiShoppingBag /> },
         { type: 'button', label: 'Produits Vedettes',   icon: <FiStar />,    onClick: () => scrollTo('vedettes') },
         { type: 'button', label: 'Produits Populaires', icon: <FiPackage />, onClick: () => scrollTo('populaires') },
       ]
@@ -149,7 +149,7 @@ const Home = () => {
       label: 'Produits',
       icon: <FiShoppingBag />,
       dropdown: [
-        { to: '/products',   label: 'Tous les produits', icon: <FiShoppingBag /> },
+        { to: '/products', label: 'Tous les produits', icon: <FiShoppingBag /> },
         { type: 'button', label: 'Produits Vedettes',   icon: <FiStar />,    onClick: () => scrollTo('vedettes') },
         { type: 'button', label: 'Produits Populaires', icon: <FiPackage />, onClick: () => scrollTo('populaires') },
       ]
@@ -162,7 +162,6 @@ const Home = () => {
   return (
     <div className="wild-page">
 
-      {/* ── NAVBAR ── */}
       <Navbar
         variant="default"
         brand="Khayrat Bladi"
@@ -172,7 +171,6 @@ const Home = () => {
         links={isAuthenticated ? navLinksAuth : navLinksGuest}
       />
 
-      {/* ── HERO ── */}
       <section
         className="wild-hero"
         style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/home3.jpeg)` }}
@@ -201,7 +199,6 @@ const Home = () => {
           </div>
         </div>
 
-        {/* ── STATS BAR ── */}
         <div className="wild-stats">
           <div className="wild-stat">
             <span className="wild-stat-val">⭐ 4.9</span>
@@ -224,15 +221,15 @@ const Home = () => {
           </div>
         </div>
       </section>
-
-      {/* ── À PROPOS ── */}
       <section className="wild-about" id="apropos">
         <div className="wild-about-inner">
           <div className="wild-about-text">
             <p className="wild-section-eyebrow">Notre Histoire</p>
             <h2 className="wild-section-title">À Propos de Khayrat Bladi</h2>
             <p className="wild-about-desc">
-Fondée en 2018, Khayrate Bladi est une coopérative marocaine passionnée par la richesse de notre terroir, qui s'est donné pour mission de partager les trésors de la nature à travers des produits 100% naturels, authentiques et respectueux de l'environnement. Spécialistes des remèdes et délices naturels, nous sélectionnons avec le plus grand soin des matières premières d’une pureté absolue pour vous offrir le meilleur des miels issus de ruchers préservés, des huiles nobles et cosmétiques (Argan, Amande amère), de l'Amlou traditionnel ainsi que des herbes aromatiques. Grâce à votre fidélité et à notre soutien continu aux producteurs locaux, nous sommes fiers d’expédier aujourd'hui plus de 100 000 produits par an à travers tout le Royaume, s'imposant comme une référence de confiance pour le retour aux sources et l'excellence du terroir marocain.
+              Fondée en 2018, Khayrate Bladi est une coopérative marocaine passionnée par la richesse
+              de notre terroir, qui s'est donné pour mission de partager les trésors de la nature à
+              travers des produits 100% naturels, authentiques et respectueux de l'environnement.
             </p>
             <p className="wild-about-desc">
               Notre mission : vous offrir des produits authentiques, 100% naturels,
@@ -243,12 +240,11 @@ Fondée en 2018, Khayrate Bladi est une coopérative marocaine passionnée par l
             </Link>
           </div>
           <div className="wild-about-img">
-            <img src={`${process.env.PUBLIC_URL}/images/home2.jpeg`} alt="À propos" />
+            <img src={`${process.env.PUBLIC_URL}/images/home3.jpeg`} alt="À propos" />
           </div>
         </div>
       </section>
 
-      {/* ── CATÉGORIES ── */}
       <section className="wild-section wild-cats-section" id="categories">
         <div className="wild-section-header">
           <p className="wild-section-eyebrow">Explorer</p>
@@ -276,24 +272,29 @@ Fondée en 2018, Khayrate Bladi est une coopérative marocaine passionnée par l
         </div>
       </section>
 
-      {/* ── PRODUITS VEDETTES ── */}
       <section className="wild-section wild-prods-section" id="vedettes">
         <div className="wild-section-header">
           <p className="wild-section-eyebrow">Sélection</p>
           <h2 className="wild-section-title">Produits Vedettes</h2>
           <Link to="/products" className="wild-section-link">Voir tout <FiArrowRight /></Link>
         </div>
-        <ProdSlider products={vedettes} />
+        <ProdSlider
+          products={vedettes}
+          onCardClick={(p) => navigate(`/products?search=${encodeURIComponent(p.nom)}`)}
+        />
       </section>
 
-      {/* ── PRODUITS POPULAIRES ── */}
       <section className="wild-section wild-prods-section wild-pop-section" id="populaires">
         <div className="wild-section-header">
           <p className="wild-section-eyebrow">Tendances</p>
           <h2 className="wild-section-title">Produits Populaires</h2>
           <Link to="/products" className="wild-section-link">Voir tout <FiArrowRight /></Link>
         </div>
-        <ProdSlider products={populaires} badge="Populaire" />
+        <ProdSlider
+          products={populaires}
+          badge="Populaire"
+          onCardClick={(p) => navigate(`/products?search=${encodeURIComponent(p.nom)}`)}
+        />
       </section>
 
     </div>
