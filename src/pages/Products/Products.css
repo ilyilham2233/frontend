@@ -46,11 +46,11 @@
 }
 
 .cart-nav-link {
-  position: relative;
+  position: fixed;
 }
 
 .cart-count-badge {
-  position: absolute;
+  position: fixed;
   top: -6px;
   right: -6px;
   min-width: 18px;
@@ -70,7 +70,7 @@
 
 /* --- Hero --- */
 .honey-hero {
-  position: relative;
+  position: fixed;
   height: 80vh;
   min-height: 500px;
   display: flex;
@@ -83,7 +83,7 @@
 
 .honey-hero::before {
   content: '';
-  position: absolute;
+  position: fixed;
   inset: 0;
   background: linear-gradient(180deg, rgba(10,8,6,0.18), rgba(10,8,6,0.55));
 }
@@ -93,7 +93,7 @@
 }
 
 .honey-hero-content {
-  position: relative;
+  position: fixed;
   z-index: 2;
   text-align: center;
   max-width: 700px;
@@ -200,7 +200,7 @@
 
 /* --- Products Section --- */
 .honey-products {
-  position: relative;
+  position: relative ;
   padding: 6rem 2rem 5rem;
   max-width: none;
   margin: 0 auto;

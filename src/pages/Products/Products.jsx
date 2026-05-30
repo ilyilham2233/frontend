@@ -55,7 +55,6 @@ const Products = () => {
       contentRef.current.style.transform = `translateY(${y * 0.18}px)`;
       contentRef.current.style.opacity = Math.max(0, 1 - y / 420);
     };
-
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -107,6 +106,7 @@ const Products = () => {
     setSearch(searchInput.trim());
     resetPage();
   };
+
   const clearFilters = () => {
     setSearch('');
     setSearchInput('');
@@ -131,7 +131,6 @@ const Products = () => {
       setCartMsg('Connectez-vous pour ajouter au panier.');
       return;
     }
-
     setCartLoading(produitId);
     try {
       await addToCart(produitId, quantite);
@@ -150,19 +149,26 @@ const Products = () => {
   return (
     <div className="honey-page">
       <Navbar
-  variant="default"
-  brandTo="/home"
+        variant="honey"
+        brandTo="/home"
         isAuthenticated={isAuthenticated}
         onLogout={logout}
         links={
           isAuthenticated
             ? [
-                { to: '/cart', label: 'Panier', icon: <FiShoppingCart /> },
+               { to: '/Accueil',   label: 'Accueil',  },
+                { to: '/cart',   label: 'Panier',        icon: <FiShoppingCart /> },
                 { to: '/orders', label: 'Mes Commandes', icon: <FiClipboard /> },
-                { to: '/profile', label: 'Profil', icon: <FiUser /> },
-                { type: 'button', label: 'Deconnexion', icon: <FiLogOut />, onClick: logout },
               ]
             : [{ to: '/login', label: 'Connexion', icon: <FiLogIn /> }]
+        }
+        rightLinks={
+          isAuthenticated
+            ? [
+                { to: '/profile', label: 'Profil',      icon: <FiUser /> },
+                { type: 'button', label: 'Déconnexion', icon: <FiLogOut />, onClick: logout },
+              ]
+            : []
         }
       />
 
@@ -174,25 +180,25 @@ const Products = () => {
           <p>Selectionnes avec soin pour leur qualite et leur authenticite</p>
         </div>
 
-       <CatalogueSearch
-  value={searchInput}
-  onChange={setSearchInput}
-  onSubmit={handleSearch}
-  onClear={() => {
-    setSearchInput('');
-    setSearch('');
-    resetPage();
-  }}
-  onSelectSuggestion={(suggestion) => {
-  if (suggestion?.id) {
-    setModalProduct(suggestion);
-  } else {
-    setSearchInput(suggestion);
-    setSearch(suggestion);
-    resetPage();
-  }
-}}
-/>
+        <CatalogueSearch
+          value={searchInput}
+          onChange={setSearchInput}
+          onSubmit={handleSearch}
+          onClear={() => {
+            setSearchInput('');
+            setSearch('');
+            resetPage();
+          }}
+          onSelectSuggestion={(suggestion) => {
+            if (suggestion?.id) {
+              setModalProduct(suggestion);
+            } else {
+              setSearchInput(suggestion);
+              setSearch(suggestion);
+              resetPage();
+            }
+          }}
+        />
 
         <CatalogueFilters
           categories={categories}

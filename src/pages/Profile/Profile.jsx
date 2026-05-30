@@ -128,18 +128,20 @@ const Profile = () => {
   return (
     <div className="pf-root">
       <Navbar
-        variant="default"
-        brand="Khayrat Bladi"
-        brandTo="/home"
-        isAuthenticated={true}
-        onLogout={logout}
-        links={[
-          { to: '/products', label: 'Produits',      icon: <FiShoppingBag /> },
-          { to: '/orders',   label: 'Mes Commandes', icon: <FiPackage /> },
-          { to: '/cart',     label: 'Panier',        icon: <FiShoppingCart /> },
-          { type: 'button',  label: 'Déconnexion',   icon: <FiLogOut />, onClick: logout },
-        ]}
-      />
+  variant="default"
+  brand="Khayrat Bladi"
+  brandTo="/home"
+  links={[
+    { to: '/home',     label: 'Accueil',      icon: <FiShoppingBag /> },
+    { to: '/products', label: 'Produits',     icon: <FiShoppingBag /> },
+    { to: '/orders',   label: 'Commandes',    icon: <FiPackage /> },
+    { to: '/cart',     label: 'Panier',       icon: <FiShoppingCart /> },
+  ]}
+  rightLinks={[
+    { to: '/profile',  label: 'Profil',       icon: <FiUser /> },
+    { type: 'button',  label: 'Déconnexion',  icon: <FiLogOut />, onClick: logout },
+  ]}
+/>
 
       <div className="pf-page">
         {/* ── BANNER ── */}

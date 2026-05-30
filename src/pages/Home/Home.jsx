@@ -12,12 +12,12 @@ import './Home.css';
 
 const getCatImage = (nom) => {
   const n = nom?.toLowerCase() || '';
-  if (n.includes('miel')) return `${process.env.PUBLIC_URL}/images/honey-pure.png`;
-  if (n.includes('argan')) return `${process.env.PUBLIC_URL}/images/home2.jpeg`;
-  if (n.includes('amlou')) return `${process.env.PUBLIC_URL}/images/home2.jpeg`;
-  if (n.includes('herbe') || n.includes('herb')) return `${process.env.PUBLIC_URL}/images/home2.jpeg`;
-  if (n.includes('huile')) return `${process.env.PUBLIC_URL}/images/home2.jpeg`;
-  return `${process.env.PUBLIC_URL}/images/honey-pure.png`;
+  if (n.includes('miel en gros')) return `${process.env.PUBLIC_URL}/images/miel en gros.jpeg`;
+  if (n.includes('miel'))         return `${process.env.PUBLIC_URL}/images/miel.jpeg`;
+  if (n.includes('argan'))        return `${process.env.PUBLIC_URL}/images/Argan.jpeg`;
+  if (n.includes('amlou'))        return `${process.env.PUBLIC_URL}/images/Amlouu.jpeg`;
+  if (n.includes('herbe') || n.includes('herb')) return `${process.env.PUBLIC_URL}/images/Herbes.jpeg`;
+  if (n.includes('huile'))        return `${process.env.PUBLIC_URL}/images/HUile.jpeg`;
 };
 
 const CATS_FALLBACK = [
@@ -162,15 +162,51 @@ const Home = () => {
   return (
     <div className="wild-page">
 
-      <Navbar
-        variant="default"
-        brand="Khayrat Bladi"
-        brandTo="/home"
-        isAuthenticated={isAuthenticated}
-        onLogout={logout}
-        links={isAuthenticated ? navLinksAuth : navLinksGuest}
-      />
-
+     <Navbar
+  variant="default"
+  brand="Khayrat Bladi"
+  brandTo="/home"
+  isAuthenticated={isAuthenticated}
+  onLogout={logout}
+  links={isAuthenticated ? [
+    { to: '/home', label: 'Accueil', icon: <FiShoppingBag /> },
+    {
+      to: '/products',
+      label: 'Produits',
+      icon: <FiShoppingBag />,
+      dropdown: [
+        { to: '/products', label: 'Tous les produits', icon: <FiShoppingBag /> },
+        { type: 'button', label: 'Produits Vedettes',   icon: <FiStar />,    onClick: () => scrollTo('vedettes') },
+        { type: 'button', label: 'Produits Populaires', icon: <FiPackage />, onClick: () => scrollTo('populaires') },
+      ]
+    },
+    { type: 'button', label: 'Catégories', icon: <FiList />,    onClick: () => scrollTo('categories') },
+    { type: 'button', label: 'À propos',   icon: <FiFeather />, onClick: () => scrollTo('apropos') },
+  ] : [
+    { to: '/home', label: 'Accueil', icon: <FiShoppingBag /> },
+    {
+      to: '/products',
+      label: 'Produits',
+      icon: <FiShoppingBag />,
+      dropdown: [
+        { to: '/products', label: 'Tous les produits', icon: <FiShoppingBag /> },
+        { type: 'button', label: 'Produits Vedettes',   icon: <FiStar />,    onClick: () => scrollTo('vedettes') },
+        { type: 'button', label: 'Produits Populaires', icon: <FiPackage />, onClick: () => scrollTo('populaires') },
+      ]
+    },
+    { type: 'button', label: 'Catégories', icon: <FiList />,    onClick: () => scrollTo('categories') },
+    { type: 'button', label: 'À propos',   icon: <FiFeather />, onClick: () => scrollTo('apropos') },
+  ]}
+  rightLinks={isAuthenticated ? [
+    { to: '/cart', label: 'Panier', icon: <FiUser /> },
+     { to: '/Orders', label: 'Mes commandes',},
+    { to: '/profile', label: 'Profil', icon: <FiUser /> },
+    { type: 'button', label: 'Déconnexion', icon: <FiLogOut />, onClick: logout },
+  ] : [
+    { to: '/login',    label: 'Se connecter', icon: <FiLogIn /> },
+    { to: '/register', label: 'Créer un compte', icon: <FiUser /> },
+  ]}
+/>
       <section
         className="wild-hero"
         style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/images/home3.jpeg)` }}
