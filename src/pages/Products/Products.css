@@ -4,9 +4,12 @@
 
 /* --- Page --- */
 .honey-page {
+  position: relative;
   min-height: 100vh;
-  background: #0a0806;
-  color: #f5f0e8;
+}
+
+.honey-products {
+  padding-top: 80px;
 }
 
 /* --- Navbar --- */
@@ -470,7 +473,7 @@
 /* Navbar transparente page produits */
 .honey-page .navbar {
   background: transparent !important;
-  position: absolute;
+  position: fixed !important;
   top: 0;
   left: 0;
   width: 100%;

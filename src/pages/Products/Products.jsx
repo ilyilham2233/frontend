@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { FiAlertCircle, FiClipboard, FiLogIn, FiLogOut, FiShoppingCart, FiUser } from 'react-icons/fi';
+import { FiAlertCircle, FiClipboard, FiLogIn, FiLogOut, FiShoppingBag, FiShoppingCart, FiUser } from 'react-icons/fi';
 import { getProducts, getCategories, addToCart } from '../../api/catalogue';
 import { useAuth } from '../../context/AuthContext';
 import {
   CatalogueFilters,
   CatalogueSearch,
-  Footer,
   Navbar,
   Pagination,
   ProductGrid,
@@ -149,29 +148,32 @@ const Products = () => {
   return (
     <div className="honey-page">
       <Navbar
-        variant="honey"
-        brandTo="/home"
-        isAuthenticated={isAuthenticated}
-        onLogout={logout}
-        links={
-          isAuthenticated
-            ? [
-               { to: '/Accueil',   label: 'Accueil',  },
-                { to: '/cart',   label: 'Panier',        icon: <FiShoppingCart /> },
-                { to: '/orders', label: 'Mes Commandes', icon: <FiClipboard /> },
-              ]
-            : [{ to: '/login', label: 'Connexion', icon: <FiLogIn /> }]
-        }
-        rightLinks={
-          isAuthenticated
-            ? [
-                { to: '/profile', label: 'Profil',      icon: <FiUser /> },
-                { type: 'button', label: 'Déconnexion', icon: <FiLogOut />, onClick: logout },
-              ]
-            : []
-        }
-      />
-
+  variant="default"
+  brand="Khayrat Bladi"
+  brandTo="/home"
+  isAuthenticated={isAuthenticated}
+  onLogout={logout}
+  links={
+    isAuthenticated
+      ? [
+          { to: '/home',     label: 'Accueil',        icon: <FiShoppingBag /> },
+          { to: '/cart',     label: 'Panier',         icon: <FiShoppingCart /> },
+          { to: '/orders',   label: 'Mes Commandes',  icon: <FiClipboard /> },
+        ]
+      : [
+          { to: '/home',  label: 'Accueil',     icon: <FiShoppingBag /> },
+          { to: '/login', label: 'Se connecter', icon: <FiLogIn /> },
+        ]
+  }
+  rightLinks={
+    isAuthenticated
+      ? [
+          { to: '/profile', label: 'Profil',      icon: <FiUser /> },
+          { type: 'button', label: 'Déconnexion', icon: <FiLogOut />, onClick: logout },
+        ]
+      : []
+  }
+/>
       <ProductsHero heroRef={heroRef} contentRef={contentRef} />
 
       <section className="honey-products" id="products-section">
@@ -252,8 +254,7 @@ const Products = () => {
         )}
       </section>
 
-      <Footer />
-
+      
       {modalProduct && (
         <ProductModal
           product={modalProduct}

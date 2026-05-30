@@ -78,7 +78,7 @@ body:has(.pf-root) {
 }
 
 .pf-stat {
-  background: rgba(255,255,255,0.08);
+  background: rgba(223, 215, 215, 0.08);
   border: 1px solid rgba(212,175,55,0.2);
   border-radius: var(--radius-md);
   padding: 0.75rem 1.25rem;
@@ -631,4 +631,53 @@ body:has(.pf-root) {
 .profile-page,
 .page-wrapper {
   position: relative;
+}
+.pf-root {
+  position: relative;
+  min-height: 100vh;
+}
+
+.pf-root .navbar {
+  position: fixed !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.pf-page {
+  padding-top: 68px;
+}
+/* ── Navbar fix + transparent ── */
+.pf-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  position: relative;
+}
+
+.pf-page {
+  flex: 1;
+  padding-top: 68px;
+}
+
+/* ── Edit form ── */
+.pf-field-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid rgba(200,150,12,0.3);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.08);
+  color: #e8dcc8;
+  font-size: 14px;
+  font-family: 'Arial', sans-serif;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.pf-field-input:focus {
+  border-color: #C8960C;
+}
+
+.pf-edit-form {
+  margin-bottom: 20px;
 }

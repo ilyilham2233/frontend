@@ -42,7 +42,7 @@ const CatalogueSearch = ({
   // Clic sur une suggestion
 const handleSelectSuggestion = (suggestion) => {
   setShowSuggestions(false);
-  onSelectSuggestion(suggestion); // ← pass l'objet complet, machi juste le nom
+  onSelectSuggestion(suggestion); 
 };
 
   return (

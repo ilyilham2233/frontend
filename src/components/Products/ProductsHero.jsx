@@ -18,13 +18,12 @@ const ProductsHero = ({ heroRef, contentRef }) => (
       </span>
 
       <h1 className="hero-title-animated">
-        Decouvrez nos miels<br />
-        <span className="honey-gold hero-gold-shine">d'exception</span>
+       Les Richesses de Notre Terre <br />
       </h1>
 
       <p className="hero-desc-animated">
-        Des miels purs, recoltes avec passion dans les plus belles regions.<br />
-        Du producteur directement a votre table.
+       Laissez-vous séduire par la pureté de nos miels, la richesse de notre argan et la gourmandise de notre amlou.<br />
+       Le meilleur de la nature marocaine, directement à votre table.
       </p>
 
       <div className="hero-cta-group">

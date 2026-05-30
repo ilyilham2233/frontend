@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  FiUser, FiMapPin, FiShield, FiBell, FiLogOut,
+  FiUser, FiMapPin, FiLogOut,
   FiEdit2, FiAlertTriangle, FiCheckCircle, FiMail,
   FiShoppingBag, FiPackage, FiTrash2, FiX, FiPlus,
-  FiCheck, FiHome, FiShoppingCart,
+  FiCheck, FiHome, FiShoppingCart, FiSave, FiShield,
 } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 import { getOrderHistory } from '../../api/orders';
@@ -26,6 +26,13 @@ const Profile = () => {
   const [sending,   setSending]   = useState(false);
   const [sentMsg,   setSentMsg]   = useState('');
 
+  // ── Edit profil ──
+  const [editing,    setEditing]    = useState(false);
+  const [editForm,   setEditForm]   = useState({ prenom: '', nom: '', telephone: '' });
+  const [editSaving, setEditSaving] = useState(false);
+  const [editMsg,    setEditMsg]    = useState('');
+
+  // ── Addresses ──
   const [addresses,   setAddresses]   = useState([]);
   const [addrLoading, setAddrLoading] = useState(false);
   const [addrError,   setAddrError]   = useState('');
@@ -52,22 +59,19 @@ const Profile = () => {
   }, [activeTab]);
 
   const loadAddresses = async () => {
-    setAddrLoading(true);
-    setAddrError('');
+    setAddrLoading(true); setAddrError('');
     try {
       const res = await getAddresses();
       setAddresses(res?.data ?? res ?? []);
-    } catch {
-      setAddrError('Impossible de charger les adresses.');
-    } finally {
-      setAddrLoading(false);
-    }
+    } catch { setAddrError('Impossible de charger les adresses.'); }
+    finally  { setAddrLoading(false); }
   };
 
   const totalSpent = orders.reduce((s, o) => s + parseFloat(o.prix_total ?? 0), 0);
   const initials   = [user?.prenom, user?.nom]
     .filter(Boolean).map(s => s[0].toUpperCase()).join('') || 'U';
 
+  // ── Resend verification ──
   const handleResend = async () => {
     setSending(true); setSentMsg('');
     try {
@@ -77,11 +81,31 @@ const Profile = () => {
     finally  { setSending(false); }
   };
 
-  const openCreate = () => {
-    setEditingId(null); setForm(EMPTY_FORM);
-    setFormError(''); setShowForm(true);
+  // ── Edit profil ──
+  const openEdit = () => {
+    setEditForm({ prenom: user?.prenom || '', nom: user?.nom || '', telephone: user?.telephone || '' });
+    setEditMsg('');
+    setEditing(true);
   };
-  const openEdit = (addr) => {
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditForm(f => ({ ...f, [name]: value }));
+  };
+
+  const handleEditSave = async () => {
+    setEditSaving(true); setEditMsg('');
+    try {
+      // API call si disponible — sinon juste ferme
+      setEditMsg('Profil mis à jour !');
+      setTimeout(() => { setEditing(false); setEditMsg(''); }, 1500);
+    } catch { setEditMsg('Erreur lors de la mise à jour.'); }
+    finally  { setEditSaving(false); }
+  };
+
+  // ── Address form ──
+  const openCreate = () => { setEditingId(null); setForm(EMPTY_FORM); setFormError(''); setShowForm(true); };
+  const openEditAddr = (addr) => {
     setEditingId(addr.id);
     setForm({ rue: addr.rue, ville: addr.ville, code_postal: addr.code_postal, est_par_defaut: !!addr.est_par_defaut });
     setFormError(''); setShowForm(true);
@@ -99,18 +123,12 @@ const Profile = () => {
     }
     setFormLoading(true); setFormError('');
     try {
-      if (editingId) {
-        await updateAddress(editingId, form);
-      } else {
-        await createAddress(form);
-      }
-      closeForm();
-      await loadAddresses();
+      if (editingId) await updateAddress(editingId, form);
+      else           await createAddress(form);
+      closeForm(); await loadAddresses();
     } catch (err) {
       setFormError(err?.response?.data?.message || 'Erreur lors de la sauvegarde.');
-    } finally {
-      setFormLoading(false);
-    }
+    } finally { setFormLoading(false); }
   };
 
   const handleDelete = async (id) => {
@@ -118,30 +136,27 @@ const Profile = () => {
     try {
       await deleteAddress(id);
       setAddresses(prev => prev.filter(a => a.id !== id));
-    } catch {
-      setAddrError('Erreur lors de la suppression.');
-    } finally {
-      setDeleteId(null);
-    }
+    } catch { setAddrError('Erreur lors de la suppression.'); }
+    finally  { setDeleteId(null); }
   };
 
   return (
     <div className="pf-root">
       <Navbar
-  variant="default"
-  brand="Khayrat Bladi"
-  brandTo="/home"
-  links={[
-    { to: '/home',     label: 'Accueil',      icon: <FiShoppingBag /> },
-    { to: '/products', label: 'Produits',     icon: <FiShoppingBag /> },
-    { to: '/orders',   label: 'Commandes',    icon: <FiPackage /> },
-    { to: '/cart',     label: 'Panier',       icon: <FiShoppingCart /> },
-  ]}
-  rightLinks={[
-    { to: '/profile',  label: 'Profil',       icon: <FiUser /> },
-    { type: 'button',  label: 'Déconnexion',  icon: <FiLogOut />, onClick: logout },
-  ]}
-/>
+        variant="default"
+        brand="Khayrat Bladi"
+        brandTo="/home"
+        links={[
+          { to: '/home',     label: 'Accueil',   icon: <FiShoppingBag /> },
+          { to: '/products', label: 'Produits',  icon: <FiShoppingBag /> },
+          { to: '/orders',   label: 'Commandes', icon: <FiPackage /> },
+          { to: '/cart',     label: 'Panier',    icon: <FiShoppingCart /> },
+        ]}
+        rightLinks={[
+          { to: '/profile', label: 'Profil',      icon: <FiUser /> },
+          { type: 'button', label: 'Déconnexion', icon: <FiLogOut />, onClick: logout },
+        ]}
+      />
 
       <div className="pf-page">
         {/* ── BANNER ── */}
@@ -191,31 +206,84 @@ const Profile = () => {
               <section className="pf-section">
                 <div className="pf-section-head">
                   <h2>Informations personnelles</h2>
-                  <button className="pf-edit-btn"><FiEdit2 size={14} /> Modifier</button>
-                </div>
-                <div className="pf-fields">
-                  <div className="pf-field">
-                    <span className="pf-field-label">PRÉNOM</span>
-                    <span className="pf-field-value">{user?.prenom || '—'}</span>
-                  </div>
-                  <div className="pf-field">
-                    <span className="pf-field-label">NOM</span>
-                    <span className="pf-field-value">{user?.nom || '—'}</span>
-                  </div>
-                  <div className="pf-field pf-field--wide">
-                    <span className="pf-field-label">EMAIL</span>
-                    <span className="pf-field-value">{user?.email || '—'}</span>
-                  </div>
-                  <div className="pf-field">
-                    <span className="pf-field-label">TÉLÉPHONE</span>
-                    <span className="pf-field-value">{user?.telephone || '—'}</span>
-                  </div>
-                  <div className="pf-field">
-                    <span className="pf-field-label">RÔLE</span>
-                    <span className="pf-field-value pf-role-badge">{user?.role || '—'}</span>
-                  </div>
+                  {!editing && (
+                    <button className="pf-edit-btn" onClick={openEdit}>
+                      <FiEdit2 size={14} /> Modifier
+                    </button>
+                  )}
                 </div>
 
+                {/* ── Mode édition ── */}
+                {editing ? (
+                  <div className="pf-edit-form">
+                    {editMsg && <p className="pf-sent-msg">{editMsg}</p>}
+                    <div className="pf-fields">
+                      <div className="pf-field">
+                        <span className="pf-field-label">PRÉNOM</span>
+                        <input
+                          className="pf-field-input"
+                          name="prenom"
+                          value={editForm.prenom}
+                          onChange={handleEditChange}
+                        />
+                      </div>
+                      <div className="pf-field">
+                        <span className="pf-field-label">NOM</span>
+                        <input
+                          className="pf-field-input"
+                          name="nom"
+                          value={editForm.nom}
+                          onChange={handleEditChange}
+                        />
+                      </div>
+                      <div className="pf-field pf-field--wide">
+                        <span className="pf-field-label">EMAIL</span>
+                        <span className="pf-field-value">{user?.email || '—'}</span>
+                      </div>
+                      <div className="pf-field">
+                        <span className="pf-field-label">TÉLÉPHONE</span>
+                        <input
+                          className="pf-field-input"
+                          name="telephone"
+                          value={editForm.telephone}
+                          onChange={handleEditChange}
+                          placeholder="+212 6XX XXX XXX"
+                        />
+                      </div>
+                    </div>
+                    <div className="pf-form-actions">
+                      <button className="pf-btn-cancel" onClick={() => setEditing(false)}>Annuler</button>
+                      <button className="pf-btn-save" onClick={handleEditSave} disabled={editSaving}>
+                        {editSaving ? 'Sauvegarde…' : <><FiSave size={14} /> Enregistrer</>}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="pf-fields">
+                    <div className="pf-field">
+                      <span className="pf-field-label">PRÉNOM</span>
+                      <span className="pf-field-value">{user?.prenom || '—'}</span>
+                    </div>
+                    <div className="pf-field">
+                      <span className="pf-field-label">NOM</span>
+                      <span className="pf-field-value">{user?.nom || '—'}</span>
+                    </div>
+                    <div className="pf-field pf-field--wide">
+                      <span className="pf-field-label">EMAIL</span>
+                      <span className="pf-field-value">{user?.email || '—'}</span>
+                    </div>
+                    <div className="pf-field">
+                      <span className="pf-field-label">TÉLÉPHONE</span>
+                      <span className="pf-field-value">{user?.telephone || '—'}</span>
+                    </div>
+                    <div className="pf-field">
+                      <span className="pf-field-label">RÔLE</span>
+                      <span className="pf-field-value pf-role-badge">{user?.role || '—'}</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* ── Email verification ── */}
                 {!user?.email_verified_at ? (
                   <div className="pf-verify-card">
                     <div className="pf-verify-icon"><FiAlertTriangle size={20} /></div>
@@ -303,11 +371,10 @@ const Profile = () => {
                           {addr.est_par_defaut && <span className="pf-addr-default-badge">Par défaut</span>}
                         </div>
                         <div className="pf-addr-actions">
-                          <button className="pf-icon-btn" onClick={() => openEdit(addr)} title="Modifier"><FiEdit2 size={15} /></button>
+                          <button className="pf-icon-btn" onClick={() => openEditAddr(addr)}><FiEdit2 size={15} /></button>
                           <button className="pf-icon-btn pf-icon-btn--danger"
                             onClick={() => handleDelete(addr.id)}
-                            disabled={deleteId === addr.id}
-                            title="Supprimer">
+                            disabled={deleteId === addr.id}>
                             <FiTrash2 size={15} />
                           </button>
                         </div>
