@@ -263,9 +263,7 @@ const Home = () => {
             <p className="wild-section-eyebrow">Notre Histoire</p>
             <h2 className="wild-section-title">À Propos de Khayrat Bladi</h2>
             <p className="wild-about-desc">
-              Fondée en 2018, Khayrate Bladi est une coopérative marocaine passionnée par la richesse
-              de notre terroir, qui s'est donné pour mission de partager les trésors de la nature à
-              travers des produits 100% naturels, authentiques et respectueux de l'environnement.
+              Fondée en 2018, Khayrate Bladi est une coopérative marocaine passionnée par la richesse de notre terroir, qui s'est donné pour mission de partager les trésors de la nature à travers des produits 100% naturels, authentiques et respectueux de l'environnement. Spécialistes des remèdes et délices naturels, nous sélectionnons avec le plus grand soin des matières premières d’une pureté absolue pour vous offrir le meilleur des miels issus de ruchers préservés, des huiles nobles et cosmétiques (Argan, Amande amère), de l'Amlou traditionnel ainsi que des herbes aromatiques. Grâce à votre fidélité et à notre soutien continu aux producteurs locaux, nous sommes fiers d’expédier aujourd'hui plus de 100 000 produits par an à travers tout le Royaume, s'imposant comme une référence de confiance pour le retour aux sources et l'excellence du terroir marocain.
             </p>
             <p className="wild-about-desc">
               Notre mission : vous offrir des produits authentiques, 100% naturels,

@@ -6,10 +6,17 @@
 .honey-page {
   position: relative;
   min-height: 100vh;
+  overflow: visible !important;
 }
 
-.honey-products {
-  padding-top: 80px;
+/* --- Navbar transparente sur hero --- */
+.honey-page .nav-link,
+.honey-page .nav-btn {
+  color: #e8dcc8 !important;
+}
+
+.honey-page .brand-text {
+  color: #C8960C !important;
 }
 
 /* --- Navbar --- */
@@ -34,10 +41,6 @@
   color: #f5f0e8;
 }
 
-.honey-brand-icon {
-  font-size: 1.5rem;
-}
-
 .honey-brand-text {
   font-size: 1.2rem;
   font-weight: 700;
@@ -48,32 +51,9 @@
   background-clip: text;
 }
 
-.cart-nav-link {
-  position: fixed;
-}
-
-.cart-count-badge {
-  position: fixed;
-  top: -6px;
-  right: -6px;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 5px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 9999px;
-  background: linear-gradient(135deg, #f0c957, #b8860b);
-  color: #0a0806;
-  font-size: .68rem;
-  font-weight: 800;
-  line-height: 1;
-  box-shadow: 0 4px 14px rgba(212, 175, 55, .38);
-}
-
 /* --- Hero --- */
 .honey-hero {
-  position: fixed;
+  position: relative;
   height: 80vh;
   min-height: 500px;
   display: flex;
@@ -86,17 +66,16 @@
 
 .honey-hero::before {
   content: '';
-  position: fixed;
+  position: absolute;
   inset: 0;
   background: linear-gradient(180deg, rgba(10,8,6,0.18), rgba(10,8,6,0.55));
+  pointer-events: none;
 }
 
-.honey-hero-img {
-  display: none; /* Hide the img tag since we're using background-image */
-}
+.honey-hero-img { display: none; }
 
 .honey-hero-content {
-  position: fixed;
+  position: relative;
   z-index: 2;
   text-align: center;
   max-width: 700px;
@@ -203,11 +182,11 @@
 
 /* --- Products Section --- */
 .honey-products {
-  position: relative ;
-  padding: 6rem 2rem 5rem;
+  position: relative;
+  padding: 80px 2rem 5rem;
   max-width: none;
   margin: 0 auto;
-  overflow: hidden;
+  overflow: visible;
   background:
     radial-gradient(circle at 14% 10%, rgba(255, 225, 151, 0.32), transparent 27%),
     radial-gradient(circle at 86% 7%, rgba(142, 92, 42, 0.18), transparent 31%),
@@ -219,12 +198,11 @@
 .honey-products::before {
   content: '';
   position: absolute;
-  top: -92px;
+  top: 0;
   left: 0;
   right: 0;
-  height: 180px;
-  background:
-    linear-gradient(180deg, rgba(10, 8, 6, 0.94) 0%, rgba(83, 58, 34, 0.52) 38%, rgba(247, 234, 211, 0) 100%);
+  height: 100px;
+  background: linear-gradient(180deg, rgba(10, 8, 6, 0.4) 0%, rgba(247, 234, 211, 0) 100%);
   pointer-events: none;
 }
 
@@ -328,9 +306,6 @@
     radial-gradient(circle at 24% 50%, rgba(191, 139, 49, .32) 0 2px, transparent 3px),
     radial-gradient(circle at 76% 50%, rgba(191, 139, 49, .32) 0 2px, transparent 3px);
 }
-.honey-products {
-  padding-top: 80px;
-}
 
 /* --- Filters --- */
 .honey-filters {
@@ -373,124 +348,22 @@
   font-weight: 600;
 }
 
-/* --- Product Grid + Card --- */
-/* Les styles sont définis dans ProductCard.css — ne pas redéfinir ici */
-/* --- Footer --- */
-.honey-footer {
-  padding: 3rem 2rem;
-  border-top: 1px solid rgba(212, 175, 55, 0.08);
-  text-align: center;
-}
-
-.honey-footer-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.honey-footer-brand {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin-bottom: 0.75rem;
-  color: #d4af37;
-}
-
-.honey-footer p {
-  font-size: 0.85rem;
-  color: rgba(245, 240, 232, 0.3);
-}
-
 /* --- Responsive --- */
 @media (max-width: 768px) {
-  .honey-hero-content h1 {
-    font-size: 2.2rem;
-  }
-
-  .honey-hero {
-    height: 60vh;
-  }
-
-  .honey-stats {
-    gap: 1rem;
-  }
-
-  .honey-stat {
-    padding: 0 1rem;
-  }
-
-  .honey-stat-divider {
-    display: none;
-  }
-
-  .honey-grid {
-    grid-template-columns: repeat(2, 1fr);
-    max-width: none;
-  }
-
-  .honey-products {
-    padding: 4.8rem 1.25rem 4rem;
-  }
-
-  .honey-products-header {
-    padding: 0;
-  }
-
+  .honey-hero-content h1 { font-size: 2.2rem; }
+  .honey-hero { height: 60vh; }
+  .honey-stats { gap: 1rem; }
+  .honey-stat { padding: 0 1rem; }
+  .honey-stat-divider { display: none; }
+  .honey-products { padding: 4.8rem 1.25rem 4rem; }
+  .honey-products-header { padding: 0; }
   .honey-products-header::before,
-  .honey-products-header::after {
-    width: 82px;
-    height: 64px;
-    opacity: .24;
-  }
-
-  .honey-products-header::before {
-    left: -26px;
-  }
-
-  .honey-products-header::after {
-    right: -26px;
-  }
-
+  .honey-products-header::after { width: 82px; height: 64px; opacity: .24; }
+  .honey-products-header::before { left: -26px; }
+  .honey-products-header::after { right: -26px; }
   .honey-products-header h2::before,
-  .honey-products-header h2::after {
-    width: 34px;
-  }
-
-  .honey-products-header h2::before {
-    right: calc(100% + 10px);
-  }
-
-  .honey-products-header h2::after {
-    left: calc(100% + 10px);
-  }
-
-  .honey-nav {
-    padding: 0.75rem 1rem;
-  }
-}
-/* Navbar transparente page produits */
-.honey-page .navbar {
-  background: transparent !important;
-  position: fixed !important;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 100;
-  box-shadow: none;
-  border: none;
-}
-
-.honey-page .navbar .nav-link,
-.honey-page .navbar .nav-btn,
-.honey-page .navbar span {
-  color: #fff !important;
-}
-
-.honey-page .navbar .brand-text {
-  color: #C8960C !important;
-}
-.honey-page {
-  overflow: visible !important;
+  .honey-products-header h2::after { width: 34px; }
+  .honey-products-header h2::before { right: calc(100% + 10px); }
+  .honey-products-header h2::after { left: calc(100% + 10px); }
+  .honey-nav { padding: 0.75rem 1rem; }
 }

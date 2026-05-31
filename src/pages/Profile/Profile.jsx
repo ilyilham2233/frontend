@@ -10,6 +10,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getOrderHistory } from '../../api/orders';
 import { getAddresses, createAddress, updateAddress, deleteAddress } from '../../api/Adresse';
 import { Navbar } from '../../components';
+import { updateProfile } from '../../api/auth';
 import './Profile.css';
 
 const NAV_ITEMS = [
@@ -94,14 +95,17 @@ const Profile = () => {
   };
 
   const handleEditSave = async () => {
-    setEditSaving(true); setEditMsg('');
-    try {
-      // API call si disponible — sinon juste ferme
-      setEditMsg('Profil mis à jour !');
-      setTimeout(() => { setEditing(false); setEditMsg(''); }, 1500);
-    } catch { setEditMsg('Erreur lors de la mise à jour.'); }
-    finally  { setEditSaving(false); }
-  };
+  setEditSaving(true); setEditMsg('');
+  try {
+    await updateProfile(editForm);
+    setEditMsg('Profil mis à jour !');
+    setTimeout(() => { setEditing(false); setEditMsg(''); }, 1500);
+  } catch (err) {
+    setEditMsg(err?.response?.data?.message || 'Erreur lors de la mise à jour.');
+  } finally {
+    setEditSaving(false);
+  }
+};
 
   // ── Address form ──
   const openCreate = () => { setEditingId(null); setForm(EMPTY_FORM); setFormError(''); setShowForm(true); };
@@ -284,7 +288,7 @@ const Profile = () => {
                 )}
 
                 {/* ── Email verification ── */}
-                {!user?.email_verified_at ? (
+                {!user?.email_verifie_le ? (
                   <div className="pf-verify-card">
                     <div className="pf-verify-icon"><FiAlertTriangle size={20} /></div>
                     <div className="pf-verify-text">

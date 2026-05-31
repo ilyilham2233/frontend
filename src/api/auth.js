@@ -74,5 +74,9 @@ export const verifyEmail = async (id, hash) => {
   const response = await API.get(`/verify/${id}/${hash}`);
   return response.data;
 };
+export const updateProfile = async (data) => {
+  const response = await API.post('/profile/update', data);
+  return response.data;
+};
 
 export default API;
