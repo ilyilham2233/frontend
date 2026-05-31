@@ -491,3 +491,6 @@
 .honey-page .navbar .brand-text {
   color: #C8960C !important;
 }
+.honey-page {
+  overflow: visible !important;
+}
