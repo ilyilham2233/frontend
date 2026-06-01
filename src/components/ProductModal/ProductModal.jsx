@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FiX, FiMinus, FiPlus, FiShoppingCart, FiHeart, FiTruck, FiShield, FiPackage } from 'react-icons/fi';
 import Stars from '../Stars/Stars';
-import { checkReviewForm, submitReview } from '../../api/catalogue';
+import { checkReviewForm, getProductReviews, submitReview } from '../../api/catalogue';
 import './ProductModal.css';
 
 const fallbackImage = `${process.env.PUBLIC_URL}/images/honey-pure.png`;
@@ -161,7 +161,10 @@ const ProductModal = ({ product, isFavorite, onClose, onAddToCart, onToggleFavor
   const [qty, setQty]           = useState(1);
   const [adding, setAdding]     = useState(false);
   const [added, setAdded]       = useState(false);
-  const [liveRating, setLiveRating] = useState(product.note_moyenne || 0);
+  const [liveRating, setLiveRating] = useState(product.note_moyenne || product.moyenne_note || 0);
+  const [reviews, setReviews]   = useState([]);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [reviewsError, setReviewsError] = useState('');
 
   const isOutOfStock = product.quantite_stock === 0;
   const isLowStock   = product.quantite_stock > 0 && product.quantite_stock <= 5;
@@ -185,6 +188,33 @@ const ProductModal = ({ product, isFavorite, onClose, onAddToCart, onToggleFavor
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
+
+  const fetchReviews = useCallback(async () => {
+    setReviewsLoading(true);
+    setReviewsError('');
+    try {
+      const res = await getProductReviews(product.id);
+      const payload = res?.data ?? res ?? {};
+      const avis = payload?.avis ?? payload?.data ?? [];
+      setReviews(Array.isArray(avis) ? avis : []);
+      const moyenne = payload?.moyenne_note ?? payload?.moyenne ?? product.note_moyenne;
+      if (typeof moyenne === 'number') {
+        setLiveRating(moyenne);
+      }
+    } catch (err) {
+      setReviewsError(err.response?.data?.message || 'Impossible de charger les avis.');
+    } finally {
+      setReviewsLoading(false);
+    }
+  }, [product.id, product.note_moyenne]);
+
+  const handleReviewSubmitted = () => {
+    fetchReviews();
+  };
+
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
 
   const getBadge = () => {
     if (product.badge) return { label: product.badge, cls: 'badge-gold' };
@@ -218,6 +248,39 @@ const ProductModal = ({ product, isFavorite, onClose, onAddToCart, onToggleFavor
               <div className="pm-trust-item"><FiTruck size={13} /> Livraison gratuite</div>
               <div className="pm-trust-item"><FiShield size={13} /> Qualité garantie 100%</div>
               <div className="pm-trust-item"><FiPackage size={13} /> Emballage soigné</div>
+            </div>
+            <div className="pm-review-summary">
+              <div className="pm-review-summary-header">
+                <span className="pm-review-title">Avis clients</span>
+                <span className="pm-review-count">
+                  {reviewsLoading ? 'Chargement...' : `${product.reviews_count ?? product.total_avis ?? reviews.length} avis`}
+                </span>
+              </div>
+              {reviewsError && <div className="pm-review-error">{reviewsError}</div>}
+              {!reviewsLoading && reviews.length === 0 && (
+                <p className="pm-review-empty">Soyez le premier à donner votre avis sur ce produit.</p>
+              )}
+              {reviews.length > 0 && (
+                <div className="pm-review-list">
+                  {reviews.map((review) => (
+                    <div key={review.id} className="pm-review-item">
+                      <div className="pm-review-top">
+                        <span className="pm-review-author">
+                          {review.client?.prenom || 'Client'} {review.client?.nom || ''}
+                        </span>
+                        <span className="pm-review-stars">
+                          <Stars rating={review.note || 0} />
+                          <span className="pm-review-note">{review.note}/5</span>
+                        </span>
+                      </div>
+                      {review.commentaire && <p className="pm-review-comment">{review.commentaire}</p>}
+                      <div className="pm-review-date">
+                        {new Date(review.date_publication || review.created_at || Date.now()).toLocaleDateString('fr-FR')}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
@@ -279,12 +342,14 @@ const ProductModal = ({ product, isFavorite, onClose, onAddToCart, onToggleFavor
               {isOutOfStock ? '✕ Rupture de stock' : isLowStock ? `⚠ Plus que ${product.quantite_stock} en stock` : '✓ En stock'}
             </p>
 
-            {/* ── NOTATION ── */}
             <div className="pm-rate-section">
               <RatingBlock
                 productId={product.id}
                 currentRating={liveRating}
-                onRated={(note) => setLiveRating(note)}
+                onRated={(note) => {
+                  setLiveRating(note);
+                  handleReviewSubmitted();
+                }}
               />
             </div>
 
@@ -295,6 +360,10 @@ const ProductModal = ({ product, isFavorite, onClose, onAddToCart, onToggleFavor
               <FiHeart size={14} />
               {isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
             </button>
+
+            <p className={`pm-stock${isOutOfStock ? ' out' : isLowStock ? ' low' : ''}`}>
+              {isOutOfStock ? '✕ Rupture de stock' : isLowStock ? `⚠ Plus que ${product.quantite_stock} en stock` : '✓ En stock'}
+            </p>
           </div>
         </div>
       </div>

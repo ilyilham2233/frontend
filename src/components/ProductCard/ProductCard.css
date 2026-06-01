@@ -131,15 +131,16 @@
 }
 
 .honey-card-title {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
   font-weight: 600;
   color: #2c1f0e;
-  margin-bottom: 0.3rem;
-  line-height: 1.3;
+  margin-bottom: 0.25rem;
+  line-height: 1.25;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  letter-spacing: -0.01em;
 }
 
 /* ── Rating ── */

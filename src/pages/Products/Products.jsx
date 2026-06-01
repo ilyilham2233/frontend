@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FiAlertCircle, FiClipboard, FiLogIn, FiLogOut, FiShoppingBag, FiShoppingCart, FiUser } from 'react-icons/fi';
-import { getProducts, getCategories, addToCart } from '../../api/catalogue';
+import { getProducts, getCategories, getProduct, addToCart } from '../../api/catalogue';
 import { useAuth } from '../../context/AuthContext';
 import {
   CatalogueFilters,
@@ -193,9 +193,16 @@ const Products = () => {
             setSearch('');
             resetPage();
           }}
-          onSelectSuggestion={(suggestion) => {
+          onSelectSuggestion={async (suggestion) => {
             if (suggestion?.id) {
-              setModalProduct(suggestion);
+              try {
+                const productData = await getProduct(suggestion.id);
+                const fullProduct = productData?.data ?? productData ?? suggestion;
+                setModalProduct(fullProduct);
+                setSearchInput(suggestion.nom || '');
+              } catch {
+                setModalProduct(suggestion);
+              }
             } else {
               setSearchInput(suggestion);
               setSearch(suggestion);

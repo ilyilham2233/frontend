@@ -124,12 +124,27 @@
   align-items: center;
   gap: 0.5rem;
   font-size: 0.76rem;
-  color: #555;
+  color: #111;
   padding: 0.45rem 0.7rem;
   background: #fafafa;
   border: 1px solid #efefef;
   border-radius: 8px;
   font-weight: 500;
+}
+
+.pm-left-extra {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.pm-left-extra .pm-rate-section {
+  margin: 0;
+}
+
+.pm-left-extra .pm-fav-btn {
+  width: 100%;
 }
 
 /* ── Droite : infos ── */
@@ -552,3 +567,92 @@
 }
 .pm-rate-submit:hover:not(:disabled) { background: #2c2010; }
 .pm-rate-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Review list */
+.pm-review-summary {
+  border: 1px solid #f0f0f0;
+  background: #faf9f5;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.pm-review-summary-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 0.85rem;
+}
+.pm-review-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+.pm-review-count {
+  font-size: 0.8rem;
+  color: #555;
+}
+.pm-review-empty {
+  margin: 0;
+  color: #555;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+.pm-review-list {
+  display: grid;
+  gap: 0.8rem;
+}
+.pm-review-item {
+  padding: 0.9rem 0.85rem;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #f0f0f0;
+}
+.pm-review-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+.pm-review-author {
+  font-weight: 700;
+  color: #111827;
+  font-size: 0.88rem;
+}
+.pm-review-stars {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.pm-review-note {
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+.pm-review-comment {
+  margin: 0;
+  color: #444;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  margin-bottom: 0.55rem;
+}
+.pm-review-date {
+  font-size: 0.75rem;
+  color: #71717a;
+}
+.pm-review-loading {
+  font-size: 0.8rem;
+  color: #71717a;
+}
+.pm-review-error {
+  color: #b91c1c;
+  font-size: 0.8rem;
+  margin-bottom: 0.6rem;
+}
+.pm-review-stars .honey-stars .star-filled {
+  color: #f0c957;
+}
+.pm-review-stars .honey-stars .star-empty {
+  color: #e0e0e0;
+}
