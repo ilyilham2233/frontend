@@ -75,17 +75,22 @@ export const AuthProvider = ({ children }) => {
   const sendVerification = async () => {
     return await sendVerificationEmail();
   };
-
+const updateUser = (newUser) => {
+  setUser(newUser);
+  localStorage.setItem('user', JSON.stringify(newUser));
+};
   const value = {
-    user,
-    token,
-    loading,
-    isAuthenticated: !!token && !!user,
-    login,
-    register,
-    logout,
-    sendVerification,
-  };
+  user,
+  token,
+  loading,
+  isAuthenticated: !!token && !!user,
+  login,
+  register,
+  logout,
+  sendVerification,
+  updateUser,  // ← zid had ligne
+};
+  
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

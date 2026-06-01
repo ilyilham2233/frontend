@@ -15,15 +15,17 @@ const Navbar = ({
   onLogout,
   links,
   rightLinks,
+  alwaysTransparent = false,
 }) => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
+    if (alwaysTransparent) return;
     const handleScroll = () => setScrolled(window.scrollY > 30);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [alwaysTransparent]);
 
   let cartCount = 0;
   try {
@@ -117,8 +119,7 @@ const Navbar = ({
   };
 
   return (
-    <nav className={`navbar${scrolled ? ' navbar-scrolled' : ''}`}>
-      {/* ── LEFT: brand + main links ── */}
+    <nav className={`navbar${scrolled && !alwaysTransparent ? ' navbar-scrolled' : ''}`}>
       <div className="navbar-left">
         <Link to={brandTo} className="navbar-brand">
           <span className="brand-text">{brand}</span>
@@ -127,8 +128,6 @@ const Navbar = ({
           {items.map((item, i) => renderItem(item, i))}
         </div>
       </div>
-
-      {/* ── RIGHT: profil + deconnexion ── */}
       <div className="navbar-right">
         {rightItems.map((item, i) => renderItem(item, i + 100))}
       </div>

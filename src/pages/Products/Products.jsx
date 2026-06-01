@@ -148,32 +148,34 @@ const Products = () => {
   return (
     <div className="honey-page">
       <Navbar
-  variant="default"
-  brand="Khayrat Bladi"
-  brandTo="/home"
-  isAuthenticated={isAuthenticated}
-  onLogout={logout}
-  links={
-    isAuthenticated
-      ? [
-          { to: '/home',     label: 'Accueil',        icon: <FiShoppingBag /> },
-          { to: '/cart',     label: 'Panier',         icon: <FiShoppingCart /> },
-          { to: '/orders',   label: 'Mes Commandes',  icon: <FiClipboard /> },
-        ]
-      : [
-          { to: '/home',  label: 'Accueil',     icon: <FiShoppingBag /> },
-          { to: '/login', label: 'Se connecter', icon: <FiLogIn /> },
-        ]
-  }
-  rightLinks={
-    isAuthenticated
-      ? [
-          { to: '/profile', label: 'Profil',      icon: <FiUser /> },
-          { type: 'button', label: 'Déconnexion', icon: <FiLogOut />, onClick: logout },
-        ]
-      : []
-  }
-/>
+        variant="default"
+        brand="Khayrat Bladi"
+        brandTo="/home"
+        alwaysTransparent={true}
+        isAuthenticated={isAuthenticated}
+        onLogout={logout}
+        links={
+          isAuthenticated
+            ? [
+                { to: '/home',   label: 'Accueil',       icon: <FiShoppingBag /> },
+                { to: '/cart',   label: 'Panier',        icon: <FiShoppingCart /> },
+                { to: '/orders', label: 'Mes Commandes', icon: <FiClipboard /> },
+              ]
+            : [
+                { to: '/home',  label: 'Accueil',      icon: <FiShoppingBag /> },
+                { to: '/login', label: 'Se connecter', icon: <FiLogIn /> },
+              ]
+        }
+        rightLinks={
+          isAuthenticated
+            ? [
+                { to: '/profile', label: 'Profil',      icon: <FiUser /> },
+                { type: 'button', label: 'Déconnexion', icon: <FiLogOut />, onClick: logout },
+              ]
+            : []
+        }
+      />
+
       <ProductsHero heroRef={heroRef} contentRef={contentRef} />
 
       <section className="honey-products" id="products-section">
@@ -254,7 +256,6 @@ const Products = () => {
         )}
       </section>
 
-      
       {modalProduct && (
         <ProductModal
           product={modalProduct}

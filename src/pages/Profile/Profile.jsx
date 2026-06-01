@@ -9,8 +9,10 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { getOrderHistory } from '../../api/orders';
 import { getAddresses, createAddress, updateAddress, deleteAddress } from '../../api/Adresse';
-import { Navbar } from '../../components';
 import { updateProfile } from '../../api/auth';
+import { Navbar } from '../../components';
+import { getProfile } from '../../api/auth';
+import { useNavigate } from 'react-router-dom';
 import './Profile.css';
 
 const NAV_ITEMS = [
@@ -21,19 +23,17 @@ const NAV_ITEMS = [
 const EMPTY_FORM = { rue: '', ville: '', code_postal: '', est_par_defaut: false };
 
 const Profile = () => {
-  const { user, logout, sendVerification } = useAuth();
+  const { user, logout, sendVerification, updateUser } = useAuth();
   const [activeTab, setActiveTab] = useState('profil');
   const [orders,    setOrders]    = useState([]);
   const [sending,   setSending]   = useState(false);
   const [sentMsg,   setSentMsg]   = useState('');
 
-  // ── Edit profil ──
   const [editing,    setEditing]    = useState(false);
   const [editForm,   setEditForm]   = useState({ prenom: '', nom: '', telephone: '' });
   const [editSaving, setEditSaving] = useState(false);
   const [editMsg,    setEditMsg]    = useState('');
 
-  // ── Addresses ──
   const [addresses,   setAddresses]   = useState([]);
   const [addrLoading, setAddrLoading] = useState(false);
   const [addrError,   setAddrError]   = useState('');
@@ -48,6 +48,11 @@ const Profile = () => {
     if (!user?.created_at) return null;
     return new Date(user.created_at).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
   })();
+  useEffect(() => {
+  getProfile()
+    .then(res => updateUser(res.data))
+    .catch(() => {});
+}, []);
 
   useEffect(() => {
     getOrderHistory()
@@ -72,7 +77,6 @@ const Profile = () => {
   const initials   = [user?.prenom, user?.nom]
     .filter(Boolean).map(s => s[0].toUpperCase()).join('') || 'U';
 
-  // ── Resend verification ──
   const handleResend = async () => {
     setSending(true); setSentMsg('');
     try {
@@ -81,8 +85,18 @@ const Profile = () => {
     } catch { setSentMsg('Erreur. Réessayez plus tard.'); }
     finally  { setSending(false); }
   };
+  const navigate = useNavigate();
 
-  // ── Edit profil ──
+const handleVerifyEmail = async () => {
+  setSending(true); setSentMsg('');
+  try {
+    await sendVerification();
+    setSentMsg('Email envoyé !');
+    setTimeout(() => navigate('/verify-email'), 1500); // ← rediriger
+  } catch { setSentMsg('Erreur. Réessayez plus tard.'); }
+  finally  { setSending(false); }
+};
+
   const openEdit = () => {
     setEditForm({ prenom: user?.prenom || '', nom: user?.nom || '', telephone: user?.telephone || '' });
     setEditMsg('');
@@ -95,19 +109,17 @@ const Profile = () => {
   };
 
   const handleEditSave = async () => {
-  setEditSaving(true); setEditMsg('');
-  try {
-    await updateProfile(editForm);
-    setEditMsg('Profil mis à jour !');
-    setTimeout(() => { setEditing(false); setEditMsg(''); }, 1500);
-  } catch (err) {
-    setEditMsg(err?.response?.data?.message || 'Erreur lors de la mise à jour.');
-  } finally {
-    setEditSaving(false);
-  }
-};
+    setEditSaving(true); setEditMsg('');
+    try {
+      const res = await updateProfile(editForm);
+      updateUser(res?.data ?? { ...user, ...editForm });
+      setEditMsg('Profil mis à jour !');
+      setTimeout(() => { setEditing(false); setEditMsg(''); }, 1500);
+    } catch (err) {
+      setEditMsg(err?.response?.data?.message || 'Erreur lors de la mise à jour.');
+    } finally { setEditSaving(false); }
+  };
 
-  // ── Address form ──
   const openCreate = () => { setEditingId(null); setForm(EMPTY_FORM); setFormError(''); setShowForm(true); };
   const openEditAddr = (addr) => {
     setEditingId(addr.id);
@@ -217,28 +229,17 @@ const Profile = () => {
                   )}
                 </div>
 
-                {/* ── Mode édition ── */}
                 {editing ? (
                   <div className="pf-edit-form">
                     {editMsg && <p className="pf-sent-msg">{editMsg}</p>}
                     <div className="pf-fields">
                       <div className="pf-field">
                         <span className="pf-field-label">PRÉNOM</span>
-                        <input
-                          className="pf-field-input"
-                          name="prenom"
-                          value={editForm.prenom}
-                          onChange={handleEditChange}
-                        />
+                        <input className="pf-field-input" name="prenom" value={editForm.prenom} onChange={handleEditChange} />
                       </div>
                       <div className="pf-field">
                         <span className="pf-field-label">NOM</span>
-                        <input
-                          className="pf-field-input"
-                          name="nom"
-                          value={editForm.nom}
-                          onChange={handleEditChange}
-                        />
+                        <input className="pf-field-input" name="nom" value={editForm.nom} onChange={handleEditChange} />
                       </div>
                       <div className="pf-field pf-field--wide">
                         <span className="pf-field-label">EMAIL</span>
@@ -246,13 +247,7 @@ const Profile = () => {
                       </div>
                       <div className="pf-field">
                         <span className="pf-field-label">TÉLÉPHONE</span>
-                        <input
-                          className="pf-field-input"
-                          name="telephone"
-                          value={editForm.telephone}
-                          onChange={handleEditChange}
-                          placeholder="+212 6XX XXX XXX"
-                        />
+                        <input className="pf-field-input" name="telephone" value={editForm.telephone} onChange={handleEditChange} placeholder="+212 6XX XXX XXX" />
                       </div>
                     </div>
                     <div className="pf-form-actions">
@@ -287,7 +282,6 @@ const Profile = () => {
                   </div>
                 )}
 
-                {/* ── Email verification ── */}
                 {!user?.email_verifie_le ? (
                   <div className="pf-verify-card">
                     <div className="pf-verify-icon"><FiAlertTriangle size={20} /></div>
@@ -295,9 +289,9 @@ const Profile = () => {
                       <strong>Email non vérifié</strong>
                       <p>Vérifiez votre email pour accéder à toutes les fonctionnalités.</p>
                     </div>
-                    <button className="pf-resend-btn" onClick={handleResend} disabled={sending}>
-                      {sending ? 'Envoi…' : 'Renvoyer'}
-                    </button>
+                   <button className="pf-resend-btn" onClick={handleVerifyEmail} disabled={sending}>
+  {sending ? 'Envoi…' : 'Vérifier email'}
+</button>
                     {sentMsg && <p className="pf-sent-msg">{sentMsg}</p>}
                   </div>
                 ) : (
