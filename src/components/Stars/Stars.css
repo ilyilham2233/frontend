@@ -1,1 +1,14 @@
 /* Star styles are shared by catalogue cards and kept with the honey card theme. */
+.honey-stars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.08rem;
+}
+
+.honey-stars .star-filled {
+  color: #d4a017;
+}
+
+.honey-stars .star-empty {
+  color: #ddd;
+}

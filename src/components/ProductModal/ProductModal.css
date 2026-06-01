@@ -195,7 +195,6 @@
   color: #555;
   line-height: 1.6;
   margin-bottom: 1rem;
-  flex: 1;
 }
 
 .pm-desc p {
@@ -394,7 +393,8 @@
 }
 
 .pm-star-btn:hover,
-.pm-star-btn--on {
+.pm-star-btn.on,
+.pm-star-btn.on:hover {
   color: #f0c957;
 }
 

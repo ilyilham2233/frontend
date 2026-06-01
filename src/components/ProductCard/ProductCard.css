@@ -152,8 +152,8 @@
 }
 
 /* Stars — style clair */
-.honey-card-rating .honey-stars .star-filled { color: #d4a017; }
-.honey-card-rating .honey-stars .star-empty  { color: #ddd; }
+.honey-card-rating .honey-stars .star-filled { color: #d4a017 !important; }
+.honey-card-rating .honey-stars .star-empty  { color: #ddd !important; }
 
 .honey-rating-text {
   font-size: 0.62rem;

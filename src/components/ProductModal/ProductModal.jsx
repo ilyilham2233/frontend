@@ -161,7 +161,8 @@ const ProductModal = ({ product, isFavorite, onClose, onAddToCart, onToggleFavor
   const [qty, setQty]           = useState(1);
   const [adding, setAdding]     = useState(false);
   const [added, setAdded]       = useState(false);
-  const [liveRating, setLiveRating] = useState(product.note_moyenne || product.moyenne_note || 0);
+  const initialRating = Number(String(product.note_moyenne ?? product.moyenne_note ?? product.moyenne ?? 0).replace(',', '.')) || 0;
+  const [liveRating, setLiveRating] = useState(initialRating);
   const [reviews, setReviews]   = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(false);
   const [reviewsError, setReviewsError] = useState('');
@@ -198,8 +199,9 @@ const ProductModal = ({ product, isFavorite, onClose, onAddToCart, onToggleFavor
       const avis = payload?.avis ?? payload?.data ?? [];
       setReviews(Array.isArray(avis) ? avis : []);
       const moyenne = payload?.moyenne_note ?? payload?.moyenne ?? product.note_moyenne;
-      if (typeof moyenne === 'number') {
-        setLiveRating(moyenne);
+      const parsedMoyenne = Number(String(moyenne).replace(',', '.'));
+      if (!Number.isNaN(parsedMoyenne)) {
+        setLiveRating(parsedMoyenne);
       }
     } catch (err) {
       setReviewsError(err.response?.data?.message || 'Impossible de charger les avis.');
@@ -337,10 +339,6 @@ const ProductModal = ({ product, isFavorite, onClose, onAddToCart, onToggleFavor
                 {adding ? <span className="pm-spinner" /> : added ? '✓ Ajouté !' : <><FiShoppingCart size={14} /> Ajouter Au Panier</>}
               </button>
             </div>
-
-            <p className={`pm-stock${isOutOfStock ? ' out' : isLowStock ? ' low' : ''}`}>
-              {isOutOfStock ? '✕ Rupture de stock' : isLowStock ? `⚠ Plus que ${product.quantite_stock} en stock` : '✓ En stock'}
-            </p>
 
             <div className="pm-rate-section">
               <RatingBlock

@@ -15,6 +15,8 @@ const ProductCard = ({
 }) => {
   const isOutOfStock = product.quantite_stock === 0;
   const isLowStock = product.quantite_stock <= 5 && product.quantite_stock > 0;
+  const rawRating = product.note_moyenne ?? product.moyenne_note ?? product.moyenne ?? 0;
+  const productRating = Number(String(rawRating).replace(',', '.')) || 0;
 
   return (
     <div
@@ -57,9 +59,9 @@ const ProductCard = ({
         <h3 className="honey-card-title">{product.nom}</h3>
 
         <div className="honey-card-rating">
-          <Stars rating={product.note_moyenne || 0} />
+          <Stars rating={productRating} />
           <span className="honey-rating-text">
-            {product.note_moyenne ? product.note_moyenne : 'Pas encore noté'}
+            {productRating > 0 ? productRating : 'Pas encore noté'}
           </span>
         </div>
 

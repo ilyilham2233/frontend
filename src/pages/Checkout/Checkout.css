@@ -581,6 +581,149 @@
   margin-top: 0.5rem;
 }
 
+.ck-secure-payment {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.ck-secure-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-bottom: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.ck-secure-header-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #1f4d80;
+  color: #fff;
+  box-shadow: 0 16px 30px rgba(31, 77, 128, 0.12);
+}
+
+.ck-secure-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #18212b;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.ck-secure-subtitle {
+  margin: 0.15rem 0 0;
+  font-size: 0.82rem;
+  color: #5b6a77;
+  font-weight: 500;
+  text-transform: none;
+}
+
+.ck-secure-badge {
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.06);
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.ck-secure-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 0.6rem 1rem;
+  background: #133a20; /* deep green header */
+  color: #fff;
+}
+
+.ck-secure-header-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #ffd36b;
+  color: #133a20;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+}
+
+.ck-secure-header-text { text-align: center; }
+
+.ck-secure-header .ck-secure-title { margin: 0; font-size: 0.95rem; }
+
+.ck-secure-body {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem;
+  background: #f7f7f7;
+  border-top: 1px solid rgba(0,0,0,0.04);
+  overflow-x: auto;
+}
+
+.ck-secure-body::-webkit-scrollbar {
+  height: 6px;
+}
+
+.ck-secure-body::-webkit-scrollbar-thumb {
+  background: rgba(32, 40, 50, 0.16);
+  border-radius: 999px;
+}
+
+.ck-logo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  min-height: 48px;
+  padding: 0.45rem 0.8rem;
+  border-radius: 8px;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.03);
+}
+
+.ck-logo-badge img {
+  max-height: 32px;
+  width: auto;
+  display: block;
+}
+
+/* CB blue square badge */
+.ck-logo-badge.ck-logo-cb {
+  min-width: 92px;
+  background: linear-gradient(180deg,#4aa0ff,#2b75d0);
+  border: 1px solid rgba(20,80,160,0.25);
+  color: #fff;
+  box-shadow: none;
+}
+
+.ck-logo-badge.ck-logo-cb .ck-cb-text {
+  display: inline-block;
+  padding: 6px 10px;
+  font-weight: 800;
+  color: #fff;
+  font-size: 1rem;
+  border-radius: 6px;
+}
+
+.ck-logo-virement {
+  min-width: 150px;
+  color: #36454f;
+  font-weight: 600;
+  background: linear-gradient(180deg,#f3f4f5,#ffffff);
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
 /* ── Récap final ── */
 .ck-final-recap {
   background: #fdfaf4;

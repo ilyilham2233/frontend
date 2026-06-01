@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import {
   FiArrowLeft, FiArrowRight, FiCheckCircle, FiAlertCircle,
   FiLogOut, FiUser, FiMapPin, FiPlus, FiCreditCard, FiTruck,
-  FiPackage, FiShoppingBag, FiCheck, FiEdit2, FiTrash2,
+  FiPackage, FiShoppingBag, FiCheck, FiEdit2, FiTrash2, FiLock,
 } from 'react-icons/fi';
 import { processOrder } from '../../api/orders';
 import { deleteAddress, getAddresses, storeAddress, updateAddress } from '../../api/catalogue';
@@ -420,19 +420,33 @@ const StepPayment = ({ total, onBack, onConfirm, submitting, user }) => {
           </div>
           <p className="ck-card-note">🔒 Formulaire de démonstration — aucune donnée réelle envoyée</p>
           <div className="ck-secure-payment">
-  <p className="ck-secure-title">Paiement sécurisé</p>
-  <div className="ck-secure-badge">
-  <div className="ck-secure-header">🔒 PAIEMENT SÉCURISÉ</div>
-  <div className="ck-secure-body">
-    <span className="ck-secure-lock">🔒</span>
-    <span className="ck-logo-cb">CB</span>
-    <span className="ck-logo-visa">VISA</span>
-    <span className="ck-logo-mc">Master<span>Card</span></span>
-    <span className="ck-logo-paypal"><span className="pp-p">P</span>ayPal</span>
-    <span className="ck-secure-virement">Virement<br/>Bancaire</span>
-  </div>
-</div>
-</div>
+            <div className="ck-secure-badge">
+              <div className="ck-secure-header">
+                <div className="ck-secure-header-icon"><FiLock size={16} /></div>
+                <div className="ck-secure-header-text">
+                  <p className="ck-secure-title">PAIEMENT SÉCURISÉ</p>
+                  <p className="ck-secure-subtitle">en partenariat avec</p>
+                </div>
+              </div>
+              <div className="ck-secure-body">
+                <div className="ck-logo-badge ck-logo-cb">
+                  <span className="ck-cb-text">CB</span>
+                </div>
+                <div className="ck-logo-badge ck-logo-visa">
+                  <img src={`${process.env.PUBLIC_URL}/images/visa.jfif`} alt="Visa" />
+                </div>
+                <div className="ck-logo-badge ck-logo-mc">
+                  <img src={`${process.env.PUBLIC_URL}/images/${encodeURIComponent('master card.jfif')}`} alt="MasterCard" />
+                </div>
+                <div className="ck-logo-badge ck-logo-paypal">
+                  <img src={`${process.env.PUBLIC_URL}/images/paypal.jfif`} alt="PayPal" />
+                </div>
+                <div className="ck-logo-badge ck-logo-virement">
+                  Virement Bancaire
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
