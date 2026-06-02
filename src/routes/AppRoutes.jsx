@@ -12,6 +12,10 @@ import Register from '../pages/Register/Register';
 import ResetToken from '../pages/ResetPassword/ResetToken';
 import VerifyEmail from '../pages/VerifyEmail/VerifyEmail';
 import PrivateRoute from './PrivateRoute';
+import RoleRoute from './RoleRoute';
+import VendeurDashboard from '../pages/vendeur/VendeurDashboard';
+import VendeurProduits from '../pages/vendeur/VendeurProduits';
+import VendeurCommandes from '../pages/vendeur/VendeurCommandes';
 import { Footer } from '../components';
 
 const AppRoutes = () => (
@@ -29,7 +33,13 @@ const AppRoutes = () => (
       <Route path="/cart"                  element={<PrivateRoute><Cart /></PrivateRoute>} />
       <Route path="/checkout"              element={<PrivateRoute><Checkout /></PrivateRoute>} />
       <Route path="/orders"                element={<PrivateRoute><OrderHistory /></PrivateRoute>} />
-      <Route path="*"                      element={<Navigate to="/home" replace />} />
+
+      {/* Vendeur */}
+      <Route path="/vendeur/dashboard"  element={<RoleRoute role="vendeur"><VendeurDashboard /></RoleRoute>} />
+      <Route path="/vendeur/produits"   element={<RoleRoute role="vendeur"><VendeurProduits /></RoleRoute>} />
+      <Route path="/vendeur/commandes"  element={<RoleRoute role="vendeur"><VendeurCommandes /></RoleRoute>} />
+
+      <Route path="*"                   element={<Navigate to="/home" replace />} />
     </Routes>
     <Footer brand="Khayrat Bladi" />
   </>

@@ -507,10 +507,12 @@ const Checkout = () => {
     setSubmitting(true);
     try {
       const res = await processOrder();
+      console.log('[Checkout] processOrder response:', res);
       setCartItems([]);
       setResult({ ok: true, msg: res.message || 'Commande confirmée avec succès ! Un email vous a été envoyé.' });
       setTimeout(() => navigate('/orders'), 3000);
     } catch (err) {
+      console.error('[Checkout] processOrder error:', err?.response?.data ?? err);
       setResult({ ok: false, msg: err.response?.data?.message || 'Erreur lors de la commande. Réessayez.' });
       setSubmitting(false);
     }

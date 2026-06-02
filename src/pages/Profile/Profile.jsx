@@ -34,6 +34,16 @@ const Profile = () => {
   const [editSaving, setEditSaving] = useState(false);
   const [editMsg,    setEditMsg]    = useState('');
 
+  const phone = user?.telephone || user?.Telephone || user?.phone || user?.Phone || '—';
+  const isEmailVerified = Boolean(
+    user?.email_verifie_le ||
+    user?.email_verified_at ||
+    user?.email_verified ||
+    user?.verified ||
+    user?.is_verified ||
+    user?.emailVerified
+  );
+
   const [addresses,   setAddresses]   = useState([]);
   const [addrLoading, setAddrLoading] = useState(false);
   const [addrError,   setAddrError]   = useState('');
@@ -98,7 +108,11 @@ const handleVerifyEmail = async () => {
 };
 
   const openEdit = () => {
-    setEditForm({ prenom: user?.prenom || '', nom: user?.nom || '', telephone: user?.telephone || '' });
+    setEditForm({
+      prenom: user?.prenom || '',
+      nom: user?.nom || '',
+      telephone: user?.telephone || user?.Telephone || user?.phone || user?.Phone || '',
+    });
     setEditMsg('');
     setEditing(true);
   };
@@ -108,18 +122,18 @@ const handleVerifyEmail = async () => {
     setEditForm(f => ({ ...f, [name]: value }));
   };
 
-  const handleEditSave = async () => {
-    setEditSaving(true); setEditMsg('');
-    try {
-      const res = await updateProfile(editForm);
-      updateUser(res?.data ?? { ...user, ...editForm });
-      setEditMsg('Profil mis à jour !');
-      setTimeout(() => { setEditing(false); setEditMsg(''); }, 1500);
-    } catch (err) {
-      setEditMsg(err?.response?.data?.message || 'Erreur lors de la mise à jour.');
-    } finally { setEditSaving(false); }
-  };
-
+ const handleEditSave = async () => {
+  setEditSaving(true); setEditMsg('');
+  try {
+    await updateProfile(editForm);
+    setEditMsg('Profil mis à jour !');
+    setTimeout(() => { setEditing(false); setEditMsg(''); }, 1500);
+  } catch (err) {
+    setEditMsg(err?.response?.data?.message || 'Erreur lors de la mise à jour.');
+  } finally {
+    setEditSaving(false);
+  }
+};
   const openCreate = () => { setEditingId(null); setForm(EMPTY_FORM); setFormError(''); setShowForm(true); };
   const openEditAddr = (addr) => {
     setEditingId(addr.id);
@@ -273,7 +287,7 @@ const handleVerifyEmail = async () => {
                     </div>
                     <div className="pf-field">
                       <span className="pf-field-label">TÉLÉPHONE</span>
-                      <span className="pf-field-value">{user?.telephone || '—'}</span>
+                      <span className="pf-field-value">{phone}</span>
                     </div>
                     <div className="pf-field">
                       <span className="pf-field-label">RÔLE</span>
@@ -282,16 +296,16 @@ const handleVerifyEmail = async () => {
                   </div>
                 )}
 
-                {!user?.email_verifie_le ? (
+                {!isEmailVerified ? (
                   <div className="pf-verify-card">
                     <div className="pf-verify-icon"><FiAlertTriangle size={20} /></div>
                     <div className="pf-verify-text">
                       <strong>Email non vérifié</strong>
                       <p>Vérifiez votre email pour accéder à toutes les fonctionnalités.</p>
                     </div>
-                   <button className="pf-resend-btn" onClick={handleVerifyEmail} disabled={sending}>
-  {sending ? 'Envoi…' : 'Vérifier email'}
-</button>
+                    <button className="pf-resend-btn" onClick={handleVerifyEmail} disabled={sending}>
+                      {sending ? 'Envoi…' : 'Vérifier email'}
+                    </button>
                     {sentMsg && <p className="pf-sent-msg">{sentMsg}</p>}
                   </div>
                 ) : (

@@ -22,8 +22,14 @@ const Login = () => {
     setError('');
 
     try {
-      await login(formData);
-      navigate('/home');
+      const response = await login(formData);
+      const authData = response?.user || response?.data || response || {};
+      const role = authData?.role;
+
+      if (role === 'livreur') navigate('/livreur/dashboard');
+      else if (role === 'vendeur') navigate('/vendeur/dashboard');
+      else if (role === 'admin') navigate('/admin/dashboard');
+      else navigate('/home');
     } catch (err) {
       const message =
         err.response?.data?.message ||

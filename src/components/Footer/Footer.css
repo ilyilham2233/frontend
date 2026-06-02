@@ -108,8 +108,9 @@
   .footer-inner { grid-template-columns: 1fr; }
 }
 .footer-bottom {
-  position: sticky;
-  bottom: 0;
+  /* footer bottom should not be sticky - keep it after page content */
+  position: static;
+  bottom: auto;
 }
 .footer {
   background: #0d0d0d;
