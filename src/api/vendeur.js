@@ -27,5 +27,18 @@ export const updateSellerOrderStatus = async (id, statut) =>
 export const getSellerStats = async () =>
   API.get('/seller/statistics').then(r => r.data);
 
-export const downloadSellerStatsPdf = () =>
-  window.open('https://ice-universe-reason.ngrok-free.dev/api/seller/statistics/download-pdf');
+export const downloadSellerStatsPdf = async () => {
+  const response = await API.get('/seller/statistics/download-pdf', {
+    responseType: 'blob', // ← dit à Axios que c'est un fichier binaire (PDF)
+  });
+
+  // Crée un lien temporaire et clique dessus automatiquement
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', 'statistiques-vendeur.pdf');
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.URL.revokeObjectURL(url);
+};

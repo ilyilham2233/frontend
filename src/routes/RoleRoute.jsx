@@ -15,7 +15,7 @@ const RoleRoute = ({ children, role }) => {
   }
 
   if (!isAuthenticated) return <Navigate to="/login" replace />;
-  if (user?.role !== role) return <Navigate to="/home" replace />;
+  if (user?.role !== role) return <Navigate to="/dashboard" replace />;
 
   return children;
 };

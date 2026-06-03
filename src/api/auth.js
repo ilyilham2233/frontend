@@ -78,7 +78,7 @@ export const updateProfile = async (data) => {
   const response = await API.post('/profile/update', data);
   return response.data;
 };
-export const getProfile = async () => {
+export const fetchProfile = async () => {
   const response = await API.get('/profile');
   return response.data;
 };

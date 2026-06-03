@@ -22,9 +22,9 @@ const Login = () => {
     setError('');
 
     try {
-      const response = await login(formData);
-      const authData = response?.user || response?.data || response || {};
-      const role = authData?.role;
+      await login(formData);
+      const loggedUser = JSON.parse(localStorage.getItem('user'));
+      const role = loggedUser?.role;
 
       if (role === 'livreur') navigate('/livreur/dashboard');
       else if (role === 'vendeur') navigate('/vendeur/dashboard');

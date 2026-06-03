@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import {
   FiUser, FiMapPin, FiLogOut,
   FiEdit2, FiAlertTriangle, FiCheckCircle, FiMail,
@@ -9,9 +8,8 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { getOrderHistory } from '../../api/orders';
 import { getAddresses, createAddress, updateAddress, deleteAddress } from '../../api/Adresse';
-import { updateProfile } from '../../api/auth';
+import { updateProfile, fetchProfile } from '../../api/auth';
 import { Navbar } from '../../components';
-import { getProfile } from '../../api/auth';
 import { useNavigate } from 'react-router-dom';
 import './Profile.css';
 
@@ -59,10 +57,10 @@ const Profile = () => {
     return new Date(user.created_at).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
   })();
   useEffect(() => {
-  getProfile()
-    .then(res => updateUser(res.data))
-    .catch(() => {});
-}, []);
+    fetchProfile()
+      .then(res => updateUser(res.data))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     getOrderHistory()

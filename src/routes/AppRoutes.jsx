@@ -13,9 +13,11 @@ import ResetToken from '../pages/ResetPassword/ResetToken';
 import VerifyEmail from '../pages/VerifyEmail/VerifyEmail';
 import PrivateRoute from './PrivateRoute';
 import RoleRoute from './RoleRoute';
+import Dashboard from '../pages/Dashboard';
+import AdminDashboard from '../pages/admin/AdminDashboard';
+import LivreurDashboard  from '../pages/livreur/Livreurdashboard';
+import LivreurHistorique from '../pages/livreur/LivreurHistorique';
 import VendeurDashboard from '../pages/vendeur/VendeurDashboard';
-import VendeurProduits from '../pages/vendeur/VendeurProduits';
-import VendeurCommandes from '../pages/vendeur/VendeurCommandes';
 import { Footer } from '../components';
 
 const AppRoutes = () => (
@@ -35,11 +37,16 @@ const AppRoutes = () => (
       <Route path="/orders"                element={<PrivateRoute><OrderHistory /></PrivateRoute>} />
 
       {/* Vendeur */}
-      <Route path="/vendeur/dashboard"  element={<RoleRoute role="vendeur"><VendeurDashboard /></RoleRoute>} />
-      <Route path="/vendeur/produits"   element={<RoleRoute role="vendeur"><VendeurProduits /></RoleRoute>} />
-      <Route path="/vendeur/commandes"  element={<RoleRoute role="vendeur"><VendeurCommandes /></RoleRoute>} />
-
+     <Route path="/vendeur/dashboard" element={
+  <RoleRoute role="vendeur"><VendeurDashboard/></RoleRoute>
+} />
+      {/* Livreur */}
+<Route path="/livreur/historique" element={<RoleRoute role="livreur"><LivreurHistorique /></RoleRoute>} />
       <Route path="*"                   element={<Navigate to="/home" replace />} />
+<Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+<Route path="/livreur/dashboard"  element={<RoleRoute role="livreur"><LivreurDashboard /></RoleRoute>} />
+<Route path="/admin/dashboard" element={<RoleRoute role="admin"><AdminDashboard/></RoleRoute>} />
+
     </Routes>
     <Footer brand="Khayrat Bladi" />
   </>
