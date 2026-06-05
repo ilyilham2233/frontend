@@ -13,7 +13,7 @@ import {
   confirmerLivraison,
   getHistoriqueLivraisons,
 } from '../../api/livreur';
-import './Livreur.css';
+import './livreur.css';
 
 /* ── Statuts selon openapi.yaml ── */
 const STATUTS = {
