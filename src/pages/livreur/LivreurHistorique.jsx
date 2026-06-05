@@ -7,7 +7,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { Navbar } from '../../components';
 import { getHistoriqueLivraisons } from '../../api/livreur';
-import './livreur.css';
+import './Livreur.css';
 
 const PERIODS = [
   { value: '',           label: "Toutes" },
