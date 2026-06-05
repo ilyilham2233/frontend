@@ -15,7 +15,7 @@ import PrivateRoute from './PrivateRoute';
 import RoleRoute from './RoleRoute';
 import Dashboard from '../pages/Dashboard';
 import AdminDashboard from '../pages/admin/AdminDashboard';
-import LivreurDashboard from '../pages/livreur/livreurdashboard.jsx';
+import LivreurDashboard  from '../pages/livreur/Livreurdashboard';
 import LivreurHistorique from '../pages/livreur/LivreurHistorique';
 import VendeurDashboard from '../pages/vendeur/VendeurDashboard';
 import { Footer } from '../components';
