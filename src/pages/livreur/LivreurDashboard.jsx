@@ -86,7 +86,6 @@ const LivreurDashboard = () => {
       setUpdating(null);
     }
   };
-
   const handleConfirmer = async (id) => {
     setUpdating(id);
     setConfirmId(null);
