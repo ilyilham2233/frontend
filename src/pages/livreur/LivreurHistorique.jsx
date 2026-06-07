@@ -17,9 +17,35 @@ const PERIODS = [
   { value: 'last_month', label: 'Mois dernier' },
 ];
 
-const fmt = (d) => d
-  ? new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })
-  : '—';
+const fmt = (d) => {
+  if (d === null || d === undefined || d === '') return '—';
+  if (d instanceof Date) {
+    return isNaN(d.getTime())
+      ? '—'
+      : d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+  const parsed = new Date(d);
+  if (!isNaN(parsed.getTime())) {
+    return parsed.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+  return String(d);
+};
+
+const getLivraisonStatut = (l) => l.statut_suivi ?? l.statut ?? l.status ?? 'assignee';
+
+const getLivraisonDateEstimee = (l) =>
+  l.date_livraison_estimee ??
+  l.date_estimee ??
+  l.commande?.date_livraison_estimee ??
+  l.commande?.date_estimee ??
+  l.commande?.commande?.date_livraison_estimee ??
+  l.commande?.commande?.date_estimee ??
+  l.commande?.order?.date_livraison_estimee ??
+  l.commande?.order?.date_estimee ??
+  l.order?.date_livraison_estimee ??
+  l.order?.date_estimee ??
+  l.commande?.livraison?.date_livraison_estimee ??
+  l.commande?.livraison?.date_estimee;
 
 const fmtHour = (d) => d
   ? new Date(d).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
@@ -50,8 +76,7 @@ const LivreurHistorique = () => {
 
   useEffect(() => { load(); }, [load]);
 
-  const livrees    = historique.filter(l => l.statut_suivi === 'livree');
-  const nonLivrees = historique.filter(l => l.statut_suivi === 'non_livree');
+  const livrees    = historique.filter(l => getLivraisonStatut(l) === 'livree');
   const taux       = historique.length > 0
     ? Math.round((livrees.length / historique.length) * 100)
     : 0;
@@ -112,11 +137,6 @@ const LivreurHistorique = () => {
               <span className="lv-kpi-num">{livrees.length}</span>
               <span className="lv-kpi-label">Livrées</span>
             </div>
-            <div className="lv-kpi lv-kpi--red">
-              <FiAlertCircle size={16} />
-              <span className="lv-kpi-num">{nonLivrees.length}</span>
-              <span className="lv-kpi-label">Non livrées</span>
-            </div>
             <div className="lv-kpi lv-kpi--blue">
               <FiClock size={16} />
               <span className="lv-kpi-num">{taux}%</span>
@@ -172,7 +192,7 @@ const LivreurHistorique = () => {
               </thead>
               <tbody>
                 {historique.map(l => {
-                  const isLivree = l.statut_suivi === 'livree';
+                  const isLivree = getLivraisonStatut(l) === 'livree';
                   return (
                     <tr key={l.id} className={`lv-hist-row ${isLivree ? 'lv-hist-row--livree' : 'lv-hist-row--fail'}`}>
                       <td className="lv-hist-id">#{l.id}</td>
@@ -185,7 +205,7 @@ const LivreurHistorique = () => {
                       <td>
                         <div className="lv-hist-date">
                           <FiCalendar size={11} />
-                          {fmt(l.date_livraison_estimee)}
+                          {fmt(getLivraisonDateEstimee(l))}
                         </div>
                       </td>
                       <td>

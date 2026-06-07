@@ -42,10 +42,13 @@ const AppRoutes = () => (
 } />
       {/* Livreur */}
 <Route path="/livreur/historique" element={<RoleRoute role="livreur"><LivreurHistorique /></RoleRoute>} />
+      <Route path="/livreur" element={<Navigate to="/livreur/dashboard" replace />} />
+      <Route path="/vendeur" element={<Navigate to="/vendeur/dashboard" replace />} />
+      <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+      <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+      <Route path="/livreur/dashboard"  element={<RoleRoute role="livreur"><LivreurDashboard /></RoleRoute>} />
+      <Route path="/admin/dashboard" element={<RoleRoute role="admin"><AdminDashboard/></RoleRoute>} />
       <Route path="*"                   element={<Navigate to="/home" replace />} />
-<Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-<Route path="/livreur/dashboard"  element={<RoleRoute role="livreur"><LivreurDashboard /></RoleRoute>} />
-<Route path="/admin/dashboard" element={<RoleRoute role="admin"><AdminDashboard/></RoleRoute>} />
 
     </Routes>
     <Footer brand="Khayrat Bladi" />

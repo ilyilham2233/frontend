@@ -57,10 +57,13 @@ const Profile = () => {
     return new Date(user.created_at).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
   })();
   useEffect(() => {
-    fetchProfile()
-      .then(res => updateUser(res.data))
-      .catch(() => {});
-  }, []);
+  fetchProfile()
+    .then(res => {
+      const fresh = res?.data?.data || res?.data || res;
+      updateUser({ ...user, ...fresh });
+    })
+    .catch(() => {});
+}, []);
 
   useEffect(() => {
     getOrderHistory()

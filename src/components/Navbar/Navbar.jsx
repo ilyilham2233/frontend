@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  FiLogIn, FiLogOut, FiShoppingBag, FiShoppingCart, FiUser, FiChevronDown,
+  FiTruck, FiShoppingBag, FiShoppingCart, FiUser, FiChevronDown,
 } from 'react-icons/fi';
 import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
 import './Navbar.css';
 
 const Navbar = ({
@@ -11,11 +12,11 @@ const Navbar = ({
   brand = 'Khayrat Bladi',
   brandTo = '/home',
   isAuthenticated = false,
-  user,
+  user: userProp,
   onLogout,
   links,
   rightLinks,
-  alwaysTransparent = false,
+  alwaysTransparent = true,
 }) => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [scrolled, setScrolled] = useState(false);
@@ -35,6 +36,21 @@ const Navbar = ({
 
   const items = links || [];
   const rightItems = rightLinks || [];
+  const { user } = useAuth();
+
+  const roleLink = (() => {
+    const role = String(user?.role ?? '').toLowerCase();
+    if (role === 'livreur') {
+      return { to: '/livreur', label: 'Espace Livreur', icon: <FiTruck /> };
+    }
+    if (role === 'vendeur') {
+      return { to: '/vendeur', label: 'Espace Vendeur', icon: <FiShoppingBag /> };
+    }
+    if (role === 'admin') {
+      return { to: '/admin', label: 'Administration', icon: <FiUser /> };
+    }
+    return null;
+  })();
 
   const renderItem = (item, index) => {
     const isCart = item.to === '/cart';
@@ -129,10 +145,17 @@ const Navbar = ({
         </div>
       </div>
       <div className="navbar-right">
+        {roleLink && (
+          <Link to={roleLink.to} className="nav-btn" key="role-quick-link">
+            {roleLink.icon}
+            <span>{roleLink.label}</span>
+          </Link>
+        )}
         {rightItems.map((item, i) => renderItem(item, i + 100))}
       </div>
     </nav>
   );
+  
 };
 
 export default Navbar;

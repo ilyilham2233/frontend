@@ -1,4 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import {
   getSellerProducts,
   storeSellerProduct,
@@ -10,209 +12,139 @@ import {
   downloadSellerStatsPdf,
 } from "../../api/vendeur";
 
-/* ─────────────────────────────────────────────
-   STYLES (injected once)
-───────────────────────────────────────────── */
 const CSS = `
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap');
 @import url('https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css');
 
 .kb-root *, .kb-root *::before, .kb-root *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 .kb-root {
-  --honey:        #C8830A;
-  --honey-light:  #F5C842;
-  --honey-pale:   #FDF3DC;
-  --terracotta:   #B85C38;
-  --cream:        #FAF6EF;
-  --bark:         #4A3728;
-  --moss:         #5A7A4A;
-  --moss-light:   #EBF2E6;
-  --sand:         #E8DCC8;
-  --border:       rgba(74,55,40,0.12);
+  --honey: #C8830A; --honey-light: #F5C842; --honey-pale: #FDF3DC;
+  --terracotta: #B85C38; --cream: #FAF6EF; --bark: #4A3728;
+  --moss: #5A7A4A; --moss-light: #EBF2E6; --sand: #E8DCC8;
+  --border: rgba(74,55,40,0.12);
   font-family: 'DM Sans', sans-serif;
-  background: var(--cream);
-  color: var(--bark);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  background: var(--cream); color: var(--bark);
+  min-height: 100vh; display: flex; flex-direction: column;
 }
-
-/* NAV */
 .kb-nav {
-  background: #4A3728;
-  padding: 0 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 56px;
-  flex-shrink: 0;
+  background: #4A3728; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 56px; flex-shrink: 0;
 }
 .kb-nav-brand {
-  font-family: 'Playfair Display', serif;
-  color: var(--honey-light);
-  font-size: 18px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-family: 'Playfair Display', serif; color: var(--honey-light);
+  font-size: 18px; font-weight: 500; display: flex; align-items: center; gap: 8px;
 }
 .kb-nav-right { display: flex; align-items: center; gap: 16px; }
-.kb-nav-user  { display: flex; align-items: center; gap: 8px; color: #E8DCC8; font-size: 13px; }
+.kb-nav-user {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: #E8DCC8; font-size: 13px;
+  background: transparent; border: none; padding: 6px 10px;
+  border-radius: 999px; cursor: pointer; transition: background 0.2s, color 0.2s;
+}
+.kb-nav-user:hover, .kb-nav-user:focus { background: rgba(255,255,255,0.08); color: #fff; outline: none; }
 .kb-nav-avatar {
   width: 32px; height: 32px; border-radius: 50%;
-  background: var(--honey);
-  display: flex; align-items: center; justify-content: center;
+  background: var(--honey); display: flex; align-items: center; justify-content: center;
   font-weight: 500; font-size: 12px; color: var(--bark);
 }
 .kb-badge-role {
   background: var(--honey); color: var(--bark);
-  font-size: 11px; font-weight: 500;
-  padding: 2px 8px; border-radius: 12px;
+  font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 12px;
 }
-
-/* LAYOUT */
 .kb-layout { display: flex; flex: 1; }
-
-/* SIDEBAR */
 .kb-sidebar { width: 200px; background: #3A2B1E; padding: 20px 0; flex-shrink: 0; }
 .kb-sidebar-label {
   font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
   color: rgba(255,255,255,0.25); padding: 16px 20px 6px;
 }
 .kb-sidebar-item {
-  padding: 10px 20px; cursor: pointer;
-  font-size: 13px; color: rgba(255,255,255,0.55);
+  padding: 10px 20px; cursor: pointer; font-size: 13px; color: rgba(255,255,255,0.55);
   display: flex; align-items: center; gap: 10px;
-  border-left: 3px solid transparent;
-  transition: all 0.15s;
-  user-select: none;
+  border-left: 3px solid transparent; transition: all 0.15s; user-select: none;
   background: none; border-top: none; border-right: none; border-bottom: none;
-  width: 100%; text-align: left;
-  font-family: 'DM Sans', sans-serif;
+  width: 100%; text-align: left; font-family: 'DM Sans', sans-serif;
 }
 .kb-sidebar-item:hover { color: var(--honey-light); background: rgba(255,255,255,0.05); }
 .kb-sidebar-item.active {
-  color: var(--honey-light);
-  background: rgba(200,131,10,0.15);
+  color: var(--honey-light); background: rgba(200,131,10,0.15);
   border-left-color: var(--honey);
 }
 .kb-sidebar-count {
-  margin-left: auto;
-  background: var(--terracotta); color: #fff;
+  margin-left: auto; background: var(--terracotta); color: #fff;
   font-size: 10px; padding: 1px 6px; border-radius: 10px;
 }
-
-/* MAIN */
+.kb-sidebar-logout { margin-top: 16px; color: rgba(255,255,255,0.75); }
+.kb-sidebar-logout:hover { color: #fff; background: rgba(255,255,255,0.08); }
 .kb-main { flex: 1; padding: 24px; overflow-y: auto; }
-
-/* PAGE HEADER */
 .kb-page-header {
   display: flex; align-items: flex-start;
   justify-content: space-between; margin-bottom: 24px;
 }
-.kb-page-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px; font-weight: 600; color: var(--bark);
-}
+.kb-page-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 600; color: var(--bark); }
 .kb-page-subtitle { font-size: 13px; color: rgba(74,55,40,0.55); margin-top: 2px; }
-
-/* BUTTONS */
 .kb-btn {
-  padding: 8px 16px; border-radius: 8px;
-  font-size: 13px; font-weight: 500;
-  cursor: pointer; border: none;
-  display: inline-flex; align-items: center; gap: 6px;
-  font-family: 'DM Sans', sans-serif;
-  transition: opacity 0.15s;
+  padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 500;
+  cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'DM Sans', sans-serif; transition: opacity 0.15s;
 }
 .kb-btn:hover { opacity: 0.88; }
 .kb-btn-primary  { background: var(--honey); color: var(--bark); }
 .kb-btn-outline  { background: transparent; border: 1px solid var(--border); color: var(--bark); }
 .kb-btn-danger   { background: #fee2e2; color: #991b1b; border: none; }
 .kb-btn-sm       { padding: 5px 10px; font-size: 12px; }
-
-/* STAT CARDS */
 .kb-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 14px; margin-bottom: 24px;
 }
 .kb-stat-card {
-  background: #fff; border-radius: 12px;
-  padding: 16px; border: 1px solid var(--border);
-  position: relative; overflow: hidden;
+  background: #fff; border-radius: 12px; padding: 16px;
+  border: 1px solid var(--border); position: relative; overflow: hidden;
 }
-.kb-stat-card::before {
-  content: ''; position: absolute;
-  top: 0; left: 0; right: 0; height: 3px;
-}
-.kb-stat-card.honey::before    { background: var(--honey); }
-.kb-stat-card.moss::before     { background: var(--moss); }
-.kb-stat-card.terra::before    { background: var(--terracotta); }
-.kb-stat-card.blue::before     { background: #3B82F6; }
+.kb-stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+.kb-stat-card.honey::before { background: var(--honey); }
+.kb-stat-card.moss::before  { background: var(--moss); }
+.kb-stat-card.terra::before { background: var(--terracotta); }
+.kb-stat-card.blue::before  { background: #3B82F6; }
 .kb-stat-icon { font-size: 20px; margin-bottom: 8px; color: var(--honey); }
 .kb-stat-card.moss  .kb-stat-icon { color: var(--moss); }
 .kb-stat-card.terra .kb-stat-icon { color: var(--terracotta); }
 .kb-stat-card.blue  .kb-stat-icon { color: #3B82F6; }
 .kb-stat-value {
-  font-family: 'Playfair Display', serif;
-  font-size: 24px; font-weight: 600;
+  font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 600;
   color: var(--bark); line-height: 1; margin-bottom: 4px;
 }
 .kb-stat-label { font-size: 12px; color: rgba(74,55,40,0.5); }
-.kb-stat-trend { font-size: 11px; margin-top: 6px; color: var(--moss); }
-.kb-stat-trend.down { color: var(--terracotta); }
-
-/* TWO COL */
 .kb-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
-
-/* CARD */
 .kb-card { background: #fff; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; }
 .kb-card-header {
   padding: 16px 20px; border-bottom: 1px solid var(--border);
   display: flex; align-items: center; justify-content: space-between;
 }
-.kb-card-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 15px; font-weight: 500; color: var(--bark);
-}
+.kb-card-title { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 500; color: var(--bark); }
 .kb-card-body { padding: 16px 20px; }
-
-/* TABLE */
 .kb-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .kb-table th {
-  text-align: left; padding: 10px 12px;
-  font-size: 11px; font-weight: 500; text-transform: uppercase;
-  letter-spacing: 0.5px; color: rgba(74,55,40,0.45);
-  border-bottom: 1px solid var(--border);
-  background: var(--cream);
+  text-align: left; padding: 10px 12px; font-size: 11px; font-weight: 500;
+  text-transform: uppercase; letter-spacing: 0.5px; color: rgba(74,55,40,0.45);
+  border-bottom: 1px solid var(--border); background: var(--cream);
 }
 .kb-table td {
   padding: 12px; border-bottom: 1px solid rgba(74,55,40,0.06);
   vertical-align: middle; color: var(--bark);
 }
 .kb-table tr:last-child td { border-bottom: none; }
-.kb-table tr:hover td    { background: var(--honey-pale); }
-
-/* PRODUCT THUMB */
+.kb-table tr:hover td { background: var(--honey-pale); }
 .kb-prod-info { display: flex; align-items: center; gap: 10px; }
 .kb-prod-thumb {
-  width: 40px; height: 40px; border-radius: 8px;
-  background: var(--sand); display: flex; align-items: center;
-  justify-content: center; font-size: 20px; flex-shrink: 0;
-  overflow: hidden;
+  width: 40px; height: 40px; border-radius: 8px; background: var(--sand);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0; overflow: hidden;
 }
 .kb-prod-thumb img { width: 100%; height: 100%; object-fit: cover; }
 .kb-prod-name { font-weight: 500; font-size: 13px; }
 .kb-prod-sub  { font-size: 11px; color: rgba(74,55,40,0.5); }
-
-/* BADGES */
-.kb-badge {
-  display: inline-flex; align-items: center;
-  padding: 3px 9px; border-radius: 20px;
-  font-size: 11px; font-weight: 500;
-}
+.kb-badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 500; }
 .kb-badge-actif   { background: var(--moss-light); color: #2D5A1B; }
 .kb-badge-attente { background: var(--honey-pale); color: #7A5200; }
 .kb-badge-masque  { background: #F3F4F6; color: #6B7280; }
@@ -220,8 +152,6 @@ const CSS = `
 .kb-badge-exped   { background: #EDE9FE; color: #6D28D9; }
 .kb-badge-livre   { background: var(--moss-light); color: #2D5A1B; }
 .kb-badge-annule  { background: #FEE2E2; color: #991B1B; }
-
-/* TOP PRODUCTS */
 .kb-top-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(74,55,40,0.06); }
 .kb-top-item:last-child { border-bottom: none; }
 .kb-top-rank {
@@ -234,8 +164,6 @@ const CSS = `
 .kb-top-bar-bg { background: var(--sand); border-radius: 4px; height: 6px; margin-top: 4px; }
 .kb-top-bar    { height: 6px; border-radius: 4px; background: var(--honey); }
 .kb-top-amount { font-size: 12px; font-weight: 500; white-space: nowrap; }
-
-/* SEARCH BAR */
 .kb-search-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
 .kb-search-wrap { position: relative; flex: 1; }
 .kb-search-wrap .kb-search-icon {
@@ -243,14 +171,11 @@ const CSS = `
   font-size: 16px; color: rgba(74,55,40,0.35); pointer-events: none;
 }
 .kb-search-input {
-  width: 100%; padding: 9px 12px 9px 34px;
-  border: 1px solid var(--border); border-radius: 8px;
-  font-size: 13px; font-family: 'DM Sans', sans-serif;
+  width: 100%; padding: 9px 12px 9px 34px; border: 1px solid var(--border);
+  border-radius: 8px; font-size: 13px; font-family: 'DM Sans', sans-serif;
   color: var(--bark); background: #fff; outline: none;
 }
 .kb-search-input:focus { border-color: var(--honey); }
-
-/* FORM */
 .kb-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .kb-form-group { display: flex; flex-direction: column; gap: 4px; }
 .kb-form-group.full { grid-column: 1 / -1; }
@@ -258,24 +183,17 @@ const CSS = `
 .kb-form-input {
   padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px;
   font-size: 13px; font-family: 'DM Sans', sans-serif;
-  color: var(--bark); background: #fff; outline: none;
-  transition: border-color 0.15s;
+  color: var(--bark); background: #fff; outline: none; transition: border-color 0.15s;
 }
 .kb-form-input:focus { border-color: var(--honey); }
 .kb-form-hint { font-size: 11px; color: rgba(74,55,40,0.4); margin-top: 10px; }
-
-/* MODAL */
 .kb-modal-overlay {
-  position: fixed; inset: 0;
-  background: rgba(30,15,5,0.5);
-  display: flex; align-items: center; justify-content: center;
-  z-index: 200;
+  position: fixed; inset: 0; background: rgba(30,15,5,0.5);
+  display: flex; align-items: center; justify-content: center; z-index: 200;
 }
 .kb-modal {
-  background: #fff; border-radius: 16px;
-  width: 520px; max-width: 95vw;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-  overflow: hidden;
+  background: #fff; border-radius: 16px; width: 520px; max-width: 95vw;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15); overflow: hidden;
 }
 .kb-modal-header {
   padding: 20px 24px; border-bottom: 1px solid var(--border);
@@ -284,40 +202,26 @@ const CSS = `
 .kb-modal-title { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 600; }
 .kb-modal-body   { padding: 20px 24px; }
 .kb-modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
-
-/* STATUS SELECT */
 .kb-status-select {
   padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px;
-  font-size: 12px; font-family: 'DM Sans', sans-serif;
-  background: #fff; cursor: pointer; color: var(--bark);
+  font-size: 12px; font-family: 'DM Sans', sans-serif; background: #fff; cursor: pointer; color: var(--bark);
 }
-
-/* TOAST */
 .kb-toast {
-  position: fixed; top: 16px; right: 16px;
-  background: var(--moss); color: #fff;
-  padding: 10px 16px; border-radius: 10px;
-  font-size: 13px; font-weight: 500; z-index: 300;
-  display: flex; align-items: center; gap: 8px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-  transform: translateY(-10px); opacity: 0;
-  transition: all 0.3s; pointer-events: none;
+  position: fixed; top: 16px; right: 16px; background: var(--moss); color: #fff;
+  padding: 10px 16px; border-radius: 10px; font-size: 13px; font-weight: 500; z-index: 300;
+  display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  transform: translateY(-10px); opacity: 0; transition: all 0.3s; pointer-events: none;
 }
 .kb-toast.show  { transform: translateY(0); opacity: 1; }
 .kb-toast.error { background: var(--terracotta); }
-
-/* LOADING / EMPTY */
 .kb-loading { text-align: center; padding: 40px; color: rgba(74,55,40,0.4); font-size: 14px; }
 .kb-empty   { text-align: center; padding: 40px 20px; color: rgba(74,55,40,0.4); }
 .kb-empty i  { font-size: 36px; margin-bottom: 10px; display: block; }
-
-/* CHART CONTAINER */
 .kb-chart-wrap { position: relative; height: 180px; }
 `;
 
-/* ─────────────────────────────────────────────
-   HELPERS
-───────────────────────────────────────────── */
+const MOIS_LABELS = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
+
 const CATEGORIES = [
   { id: 1, nom: "Miel au détail" },
   { id: 2, nom: "Huiles essentielles" },
@@ -327,19 +231,15 @@ const CATEGORIES = [
 ];
 
 const STATUT_ORDER_NEXT = {
-  en_attente:    ["en_preparation", "annulee"],
+  en_attente:     ["en_preparation", "annulee"],
   en_preparation: ["expediee", "annulee"],
 };
 
 function StatutBadge({ statut }) {
   const map = {
-    actif:          "kb-badge-actif",
-    en_attente:     "kb-badge-attente",
-    masque:         "kb-badge-masque",
-    en_preparation: "kb-badge-prep",
-    expediee:       "kb-badge-exped",
-    livree:         "kb-badge-livre",
-    annulee:        "kb-badge-annule",
+    actif: "kb-badge-actif", en_attente: "kb-badge-attente", masque: "kb-badge-masque",
+    en_preparation: "kb-badge-prep", expediee: "kb-badge-exped",
+    livree: "kb-badge-livre", annulee: "kb-badge-annule",
   };
   const labels = {
     actif: "Actif", en_attente: "En attente", masque: "Masqué",
@@ -359,25 +259,17 @@ function ProdThumb({ prod }) {
   );
 }
 
-/* ─────────────────────────────────────────────
-   TOAST HOOK
-───────────────────────────────────────────── */
 function useToast() {
   const [toast, setToast] = useState({ msg: "", show: false, error: false });
   const timerRef = useRef(null);
-
   const showToast = (msg, error = false) => {
     clearTimeout(timerRef.current);
     setToast({ msg, show: true, error });
     timerRef.current = setTimeout(() => setToast(t => ({ ...t, show: false })), 3000);
   };
-
   return { toast, showToast };
 }
 
-/* ─────────────────────────────────────────────
-   MODAL PRODUCT
-───────────────────────────────────────────── */
 function ProductModal({ open, editing, onClose, onSaved, showToast }) {
   const empty = { nom: "", categorie_id: 1, prix: "", quantite_stock: "", image_url: "", description: "" };
   const [form, setForm] = useState(empty);
@@ -472,8 +364,7 @@ function ProductModal({ open, editing, onClose, onSaved, showToast }) {
             </div>
           </div>
           <p className="kb-form-hint">
-            <i className="ti ti-info-circle" aria-hidden="true" /> Les nouveaux produits passent en
-            révision admin avant publication.
+            <i className="ti ti-info-circle" aria-hidden="true" /> Les nouveaux produits passent en révision admin avant publication.
           </p>
         </div>
         <div className="kb-modal-footer">
@@ -488,22 +379,24 @@ function ProductModal({ open, editing, onClose, onSaved, showToast }) {
   );
 }
 
-/* ─────────────────────────────────────────────
-   VIEW: DASHBOARD
-───────────────────────────────────────────── */
 function DashboardView({ stats, orders, showToast }) {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
 
   useEffect(() => {
     if (!stats || !chartRef.current) return;
+
     import("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js")
       .catch(() => {})
       .finally(() => {
         if (!window.Chart) return;
         if (chartInstance.current) chartInstance.current.destroy();
-        const months = stats.ventes_par_mois?.map(v => v.mois) || [];
-        const data   = stats.ventes_par_mois?.map(v => v.total) || [];
+
+        // ✅ FIX: trier par mois croissant + convertir numéro → nom de mois
+        const ventesTriees = [...(stats.ventes_par_mois || [])].sort((a, b) => a.mois - b.mois);
+        const months = ventesTriees.map(v => MOIS_LABELS[(v.mois ?? 1) - 1]);
+        const data   = ventesTriees.map(v => Number(v.total));
+
         chartInstance.current = new window.Chart(chartRef.current, {
           type: "bar",
           data: {
@@ -521,12 +414,20 @@ function DashboardView({ stats, orders, showToast }) {
             maintainAspectRatio: false,
             plugins: {
               legend: { display: false },
-              tooltip: { callbacks: { label: c => c.raw.toLocaleString("fr-MA") + " DH" } },
+              tooltip: {
+                callbacks: {
+                  label: c => Number(c.raw).toLocaleString("fr-MA") + " DH",
+                },
+              },
             },
             scales: {
               y: {
                 grid: { color: "rgba(74,55,40,0.06)" },
-                ticks: { font: { size: 11 }, color: "rgba(74,55,40,0.45)", callback: v => v.toLocaleString("fr-MA") },
+                ticks: {
+                  font: { size: 11 },
+                  color: "rgba(74,55,40,0.45)",
+                  callback: v => v.toLocaleString("fr-MA"),
+                },
               },
               x: {
                 grid: { display: false },
@@ -536,10 +437,15 @@ function DashboardView({ stats, orders, showToast }) {
           },
         });
       });
-    return () => { if (chartInstance.current) { chartInstance.current.destroy(); chartInstance.current = null; } };
+
+    return () => {
+      if (chartInstance.current) { chartInstance.current.destroy(); chartInstance.current = null; }
+    };
   }, [stats]);
 
-  const topMax = stats?.top_produits?.[0]?.total_ventes || 1;
+  // ✅ FIX: champ correct = total_revenu (confirmé par la réponse API)
+  const getAmount = (p) => Number(p?.total_revenu ?? 0);
+  const topMax = getAmount(stats?.top_produits?.[0]) || 1;
 
   return (
     <div>
@@ -548,12 +454,12 @@ function DashboardView({ stats, orders, showToast }) {
           <h1 className="kb-page-title">Tableau de bord 🍯</h1>
           <p className="kb-page-subtitle">Résumé de votre activité de vente</p>
         </div>
-        <button className="kb-btn kb-btn-outline kb-btn-sm" onClick={() => { downloadSellerStatsPdf(); showToast("Génération du PDF..."); }}>
+        <button className="kb-btn kb-btn-outline kb-btn-sm"
+          onClick={() => { downloadSellerStatsPdf(); showToast("Génération du PDF..."); }}>
           <i className="ti ti-download" aria-hidden="true" /> Rapport PDF
         </button>
       </div>
 
-      {/* STATS */}
       <div className="kb-stats-grid">
         <div className="kb-stat-card honey">
           <div className="kb-stat-icon"><i className="ti ti-coins" aria-hidden="true" /></div>
@@ -572,12 +478,13 @@ function DashboardView({ stats, orders, showToast }) {
         </div>
         <div className="kb-stat-card blue">
           <div className="kb-stat-icon"><i className="ti ti-star" aria-hidden="true" /></div>
-          <div className="kb-stat-value">{stats?.note_moyenne ? Number(stats.note_moyenne).toFixed(1) : "—"}</div>
+          <div className="kb-stat-value">
+            {stats?.note_moyenne ? Number(stats.note_moyenne).toFixed(1) : "—"}
+          </div>
           <div className="kb-stat-label">Note moyenne</div>
         </div>
       </div>
 
-      {/* CHART + TOP */}
       <div className="kb-two-col">
         <div className="kb-card">
           <div className="kb-card-header">
@@ -585,10 +492,11 @@ function DashboardView({ stats, orders, showToast }) {
           </div>
           <div className="kb-card-body">
             <div className="kb-chart-wrap">
-              <canvas ref={chartRef} role="img" aria-label="Graphique ventes mensuelles">Ventes mensuelles.</canvas>
+              <canvas ref={chartRef} role="img" aria-label="Graphique ventes mensuelles" />
             </div>
           </div>
         </div>
+
         <div className="kb-card">
           <div className="kb-card-header">
             <span className="kb-card-title">Top produits</span>
@@ -598,19 +506,25 @@ function DashboardView({ stats, orders, showToast }) {
               <div className="kb-top-item" key={p.produit_id || i}>
                 <div className={`kb-top-rank ${i === 0 ? "first" : ""}`}>{i + 1}</div>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 13, fontWeight: 500 }}>{p.nom}</div>
+                  {/* ✅ FIX: nom depuis p.produit.nom */}
+                  <div style={{ fontSize: 13, fontWeight: 500 }}>
+                    {p.produit?.nom || `Produit #${p.produit_id}`}
+                  </div>
                   <div className="kb-top-bar-bg">
-                    <div className="kb-top-bar" style={{ width: `${Math.round((p.total_ventes / topMax) * 100)}%` }} />
+                    <div
+                      className="kb-top-bar"
+                      style={{ width: `${Math.round((getAmount(p) / topMax) * 100)}%` }}
+                    />
                   </div>
                 </div>
-                <div className="kb-top-amount">{Number(p.total_ventes).toLocaleString("fr-MA")} DH</div>
+                {/* ✅ FIX: affiche total_revenu en DH */}
+                <div className="kb-top-amount">{getAmount(p).toLocaleString("fr-MA")} DH</div>
               </div>
             )) : <div className="kb-empty"><p>Aucune donnée</p></div>}
           </div>
         </div>
       </div>
 
-      {/* RECENT ORDERS */}
       <div className="kb-card">
         <div className="kb-card-header">
           <span className="kb-card-title">Commandes récentes</span>
@@ -631,7 +545,9 @@ function DashboardView({ stats, orders, showToast }) {
                   <td><StatutBadge statut={o.statut} /></td>
                 </tr>
               ))}
-              {!orders.length && <tr><td colSpan={4}><div className="kb-empty"><p>Aucune commande</p></div></td></tr>}
+              {!orders.length && (
+                <tr><td colSpan={4}><div className="kb-empty"><p>Aucune commande</p></div></td></tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -640,9 +556,6 @@ function DashboardView({ stats, orders, showToast }) {
   );
 }
 
-/* ─────────────────────────────────────────────
-   VIEW: PRODUITS
-───────────────────────────────────────────── */
 function ProduitsView({ products, loading, onRefresh, showToast }) {
   const [search, setSearch] = useState("");
   const [filterStatut, setFilterStatut] = useState("");
@@ -764,9 +677,6 @@ function ProduitsView({ products, loading, onRefresh, showToast }) {
   );
 }
 
-/* ─────────────────────────────────────────────
-   VIEW: COMMANDES
-───────────────────────────────────────────── */
 function CommandesView({ orders, loading, onRefresh, showToast }) {
   const [search, setSearch] = useState("");
   const [filterStatut, setFilterStatut] = useState("");
@@ -878,9 +788,6 @@ function CommandesView({ orders, loading, onRefresh, showToast }) {
   );
 }
 
-/* ─────────────────────────────────────────────
-   ROOT COMPONENT
-───────────────────────────────────────────── */
 export default function VendeurDashboard() {
   const [view, setView] = useState("dashboard");
   const [products, setProducts] = useState([]);
@@ -889,25 +796,51 @@ export default function VendeurDashboard() {
   const [loadingProd, setLoadingProd] = useState(false);
   const [loadingCmd, setLoadingCmd]   = useState(false);
   const { toast, showToast } = useToast();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
-  // Load data
+  const handle401 = (err) => {
+    if (err?.response?.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      navigate('/login');
+    }
+  };
+
   const fetchProducts = async () => {
     setLoadingProd(true);
-    try { setProducts((await getSellerProducts()).data || []); }
-    catch { showToast("Impossible de charger les produits", true); }
-    finally { setLoadingProd(false); }
+    try {
+      const res = await getSellerProducts();
+      setProducts(Array.isArray(res) ? res : res?.data || []);
+    } catch (err) {
+      handle401(err);
+      showToast("Impossible de charger les produits", true);
+    } finally { setLoadingProd(false); }
   };
 
   const fetchOrders = async () => {
     setLoadingCmd(true);
-    try { setOrders((await getSellerOrders()).data || []); }
-    catch { showToast("Impossible de charger les commandes", true); }
-    finally { setLoadingCmd(false); }
+    try {
+      const res = await getSellerOrders();
+      setOrders(Array.isArray(res) ? res : res?.data || []);
+    } catch (err) {
+      handle401(err);
+      showToast("Impossible de charger les commandes", true);
+    } finally { setLoadingCmd(false); }
   };
 
   const fetchStats = async () => {
-    try { setStats((await getSellerStats()).data || null); }
-    catch { /* silent */ }
+    try {
+      const res = await getSellerStats();
+      // ✅ FIX: API retourne { status, data: { ... } }
+      // vendeur.js fait .then(r => r.data) donc res = { status, data: { top_produits, ... } }
+      // On prend res.data si dispo, sinon res directement
+      const s = res?.data ?? res;
+      setStats(s);
+    } catch (err) {
+      handle401(err);
+      showToast("Impossible de charger les statistiques", true);
+    }
   };
 
   useEffect(() => {
@@ -916,34 +849,33 @@ export default function VendeurDashboard() {
     fetchStats();
   }, []);
 
-  // Sidebar navigation
   const navItems = [
-    { id: "dashboard", label: "Tableau de bord", icon: "ti-dashboard" },
-    { id: "produits",  label: "Mes produits",    icon: "ti-package",     count: products.length },
-    { id: "commandes", label: "Commandes",        icon: "ti-shopping-bag", count: orders.filter(o => o.statut === "en_attente").length },
+    { id: "dashboard", label: "Tableau de bord",  icon: "ti-dashboard" },
+    { id: "produits",  label: "Mes produits",      icon: "ti-package",      count: products.length },
+    { id: "commandes", label: "Commandes",          icon: "ti-shopping-bag", count: orders.filter(o => o.statut === "en_attente").length },
   ];
 
   return (
     <div className="kb-root">
-      {/* Inject CSS once */}
       <style>{CSS}</style>
 
-      {/* NAV */}
       <nav className="kb-nav">
         <div className="kb-nav-brand">
           <span aria-hidden="true">🍯</span> Khayrate Bladi
         </div>
         <div className="kb-nav-right">
           <span className="kb-badge-role">Vendeur</span>
-          <div className="kb-nav-user">
-            <div className="kb-nav-avatar" aria-hidden="true">MA</div>
+          <button type="button" className="kb-nav-user"
+            onClick={() => navigate('/profile')} aria-label="Aller au profil">
+            <div className="kb-nav-avatar" aria-hidden="true">
+              {user?.prenom?.[0] || 'V'}{user?.nom?.[0] || ''}
+            </div>
             <span>Mon espace</span>
-          </div>
+          </button>
         </div>
       </nav>
 
       <div className="kb-layout">
-        {/* SIDEBAR */}
         <aside className="kb-sidebar" aria-label="Navigation vendeur">
           <div className="kb-sidebar-label">Principal</div>
           {navItems.map(item => (
@@ -957,9 +889,17 @@ export default function VendeurDashboard() {
                 <span className="kb-sidebar-count">{item.count}</span>}
             </button>
           ))}
+          <button type="button"
+            className="kb-sidebar-item kb-sidebar-logout"
+            onClick={async () => {
+              try { await logout(); } catch (err) { console.error('Logout failed', err); }
+              navigate('/login');
+            }}>
+            <i className="ti ti-logout" aria-hidden="true" />
+            Déconnexion
+          </button>
         </aside>
 
-        {/* MAIN */}
         <main className="kb-main">
           {view === "dashboard" && (
             <DashboardView stats={stats} orders={orders} showToast={showToast} />
@@ -979,7 +919,6 @@ export default function VendeurDashboard() {
         </main>
       </div>
 
-      {/* TOAST */}
       <div className={`kb-toast ${toast.show ? "show" : ""} ${toast.error ? "error" : ""}`}
         role="status" aria-live="polite">
         <i className={`ti ${toast.error ? "ti-alert-circle" : "ti-check"}`} aria-hidden="true" />

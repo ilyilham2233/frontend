@@ -218,7 +218,10 @@
   color: var(--lv-text-muted);
 }
 
-.lv-kpis--hist { margin-top: 0.5rem; }
+.lv-kpis--hist {
+  margin-top: 0.5rem;
+  grid-template-columns: repeat(3, 1fr);
+}
 
 /* ── Alert ── */
 .lv-alert {

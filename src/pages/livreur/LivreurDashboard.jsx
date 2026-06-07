@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   FiTruck, FiList, FiUser, FiLogOut, FiPackage,
   FiClock, FiCheckCircle, FiAlertCircle, FiRefreshCw,
-  FiChevronRight, FiCalendar,
+  FiCalendar,
 } from 'react-icons/fi';
 import { useAuth } from '../../context/AuthContext';
 import { Navbar } from '../../components';
@@ -21,7 +21,6 @@ const STATUTS = {
   recuperee:  { label: 'Récupérée',    color: '#c2410c', bg: '#fff7ed', icon: <FiPackage />,      step: 1 },
   en_cours:   { label: 'En cours',     color: '#1d4ed8', bg: '#eff6ff', icon: <FiTruck />,        step: 2 },
   livree:     { label: 'Livrée',       color: '#15803d', bg: '#f0fdf4', icon: <FiCheckCircle />,  step: 3 },
-  non_livree: { label: 'Non livrée',   color: '#dc2626', bg: '#fef2f2', icon: <FiAlertCircle />,  step: -1 },
 };
 
 /* Quelle action proposer selon le statut actuel */
@@ -31,9 +30,35 @@ const PROCHAINE_ACTION = {
   en_cours:  null, // → confirmerLivraison
 };
 
-const fmt = (d) => d
-  ? new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })
-  : '—';
+const fmt = (d) => {
+  if (d === null || d === undefined || d === '') return '—';
+  if (d instanceof Date) {
+    return isNaN(d.getTime())
+      ? '—'
+      : d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+  const parsed = new Date(d);
+  if (!isNaN(parsed.getTime())) {
+    return parsed.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+  return String(d);
+};
+
+const getLivraisonStatut = (l) => l.statut_suivi ?? l.statut ?? l.status ?? 'assignee';
+
+const getLivraisonDateEstimee = (l) =>
+  l.date_livraison_estimee ??
+  l.date_estimee ??
+  l.commande?.date_livraison_estimee ??
+  l.commande?.date_estimee ??
+  l.commande?.commande?.date_livraison_estimee ??
+  l.commande?.commande?.date_estimee ??
+  l.commande?.order?.date_livraison_estimee ??
+  l.commande?.order?.date_estimee ??
+  l.order?.date_livraison_estimee ??
+  l.order?.date_estimee ??
+  l.commande?.livraison?.date_livraison_estimee ??
+  l.commande?.livraison?.date_estimee;
 
 const LivreurDashboard = () => {
   const { user, logout } = useAuth();
@@ -78,7 +103,7 @@ const LivreurDashboard = () => {
     try {
       await updateStatutLivraison(id, statut);
       setLivraisons(prev =>
-        prev.map(l => l.id === id ? { ...l, statut_suivi: statut } : l)
+        prev.map(l => l.id === id ? { ...l, statut_suivi: statut, statut } : l)
       );
     } catch {
       setError('Erreur lors de la mise à jour du statut.');
@@ -92,7 +117,7 @@ const LivreurDashboard = () => {
     try {
       await confirmerLivraison(id);
       setLivraisons(prev =>
-        prev.map(l => l.id === id ? { ...l, statut_suivi: 'livree' } : l)
+        prev.map(l => l.id === id ? { ...l, statut_suivi: 'livree', statut: 'livree' } : l)
       );
       setSuccessId(id);
       setTimeout(() => setSuccessId(null), 3000);
@@ -106,9 +131,9 @@ const LivreurDashboard = () => {
   /* Stats rapides */
   const stats = {
     total:      livraisons.length,
-    assignee:   livraisons.filter(l => l.statut_suivi === 'assignee').length,
-    en_cours:   livraisons.filter(l => l.statut_suivi === 'en_cours').length,
-    livrees:    livraisons.filter(l => l.statut_suivi === 'livree').length,
+    assignee:   livraisons.filter(l => getLivraisonStatut(l) === 'assignee').length,
+    en_cours:   livraisons.filter(l => getLivraisonStatut(l) === 'en_cours').length,
+    livrees:    livraisons.filter(l => getLivraisonStatut(l) === 'livree').length,
   };
 
  const actives  = livraisons;
@@ -265,12 +290,13 @@ const termines = [];
 
 /* ── Card composant ── */
 const LivraisonCard = ({ livraison: l, updating, successId, onStatut, onConfirmRequest }) => {
-  const statut = STATUTS[l.statut_suivi] ?? STATUTS.assignee;
-  const action = PROCHAINE_ACTION[l.statut_suivi];
+  const statutKey = getLivraisonStatut(l);
+  const statut = STATUTS[statutKey] ?? STATUTS.assignee;
+  const action = PROCHAINE_ACTION[statutKey];
   const isSuccess = successId === l.id;
 
   return (
-    <article className={`lv-card ${isSuccess ? 'lv-card--success' : ''} ${['livree','non_livree'].includes(l.statut_suivi) ? 'lv-card--done' : ''}`}>
+    <article className={`lv-card ${isSuccess ? 'lv-card--success' : ''} ${['livree','non_livree'].includes(statutKey) ? 'lv-card--done' : ''}`}>
 
       {/* Top */}
       <div className="lv-card-top">
@@ -305,10 +331,27 @@ const LivraisonCard = ({ livraison: l, updating, successId, onStatut, onConfirmR
             <span>{l.commande.user.prenom} {l.commande.user.nom}</span>
           </div>
         )}
-        {l.date_livraison_estimee && (
+        {l.commande?.user?.telephone && (
+  <div className="lv-info-row">
+    <span>📞 {l.commande.user.telephone}</span>
+  </div>
+)}
+
+{l.commande?.user?.adresse_par_defaut && (
+  <div className="lv-info-row">
+    <span>
+      📍 {l.commande.user.adresse_par_defaut.rue},
+      {' '}
+      {l.commande.user.adresse_par_defaut.ville}
+      {' '}
+      ({l.commande.user.adresse_par_defaut.code_postal})
+    </span>
+  </div>
+)}
+        {(getLivraisonDateEstimee(l)) && (
           <div className="lv-info-row">
             <FiCalendar size={13} />
-            <span>Estimée : {fmt(l.date_livraison_estimee)}</span>
+            <span>Estimée : {fmt(getLivraisonDateEstimee(l))}</span>
           </div>
         )}
         {l.commande?.prix_total && (
@@ -333,7 +376,7 @@ const LivraisonCard = ({ livraison: l, updating, successId, onStatut, onConfirmR
             {updating === l.id ? 'Mise à jour…' : action.label}
           </button>
         )}
-        {!isSuccess && l.statut_suivi === 'en_cours' && (
+        {!isSuccess && statutKey === 'en_cours' && (
           <>
             <button
               className="lv-btn lv-btn--green"
@@ -342,21 +385,12 @@ const LivraisonCard = ({ livraison: l, updating, successId, onStatut, onConfirmR
             >
               <FiCheckCircle size={14} /> Confirmer livrée
             </button>
-            <button
-              className="lv-btn lv-btn--danger"
-              onClick={() => onStatut(l.id, 'non_livree')}
-              disabled={updating === l.id}
-            >
-              <FiAlertCircle size={14} /> Non livrée
-            </button>
           </>
         )}
-        {l.statut_suivi === 'livree' && !isSuccess && (
+        {statutKey === 'livree' && !isSuccess && (
           <span className="lv-done-label"><FiCheckCircle size={13} /> Livraison confirmée</span>
         )}
-        {l.statut_suivi === 'non_livree' && (
-          <span className="lv-fail-label"><FiAlertCircle size={13} /> Non livrée</span>
-        )}
+        
       </div>
     </article>
   );
