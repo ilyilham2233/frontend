@@ -33,13 +33,13 @@ const STATUS_CFG = {
 };
 
 const NAV_ITEMS = [
-  { id: "overview",    label: "Vue d'ensemble", icon: "📊" },
-  { id: "users",       label: "Utilisateurs",   icon: "👥" },
-  { id: "catalogue",   label: "Catalogue",      icon: "📦" },
-  { id: "orders",      label: "Commandes",      icon: "🛒" },
-  { id: "deliveries",  label: "Livraisons",     icon: "🚚" },
-  { id: "reports",     label: "Rapports",       icon: "📈" },
-  { id: "settings",    label: "Paramètres",     icon: "⚙️" },
+  { id: "overview",    label: "Vue d'ensemble",  },
+  { id: "users",       label: "Utilisateurs",    },
+  { id: "catalogue",   label: "Catalogue",      },
+  { id: "orders",      label: "Commandes",      },
+  { id: "deliveries",  label: "Livraisons",     },
+  { id: "reports",     label: "Rapports",       },
+  { id: "settings",    label: "Paramètres",     },
 ];
 
 // ─── Helpers UI ───────────────────────────────────────────────────────────────
@@ -55,7 +55,7 @@ const Badge = ({ value }) => {
   );
 };
 
-const MetricCard = ({ icon, label, value, sub, color }) => (
+const MetricCard = ({ label, value, sub, color }) => (
   <div style={{
     background: C.white, border: `1px solid ${C.gray200}`,
     borderRadius: 14, padding: "18px 20px",
@@ -68,7 +68,7 @@ const MetricCard = ({ icon, label, value, sub, color }) => (
         background: color + "20",
         display: "flex", alignItems: "center", justifyContent: "center",
         fontSize: 18,
-      }}>{icon}</span>
+      }}></span>
     </div>
     <div style={{ fontSize: 26, fontWeight: 600, color: C.earthDark }}>{value}</div>
     {sub && <div style={{ fontSize: 12, color: C.gray400 }}>{sub}</div>}
@@ -162,7 +162,7 @@ const Sidebar = ({ active, onNav }) => {
             fontSize: 13, fontWeight: active === item.id ? 500 : 400,
             transition: "all 0.15s",
           }}>
-            <span style={{ fontSize: 16 }}>{item.icon}</span>
+            <span style={{ fontSize: 16 }}></span>
             {item.label}
           </button>
         ))}
@@ -242,12 +242,12 @@ const Overview = () => {
         <p style={{ fontSize: 14, color: C.gray600, margin: 0 }}>Résumé des activités — Khayrate Bladi</p>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
-        <MetricCard icon="💰" label="Chiffre d'affaires" value={`${Number(ca).toLocaleString("fr-MA")} DH`} sub="Commandes livrées" color={C.honey} />
-        <MetricCard icon="🛒" label="Commandes totales" value={totalCommandes} sub={`${enAttente} en attente`} color={C.info} />
-        <MetricCard icon="👤" label="Clients" value={totalClients} sub={`${totalVendeurs} vendeurs actifs`} color={C.purple} />
-        <MetricCard icon="📦" label="Produits en attente" value={produitsEnAttente} sub="À valider" color={C.warning} />
-        <MetricCard icon="🚚" label="Livreurs disponibles" value={livreurs.length} sub="Actifs et prêts" color={C.amber} />
-        <MetricCard icon="⭐" label="Produits actifs" value={produitsParStatut?.actif?.total ?? 0} sub="Visible dans catalogue" color={C.success} />
+        <MetricCard  label="Chiffre d'affaires" value={`${Number(ca).toLocaleString("fr-MA")} DH`} sub="Commandes livrées" color={C.honey} />
+        <MetricCard label="Commandes totales" value={totalCommandes} sub={`${enAttente} en attente`} color={C.info} />
+        <MetricCard label="Clients" value={totalClients} sub={`${totalVendeurs} vendeurs actifs`} color={C.purple} />
+        <MetricCard label="Produits en attente" value={produitsEnAttente} sub="À valider" color={C.warning} />
+        <MetricCard label="Livreurs disponibles" value={livreurs.length} sub="Actifs et prêts" color={C.amber} />
+        <MetricCard label="Produits actifs" value={produitsParStatut?.actif?.total ?? 0} sub="Visible dans catalogue" color={C.success} />
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 14 }}>
@@ -313,7 +313,7 @@ const Overview = () => {
           borderRadius: 14, padding: "16px 20px",
           display: "flex", alignItems: "center", gap: 14,
         }}>
-          <span style={{ fontSize: 20 }}>⚠️</span>
+          <span style={{ fontSize: 20 }}></span>
           <div>
             <div style={{ fontWeight: 500, color: C.earthDark, fontSize: 14 }}>
               {produitsEnAttente} produit{produitsEnAttente > 1 ? "s" : ""} en attente de validation
@@ -388,7 +388,7 @@ const Users = () => {
           flex: 1, display: "flex", alignItems: "center", gap: 8,
           background: C.white, border: `1px solid ${C.gray200}`, borderRadius: 10, padding: "8px 14px",
         }}>
-          <span>🔍</span>
+         
           <input value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Rechercher..."
             style={{ border: "none", outline: "none", flex: 1, fontSize: 14, color: C.earthDark, background: "transparent" }} />
@@ -460,7 +460,7 @@ const Users = () => {
                           <button onClick={() => setConfirmDelete(u.id)} disabled={deleting === u.id} style={{
                             padding: "5px 10px", borderRadius: 7, border: `1px solid ${C.gray200}`,
                             cursor: "pointer", fontSize: 11, background: "transparent", color: C.danger,
-                          }}>🗑</button>
+                          }}></button>
                         </>
                       )}
                     </div>
@@ -813,9 +813,9 @@ const Deliveries = () => {
         <p style={{ fontSize: 14, color: C.gray600, margin: 0 }}>Suivi des tournées</p>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
-        <MetricCard icon="🚚" label="Livraisons actives" value={actives.length} color={C.purple} />
-        <MetricCard icon="✅" label="Livrées" value={livrees.length} color={C.success} />
-        <MetricCard icon="📦" label="Total avec livraison" value={deliveries.length} color={C.info} />
+        <MetricCard  label="Livraisons actives" value={actives.length} color={C.purple} />
+        <MetricCard label="Livrées" value={livrees.length} color={C.success} />
+        <MetricCard label="Total avec livraison" value={deliveries.length} color={C.info} />
       </div>
       {loading && <Spinner />}
       {error && <ErrorMsg msg={error} onRetry={load} />}
@@ -926,9 +926,9 @@ const Reports = () => {
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
-        <MetricCard icon="💰" label="CA Total" value={`${Number(ca).toLocaleString("fr-MA")} DH`} color={C.honey} />
-        <MetricCard icon="🛒" label="Total commandes" value={totalCommandes} color={C.info} />
-        <MetricCard icon="👥" label="Total clients" value={usersParRole?.client?.total ?? 0} color={C.purple} />
+        <MetricCard  label="CA Total" value={`${Number(ca).toLocaleString("fr-MA")} DH`} color={C.honey} />
+        <MetricCard  label="Total commandes" value={totalCommandes} color={C.info} />
+        <MetricCard  label="Total clients" value={usersParRole?.client?.total ?? 0} color={C.purple} />
       </div>
 
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 14 }}>

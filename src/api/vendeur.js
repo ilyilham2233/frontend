@@ -31,6 +31,7 @@ export const downloadSellerStatsPdf = async () => {
   const response = await API.get('/seller/statistics/download-pdf', {
     responseType: 'blob', // ← dit à Axios que c'est un fichier binaire (PDF)
   });
+  
 
   // Crée un lien temporaire et clique dessus automatiquement
   const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -42,3 +43,5 @@ export const downloadSellerStatsPdf = async () => {
   link.remove();
   window.URL.revokeObjectURL(url);
 };
+export const getSellerOrderDetail = async (id) =>
+  API.get(`/seller/orders/${id}`).then(r => r.data);

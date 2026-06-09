@@ -10,6 +10,7 @@ import {
   updateSellerOrderStatus,
   getSellerStats,
   downloadSellerStatsPdf,
+  getSellerOrderDetail,
 } from "../../api/vendeur";
 
 const CSS = `
@@ -200,7 +201,7 @@ const CSS = `
   display: flex; align-items: center; justify-content: space-between;
 }
 .kb-modal-title { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 600; }
-.kb-modal-body   { padding: 20px 24px; }
+.kb-modal-body   { padding: 20px 24px; max-height: 65vh; overflow-y: auto; }
 .kb-modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; }
 .kb-status-select {
   padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px;
@@ -218,6 +219,12 @@ const CSS = `
 .kb-empty   { text-align: center; padding: 40px 20px; color: rgba(74,55,40,0.4); }
 .kb-empty i  { font-size: 36px; margin-bottom: 10px; display: block; }
 .kb-chart-wrap { position: relative; height: 180px; }
+.kb-order-row { cursor: pointer; }
+.kb-order-row:hover td { background: var(--honey-pale) !important; }
+.kb-client-info { background: var(--cream); border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.kb-client-info-row { display: flex; flex-direction: column; gap: 1px; }
+.kb-client-info-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: rgba(74,55,40,0.4); }
+.kb-client-info-value { font-weight: 500; color: var(--bark); }
 `;
 
 const MOIS_LABELS = ['Jan','Fév','Mar','Avr','Mai','Jun','Jul','Aoû','Sep','Oct','Nov','Déc'];
@@ -385,18 +392,14 @@ function DashboardView({ stats, orders, showToast }) {
 
   useEffect(() => {
     if (!stats || !chartRef.current) return;
-
     import("https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js")
       .catch(() => {})
       .finally(() => {
         if (!window.Chart) return;
         if (chartInstance.current) chartInstance.current.destroy();
-
-        // ✅ FIX: trier par mois croissant + convertir numéro → nom de mois
         const ventesTriees = [...(stats.ventes_par_mois || [])].sort((a, b) => a.mois - b.mois);
         const months = ventesTriees.map(v => MOIS_LABELS[(v.mois ?? 1) - 1]);
         const data   = ventesTriees.map(v => Number(v.total));
-
         chartInstance.current = new window.Chart(chartRef.current, {
           type: "bar",
           data: {
@@ -414,20 +417,12 @@ function DashboardView({ stats, orders, showToast }) {
             maintainAspectRatio: false,
             plugins: {
               legend: { display: false },
-              tooltip: {
-                callbacks: {
-                  label: c => Number(c.raw).toLocaleString("fr-MA") + " DH",
-                },
-              },
+              tooltip: { callbacks: { label: c => Number(c.raw).toLocaleString("fr-MA") + " DH" } },
             },
             scales: {
               y: {
                 grid: { color: "rgba(74,55,40,0.06)" },
-                ticks: {
-                  font: { size: 11 },
-                  color: "rgba(74,55,40,0.45)",
-                  callback: v => v.toLocaleString("fr-MA"),
-                },
+                ticks: { font: { size: 11 }, color: "rgba(74,55,40,0.45)", callback: v => v.toLocaleString("fr-MA") },
               },
               x: {
                 grid: { display: false },
@@ -437,13 +432,11 @@ function DashboardView({ stats, orders, showToast }) {
           },
         });
       });
-
     return () => {
       if (chartInstance.current) { chartInstance.current.destroy(); chartInstance.current = null; }
     };
   }, [stats]);
 
-  // ✅ FIX: champ correct = total_revenu (confirmé par la réponse API)
   const getAmount = (p) => Number(p?.total_revenu ?? 0);
   const topMax = getAmount(stats?.top_produits?.[0]) || 1;
 
@@ -487,37 +480,27 @@ function DashboardView({ stats, orders, showToast }) {
 
       <div className="kb-two-col">
         <div className="kb-card">
-          <div className="kb-card-header">
-            <span className="kb-card-title">Ventes par mois</span>
-          </div>
+          <div className="kb-card-header"><span className="kb-card-title">Ventes par mois</span></div>
           <div className="kb-card-body">
             <div className="kb-chart-wrap">
               <canvas ref={chartRef} role="img" aria-label="Graphique ventes mensuelles" />
             </div>
           </div>
         </div>
-
         <div className="kb-card">
-          <div className="kb-card-header">
-            <span className="kb-card-title">Top produits</span>
-          </div>
+          <div className="kb-card-header"><span className="kb-card-title">Top produits</span></div>
           <div className="kb-card-body">
             {stats?.top_produits?.length ? stats.top_produits.slice(0, 4).map((p, i) => (
               <div className="kb-top-item" key={p.produit_id || i}>
                 <div className={`kb-top-rank ${i === 0 ? "first" : ""}`}>{i + 1}</div>
                 <div style={{ flex: 1 }}>
-                  {/* ✅ FIX: nom depuis p.produit.nom */}
                   <div style={{ fontSize: 13, fontWeight: 500 }}>
                     {p.produit?.nom || `Produit #${p.produit_id}`}
                   </div>
                   <div className="kb-top-bar-bg">
-                    <div
-                      className="kb-top-bar"
-                      style={{ width: `${Math.round((getAmount(p) / topMax) * 100)}%` }}
-                    />
+                    <div className="kb-top-bar" style={{ width: `${Math.round((getAmount(p) / topMax) * 100)}%` }} />
                   </div>
                 </div>
-                {/* ✅ FIX: affiche total_revenu en DH */}
                 <div className="kb-top-amount">{getAmount(p).toLocaleString("fr-MA")} DH</div>
               </div>
             )) : <div className="kb-empty"><p>Aucune donnée</p></div>}
@@ -526,15 +509,11 @@ function DashboardView({ stats, orders, showToast }) {
       </div>
 
       <div className="kb-card">
-        <div className="kb-card-header">
-          <span className="kb-card-title">Commandes récentes</span>
-        </div>
+        <div className="kb-card-header"><span className="kb-card-title">Commandes récentes</span></div>
         <div style={{ overflowX: "auto" }}>
           <table className="kb-table" aria-label="Commandes récentes">
             <thead>
-              <tr>
-                <th>N°</th><th>Client</th><th>Total</th><th>Statut</th>
-              </tr>
+              <tr><th>N°</th><th>Client</th><th>Total</th><th>Statut</th></tr>
             </thead>
             <tbody>
               {orders.slice(0, 5).map(o => (
@@ -680,6 +659,22 @@ function ProduitsView({ products, loading, onRefresh, showToast }) {
 function CommandesView({ orders, loading, onRefresh, showToast }) {
   const [search, setSearch] = useState("");
   const [filterStatut, setFilterStatut] = useState("");
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [orderDetail, setOrderDetail]     = useState(null);
+  const [loadingDetail, setLoadingDetail] = useState(false);
+
+  const fetchOrderDetail = async (orderId) => {
+    setLoadingDetail(true);
+    try {
+      const res = await getSellerOrderDetail(orderId);
+      setOrderDetail(res?.data ?? res);
+      setSelectedOrder(orderId);
+    } catch {
+      showToast("Impossible de charger les détails", true);
+    } finally {
+      setLoadingDetail(false);
+    }
+  };
 
   const filtered = orders.filter(o =>
     (!search || String(o.id).includes(search) ||
@@ -687,7 +682,9 @@ function CommandesView({ orders, loading, onRefresh, showToast }) {
     (!filterStatut || o.statut === filterStatut)
   );
 
-  const handleStatusChange = async (orderId, newStatut) => {
+  const handleStatusChange = async (e, orderId) => {
+    e.stopPropagation();
+    const newStatut = e.target.value;
     if (!newStatut) return;
     try {
       await updateSellerOrderStatus(orderId, newStatut);
@@ -705,7 +702,7 @@ function CommandesView({ orders, loading, onRefresh, showToast }) {
       <div className="kb-page-header">
         <div>
           <h1 className="kb-page-title">Commandes reçues</h1>
-          <p className="kb-page-subtitle">Gérez les commandes de vos clients</p>
+          <p className="kb-page-subtitle">Cliquez sur une ligne pour voir les détails</p>
         </div>
       </div>
 
@@ -738,24 +735,38 @@ function CommandesView({ orders, loading, onRefresh, showToast }) {
               <tbody>
                 {filtered.map(o => {
                   const nextStatuts = STATUT_ORDER_NEXT[o.statut] || [];
-                  const articles = o.articles_commande || [];
+                  const articles = o.articles_commande || o.articles || [];
                   return (
-                    <tr key={o.id}>
+                    <tr
+                      key={o.id}
+                      className="kb-order-row"
+                      onClick={() => fetchOrderDetail(o.id)}
+                    >
                       <td><strong>#{o.id}</strong></td>
                       <td>{o.user?.nom} {o.user?.prenom}</td>
                       <td>{fmtDate(o.created_at)}</td>
-                      <td style={{ fontSize: 12, color: "rgba(74,55,40,0.6)", maxWidth: 180 }}>
-                        {articles.length
-                          ? articles.map(a => `${a.produit?.nom} ×${a.quantite}`).join(", ")
-                          : "—"}
+                      <td style={{ fontSize: 12, color: "rgba(74,55,40,0.6)", maxWidth: 200 }}>
+                        {articles.length ? (
+                          <div>
+                            <div>{articles.map(a => `${a.produit?.nom || "Produit"} ×${a.quantite}`).join(", ")}</div>
+                            <div style={{ marginTop: 2, color: "rgba(74,55,40,0.4)" }}>
+                              {articles.length} article{articles.length > 1 ? "s" : ""}
+                            </div>
+                          </div>
+                        ) : (
+                          <span style={{ background: "var(--honey-pale)", color: "var(--honey)",
+                            padding: "2px 8px", borderRadius: 8, fontSize: 11 }}>
+                            Voir détails →
+                          </span>
+                        )}
                       </td>
                       <td><strong>{Number(o.prix_total).toLocaleString("fr-MA")} DH</strong></td>
                       <td><StatutBadge statut={o.statut} /></td>
-                      <td>
+                      <td onClick={e => e.stopPropagation()}>
                         {nextStatuts.length > 0 ? (
                           <select className="kb-status-select"
                             defaultValue=""
-                            onChange={e => handleStatusChange(o.id, e.target.value)}
+                            onChange={e => handleStatusChange(e, o.id)}
                             aria-label={`Changer statut commande #${o.id}`}>
                             <option value="" disabled>Changer…</option>
                             {nextStatuts.map(s => (
@@ -784,6 +795,115 @@ function CommandesView({ orders, loading, onRefresh, showToast }) {
           </div>
         )}
       </div>
+
+      {/* ===== MODAL DÉTAIL COMMANDE ===== */}
+      {selectedOrder && (
+        <div className="kb-modal-overlay" onClick={() => { setSelectedOrder(null); setOrderDetail(null); }}>
+          <div className="kb-modal" style={{ width: 620 }} onClick={e => e.stopPropagation()}>
+            <div className="kb-modal-header">
+              <span className="kb-modal-title">
+                {loadingDetail
+                  ? "Chargement…"
+                  : `Commande #${orderDetail?.id} — ${orderDetail?.user?.prenom} ${orderDetail?.user?.nom}`
+                }
+              </span>
+              <button className="kb-btn kb-btn-outline kb-btn-sm"
+                onClick={() => { setSelectedOrder(null); setOrderDetail(null); }}>
+                <i className="ti ti-x" aria-hidden="true" />
+              </button>
+            </div>
+
+            <div className="kb-modal-body">
+              {loadingDetail ? (
+                <div className="kb-loading">Chargement des détails…</div>
+              ) : orderDetail ? (
+                <>
+                  {/* Infos client */}
+                  <div className="kb-client-info">
+                    <div className="kb-client-info-row">
+                      <span className="kb-client-info-label">Client</span>
+                      <span className="kb-client-info-value">{orderDetail.user?.prenom} {orderDetail.user?.nom}</span>
+                    </div>
+                    <div className="kb-client-info-row">
+                      <span className="kb-client-info-label">Email</span>
+                      <span className="kb-client-info-value">{orderDetail.user?.email}</span>
+                    </div>
+                    <div className="kb-client-info-row">
+                      <span className="kb-client-info-label">Téléphone</span>
+                      <span className="kb-client-info-value">{orderDetail.user?.telephone || "—"}</span>
+                    </div>
+                    <div className="kb-client-info-row">
+                      <span className="kb-client-info-label">Statut</span>
+                      <span className="kb-client-info-value"><StatutBadge statut={orderDetail.statut} /></span>
+                    </div>
+                    <div className="kb-client-info-row">
+                      <span className="kb-client-info-label">Date</span>
+                      <span className="kb-client-info-value">{fmtDate(orderDetail.created_at)}</span>
+                    </div>
+                    <div className="kb-client-info-row">
+                      <span className="kb-client-info-label">N° Commande</span>
+                      <span className="kb-client-info-value">#{orderDetail.id}</span>
+                    </div>
+                  </div>
+
+                  {/* Articles */}
+                  <div className="kb-card-title" style={{ marginBottom: 12 }}>
+                    <i className="ti ti-package" style={{ marginRight: 6 }} />
+                    Articles commandés
+                  </div>
+                  <table className="kb-table">
+                    <thead>
+                      <tr>
+                        <th>Produit</th>
+                        <th>Prix unitaire</th>
+                        <th>Qté</th>
+                        <th>Sous-total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {orderDetail.articles?.map(a => (
+                        <tr key={a.id}>
+                          <td>
+                            <div className="kb-prod-info">
+                              {a.produit?.image_url && (
+                                <div className="kb-prod-thumb">
+                                  <img src={a.produit.image_url} alt={a.produit.nom}
+                                    onError={e => { e.target.style.display = "none"; }} />
+                                </div>
+                              )}
+                              <div>
+                                <div className="kb-prod-name">{a.produit?.nom || `Produit #${a.produit_id}`}</div>
+                                <div className="kb-prod-sub">#{a.produit_id}</div>
+                              </div>
+                            </div>
+                          </td>
+                          <td>{Number(a.prix_unitaire).toLocaleString("fr-MA")} DH</td>
+                          <td><strong>×{a.quantite}</strong></td>
+                          <td><strong>
+                            {(Number(a.prix_unitaire) * a.quantite).toLocaleString("fr-MA")} DH
+                          </strong></td>
+                        </tr>
+                      ))}
+                      {!orderDetail.articles?.length && (
+                        <tr><td colSpan={4}><div className="kb-empty"><p>Aucun article</p></div></td></tr>
+                      )}
+                    </tbody>
+                  </table>
+                </>
+              ) : null}
+            </div>
+
+            <div className="kb-modal-footer" style={{ justifyContent: "space-between" }}>
+              <span style={{ fontSize: 13, color: "rgba(74,55,40,0.5)" }}>
+                {orderDetail?.articles?.length ?? 0} article(s)
+              </span>
+              <strong style={{ fontSize: 15 }}>
+                Total : {Number(orderDetail?.prix_total || 0).toLocaleString("fr-MA")} DH
+              </strong>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -832,9 +952,6 @@ export default function VendeurDashboard() {
   const fetchStats = async () => {
     try {
       const res = await getSellerStats();
-      // ✅ FIX: API retourne { status, data: { ... } }
-      // vendeur.js fait .then(r => r.data) donc res = { status, data: { top_produits, ... } }
-      // On prend res.data si dispo, sinon res directement
       const s = res?.data ?? res;
       setStats(s);
     } catch (err) {
